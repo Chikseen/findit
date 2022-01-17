@@ -15,5 +15,5 @@ COPY . .
 # build app for production with minification
 RUN npm run start
 
-EXPOSE 7080
+EXPOSE 3000
 CMD [ "node", "server.js" ]
