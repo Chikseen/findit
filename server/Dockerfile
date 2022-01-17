@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # build app for production with minification
-RUN npm run serve
+RUN npm run start
 
 EXPOSE 7080
 CMD [ "node", "server.js" ]
