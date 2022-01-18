@@ -8,7 +8,7 @@ const path = require('path');
 var bodyParser = require('body-parser')
 const JSONdb = require('simple-json-db');
 
-const user = new JSONdb('/var/lib/docker/volumes/findit_database/_data/user.json', { asyncWrite: true });
+const user = new JSONdb('/database/user.json', { asyncWrite: true });
 
 const httpServer = createServer({
   key: readFileSync('cert.key'),
