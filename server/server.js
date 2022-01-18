@@ -8,7 +8,7 @@ const path = require('path');
 var bodyParser = require('body-parser')
 const JSONdb = require('simple-json-db');
 
-const user = new JSONdb('/var/lib/docker/volumes/findit_database/_data/user.json', { asyncWrite: true });
+//const user = new JSONdb('/var/lib/docker/volumes/findit_database/_data/user.json', { asyncWrite: true });
 
 const httpServer = createServer({
   key: readFileSync('cert.key'),
@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("createUser", async (data) => {
-
+/* 
     if (!user.has(data.userName)) {
       console.log("create user: ", data.userName)
       
@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
     else {
       console.log("User allrady exits")
       socket.emit("response", { error: true, msg: "userexists" })
-    }
+    } */
   })
 });
 
