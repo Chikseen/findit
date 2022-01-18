@@ -11,7 +11,7 @@ const httpServer = createServer({
 
 const io = new Server(httpServer, {
   cors: {
-    origin: `https://${ip}:8080`,
+    origin: `*`,
     methods: ["GET", "POST"],
     allowedHeaders: '*'
   }

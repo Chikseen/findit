@@ -16,7 +16,7 @@ export default {
     },
   },
   created() {
-    this.socket = io("https://drunc.net:7080");
+    this.socket = io("https://localhost:7080");
   },
   mounted() {
     this.socket.on("hello", (arg) => {
