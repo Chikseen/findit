@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <h1>FindIt</h1>
+    <h3>3D store, share and find</h3>
+    <div>
+      <LabeldText :name="'User Name'" @change="setusername" />
+      <LabeldText :name="'Passwort'" @change="setpasswort" />
+      <LabeldText
+        v-if="registerMode"
+        :name="'Repeat Passwort'"
+        @change="confirmpasswort"
+      />
+      <CTA v-if="!registerMode" :text="'Login'" @click="checkUserData" />
+      <CTA v-if="registerMode" :text="'Create account'" @click="createUser" />
+      <Button
+        v-if="!registerMode"
+        :text="'Register'"
+        @click="registerMode = true"
+      />
+      <Button
+        v-if="registerMode"
+        :text="'Try Login'"
+        @click="registerMode = false"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import LabeldText from "../components/functional/LabeledInput.vue";
+import CTA from "../components/functional/CTA.vue";
+import Button from "../components/functional/Button.vue";
+
+import api from "../apiService";
+import io from "socket.io-client";
+
+export default {
+  components: {
+    LabeldText,
+    CTA,
+    Button,
+  },
+  data() {
+    return {
+      username: "",
+      passwort: "",
+      registerMode: false,
+    };
+  },
+  methods: {
+    setusername(e) {
+      this.username = e;
+    },
+    setpasswort(e) {
+      this.passwort = e;
+    },
+    checkUserData() {},
+    register() {},
+    confirmpasswort() {},
+    createUser() {
+      api.emit("createUser", {
+        userName: this.username,
+        passwort: this.passwort,
+      });
+    },
+  },
+  mounted() {
+    this.socket = io("https://localhost:7080");
+    this.socket.on("response", (data) => {
+      console.log(data);
+    });
+  },
+};
+</script>

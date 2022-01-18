@@ -9,9 +9,15 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.1058.0",
+    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "core-js": "^3.6.5",
     "express": "^4.16.1",
     "ip": "^1.1.5",
+    "mock-aws-s3": "^4.0.2",
+    "nock": "^13.2.2",
+    "request": "^2.79.0",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "vue": "^2.6.11",

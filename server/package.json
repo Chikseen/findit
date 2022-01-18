@@ -8,8 +8,11 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.16.1",
     "ip": "^1.1.5",
+    "jsondb": "^1.0.0",
+    "simple-json-db": "^1.2.3",
     "socket.io": "^4.4.1"
   }
 }
