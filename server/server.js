@@ -49,7 +49,24 @@ io.on("connection", (socket) => {
       io.emit("response", { error: true, msg: "userexists" })
     }
   })
-});
 
+  socket.on("checkUser", async (data) => {
+    io.emit("response", { error: false, msg: "Check Data" })
+    if (user.has(data.userName)) {
+      io.emit("response", { error: false, msg: "Check passwort" })
+      const userdata = user.get(data.userName)
+
+      if (await bcrypt.compare(data.passwort, userdata.passwort)) {
+        io.emit("response", { error: false, msg: "Passwort is correct -> proceed" })
+      }
+      else {
+        io.emit("response", { error: true, msg: "wrong passwort" })
+      }
+    }
+    else {
+      io.emit("response", { error: true, msg: "User not exits" })
+    }
+  });
+})
 
 httpServer.listen(7080);

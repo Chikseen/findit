@@ -59,7 +59,12 @@ export default {
     setpasswort(e) {
       this.passwort = e;
     },
-    checkUserData() {},
+    checkUserData() {
+      api.emit("checkUser", {
+        userName: this.username,
+        passwort: this.passwort,
+      });
+    },
     register() {},
     confirmpasswort() {},
     createUser() {
@@ -84,7 +89,7 @@ export default {
       this.number = arg;
     });
     this.socket.on("response", (arg) => {
-      console.log("hi", arg)
+      console.log("hi", arg);
       this.response = arg;
     });
   },
