@@ -25,6 +25,7 @@
       />
     </div>
     <h1>{{ number.number }}</h1>
+    <h1>{{ response }}</h1>
   </div>
 </template>
 
@@ -48,6 +49,7 @@ export default {
       passwort: "",
       registerMode: false,
       number: 0,
+      response: {},
     };
   },
   methods: {
@@ -79,8 +81,11 @@ export default {
       console.log(data);
     });
     this.socket.on("Number", (arg) => {
-      console.log(arg); // world
       this.number = arg;
+    });
+    this.socket.on("response", (arg) => {
+      console.log("hi", arg)
+      this.response = arg;
     });
   },
 };
