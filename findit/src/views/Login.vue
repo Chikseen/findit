@@ -12,6 +12,7 @@
       />
       <CTA v-if="!registerMode" :text="'Login'" @click="checkUserData" />
       <CTA v-if="registerMode" :text="'Create account'" @click="createUser" />
+      <CTA :text="'TESTBTN'" @click="test" />
       <Button
         v-if="!registerMode"
         :text="'Register'"
@@ -23,6 +24,7 @@
         @click="registerMode = false"
       />
     </div>
+    <h1>{{ number.number }}</h1>
   </div>
 </template>
 
@@ -45,6 +47,7 @@ export default {
       username: "",
       passwort: "",
       registerMode: false,
+      number: 0,
     };
   },
   methods: {
@@ -63,11 +66,21 @@ export default {
         passwort: this.passwort,
       });
     },
+    test() {
+      api.emit("newNumber", {
+        userName: this.username,
+        passwort: this.passwort,
+      });
+    },
   },
   mounted() {
     this.socket = io("https://localhost:7080");
     this.socket.on("response", (data) => {
       console.log(data);
+    });
+    this.socket.on("Number", (arg) => {
+      console.log(arg); // world
+      this.number = arg;
     });
   },
 };
