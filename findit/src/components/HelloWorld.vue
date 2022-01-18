@@ -1,47 +1,33 @@
 <template>
   <div class="hello">
-    <p>HelloWorld</p>
-    <p>current ip {{ip}}</p>
-    <button @click="tryFetch">Try Fetch</button>
+    <p>Hello World</p>
+    <button @click="numberGen">Get And Show Random Number to everyone</button>
   </div>
 </template>
 
 <script>
-import api from "../apiService"
+import io from "socket.io-client";
 
 export default {
   name: "HelloWorld",
-  props: {
-    msg: String,
-  },
   methods: {
-    async tryFetch() {
-      console.log("Try fetch")
-      api.getData("test")
-    }
+    async numberGen() {
+      this.socket.emit("newNumber");
+    },
   },
-  computed: {
-    ip() {
-      return api.currentIp()
-    }
-  }
+  created() {
+    this.socket = io("https://localhost:7080");
+  },
+  mounted() {
+    this.socket.on("hello", (arg) => {
+      console.log(arg); // world
+    });
+    this.socket.on("Number", (arg) => {
+      console.log(arg); // world
+    });
+  },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style >
 </style>
