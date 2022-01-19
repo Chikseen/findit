@@ -13,13 +13,17 @@ const user = new JSONdb('/database/user.json', { asyncWrite: true });
 const httpServer = createServer({
   key: readFileSync('cert.key'),
   cert: readFileSync('cert.crt'),
+  allowRequest: (req, callback) => {
+    const noOriginHeader = req.headers.origin === undefined;
+    callback(null, noOriginHeader);
+  }
 });
 
 const io = new Server(httpServer, {
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
-    allowedHeaders: '*',
+    allowedHeaders: ['*'],
   }
 });
 io.on("connection", (socket) => {
