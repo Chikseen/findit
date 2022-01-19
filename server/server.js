@@ -24,6 +24,7 @@ const io = new Server(httpServer, {
     origin: `*`,
     methods: ["GET", "POST"],
     allowedHeaders: ['*'],
+    allowRequest: "*"
   }
 });
 io.on("connection", (socket) => {
