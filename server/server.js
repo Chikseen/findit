@@ -24,7 +24,10 @@ const io = new Server(httpServer, {
     origin: `*`,
     methods: ["GET", "POST"],
     allowedHeaders: ['*'],
-    credentials: false
+    credentials: true,
+    extraHeaders: {
+      "my-custom-header": "abcd"
+    }
   }
 });
 io.on("connection", (socket) => {
