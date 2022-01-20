@@ -7,7 +7,11 @@ var fs = require('fs');
 
 // "" for Docker Buiuld
 //"." for DevBuild
-const pathPreFix = "."
+let pathPreFix = ""
+if (fs.existsSync("../localDebug.js")) {
+  pathPreFix = "."
+}
+
 
 // UNUSED
 /* const path = require('path');
