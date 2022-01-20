@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 
-const socket = io("https://api.drunc.net");
-//const socket = io("https://localhost:7080");
+//const socket = io("https://api.drunc.net");
+const socket = io("https://localhost:7080");
 
 const apiService = {
 

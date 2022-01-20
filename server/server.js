@@ -7,6 +7,17 @@ const bcrypt = require('bcrypt')
 const path = require('path');
 var bodyParser = require('body-parser')
 const JSONdb = require('simple-json-db');
+var fs = require('fs');
+
+if (!fs.existsSync("/database")) {
+  console.log("creating folder")
+  fs.mkdirSync("/database")
+}
+
+if (!fs.existsSync("/database/user.json")) {
+  console.log("creating folder")
+  fs.appendFile("/database/user.json")
+}
 
 const user = new JSONdb('/database/user.json', { asyncWrite: true });
 

@@ -10,6 +10,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "express": "^4.16.1",
+    "fs": "0.0.1-security",
     "ip": "^1.1.5",
     "jsondb": "^1.0.0",
     "simple-json-db": "^1.2.3",
