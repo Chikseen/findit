@@ -81,8 +81,8 @@ export default {
     },
   },
   mounted() {
-    //this.socket = io("https://api.drunc.net");
-    this.socket = io("https://localhost:7080");
+    this.socket = io("https://api.drunc.net");
+    //this.socket = io("http://localhost:7080");
     this.socket.on("response", (data) => {
       console.log(data);
     });

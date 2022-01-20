@@ -1,36 +1,26 @@
 const { readFileSync } = require("fs");
-const { createServer } = require("https");
 const { Server } = require("socket.io");
 const rawip = require('ip');
-const ip = rawip.address()
-const bcrypt = require('bcrypt')
+const ip = rawip.address();
+const bcrypt = require('bcrypt');
 const path = require('path');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 const JSONdb = require('simple-json-db');
 var fs = require('fs');
 
-if (!fs.existsSync("/database")) {
+if (!fs.existsSync("./database")) {
   console.log("creating folder")
-  fs.mkdirSync("/database")
+  fs.mkdirSync("./database")
 }
 
-if (!fs.existsSync("/database/user.json")) {
+if (!fs.existsSync("./database/user.json")) {
   console.log("creating folder")
-  fs.appendFile("/database/user.json")
+  fs.appendFile("./database/user.json")
 }
 
 const user = new JSONdb('/database/user.json', { asyncWrite: true });
 
-const httpServer = createServer({
-  key: readFileSync('cert.key'),
-  cert: readFileSync('cert.crt'),
-  allowRequest: (req, callback) => {
-    const noOriginHeader = req.headers.origin === undefined;
-    callback(null, noOriginHeader);
-  }
-});
-
-const io = new Server(httpServer, {
+const io = new Server( {
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
@@ -88,4 +78,4 @@ io.on("connection", (socket) => {
   });
 })
 
-httpServer.listen(7080);
+io.listen(7080);
