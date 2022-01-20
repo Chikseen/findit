@@ -1,34 +1,36 @@
 const { readFileSync } = require("fs");
 const { Server } = require("socket.io");
 const rawip = require('ip');
-const ip = rawip.address();
 const bcrypt = require('bcrypt');
-const path = require('path');
-var bodyParser = require('body-parser');
 const JSONdb = require('simple-json-db');
 var fs = require('fs');
 
-if (!fs.existsSync("/database")) {
+// "" for Docker Buiuld
+//"." for DevBuild
+const pathPreFix = "."
+
+// UNUSED
+/* const path = require('path');
+var bodyParser = require('body-parser');
+const ip = rawip.address(); */
+
+if (!fs.existsSync(pathPreFix + "/database")) {
   console.log("creating folder")
-  fs.mkdirSync("/database")
+  fs.mkdirSync(pathPreFix + "/database")
 }
 
-if (!fs.existsSync("/database/user.json")) {
+if (!fs.existsSync(pathPreFix + "/database/user.json")) {
   console.log("creating folder")
-  fs.appendFile("/database/user.json")
+  fs.appendFile(pathPreFix + "/database/user.json")
 }
 
-const user = new JSONdb('/database/user.json', { asyncWrite: true });
+const user = new JSONdb(pathPreFix + '/database/user.json', { asyncWrite: true });
 
-const io = new Server( {
+const io = new Server({
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
-    allowedHeaders: ['*'],
-    credentials: true,
-    extraHeaders: {
-      "my-custom-header": "abcd"
-    }
+    allowedHeaders: ['*'], //Add sth
   }
 });
 io.on("connection", (socket) => {

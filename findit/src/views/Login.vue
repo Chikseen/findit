@@ -34,7 +34,6 @@ import LabeldText from "../components/functional/LabeledInput.vue";
 import CTA from "../components/functional/CTA.vue";
 import Button from "../components/functional/Button.vue";
 
-import api from "../apiService";
 import io from "socket.io-client";
 
 export default {
@@ -48,8 +47,8 @@ export default {
       username: "",
       passwort: "",
       registerMode: false,
-      number: 0,
-      response: {},
+      number: 0, // Debug
+      response: {}, // Debug
     };
   },
   methods: {
@@ -60,7 +59,7 @@ export default {
       this.passwort = e;
     },
     checkUserData() {
-      api.emit("checkUser", {
+      this.socket.emit("checkUser", {
         userName: this.username,
         passwort: this.passwort,
       });
@@ -68,21 +67,25 @@ export default {
     register() {},
     confirmpasswort() {},
     createUser() {
-      api.emit("createUser", {
+      this.socket.emit("createUser", {
         userName: this.username,
         passwort: this.passwort,
       });
     },
-    test() {
-      api.emit("newNumber", {
+    test() { // Debug
+      this.socket.emit("newNumber", {
         userName: this.username,
         passwort: this.passwort,
       });
+      setTimeout(() => {
+        this.test();
+      }, 1000);
     },
   },
   mounted() {
-    this.socket = io("https://api.drunc.net");
-    //this.socket = io("http://localhost:7080");
+    //this.socket = io("https://api.drunc.net");
+    this.socket = io("http://localhost:7080");
+
     this.socket.on("response", (data) => {
       console.log(data);
     });
@@ -90,7 +93,6 @@ export default {
       this.number = arg;
     });
     this.socket.on("response", (arg) => {
-      console.log("hi", arg);
       this.response = arg;
     });
   },
