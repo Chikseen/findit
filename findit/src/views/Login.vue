@@ -72,19 +72,16 @@ export default {
         passwort: this.passwort,
       });
     },
-    test() { // Debug
+    test() {
+      // Debug
       this.socket.emit("newNumber", {
         userName: this.username,
         passwort: this.passwort,
       });
-      setTimeout(() => {
-        this.test();
-      }, 1000);
     },
   },
   mounted() {
-    this.socket = io("https://api.drunc.net");
-    //this.socket = io("http://localhost:7080");
+    this.socket = io(this.$store.getters.getApiSocket);
 
     this.socket.on("response", (data) => {
       console.log(data);

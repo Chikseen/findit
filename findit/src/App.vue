@@ -1,12 +1,27 @@
 <template>
   <div id="app">
-   <!--  <div id="nav">
+    <!--  <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div> -->
-    <router-view/>
+    <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  created() {
+    try {
+      const checkfile = require("../../localDebug.js");
+      console.log(checkfile);
+      this.$store.commit("setApiSocket", "http://localhost:7080");
+    } catch (e) {
+      console.log("sorry, file not found");
+      this.$store.commit("setApiSocket", "https://api.drunc.net");
+    }
+  },
+};
+</script>
 
 <style>
 #app {
