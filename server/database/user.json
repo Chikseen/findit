@@ -1,4 +1,9 @@
 {
+    "12345678": {
+        "userName": "12345678",
+        "passwort": "$2b$10$lU.96Af9KaKu8HnYvtzii.qBruZKYXVvS4kx6gN09TfznNSBPAQOG",
+        "repeatPasswort": "12345678"
+    },
     "123123123": {
         "userName": "123123123",
         "passwort": "$2b$10$EMovn0ijUbWdTRtsiopncOHrwzjx.BLpGDAtVHjJMq5zfKygZ3Q26",
