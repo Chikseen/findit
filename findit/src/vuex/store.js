@@ -4,19 +4,23 @@ import Vue from 'vue'
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    state: {
-        apiSocket: null,
+  state: {
+    apiSocket: null,
+    message: {}
+  },
+  getters: {
+    getApiSocket: state => {
+      return state.apiSocket
     },
-    getters: {
-        getApiSocket: state => {
-            return state.apiSocket
-        },
+  },
+  mutations: {
+    setApiSocket(state, payload) {
+      state.apiSocket = payload
     },
-    mutations: {
-        setApiSocket(state, payload) {
-            state.apiSocket = payload
-        },
+    setMessage(state, payload) {
+      state.message = payload
     },
+  },
 })
 
 /**

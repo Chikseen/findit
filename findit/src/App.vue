@@ -5,18 +5,24 @@
       <router-link to="/about">About</router-link>
     </div> -->
     <router-view />
+    <Messege />
   </div>
 </template>
 
 <script>
+import Messege from "./assets/messageComponent.vue";
+
 export default {
+  components: {
+    Messege,
+  },
   created() {
-    try {
-      const checkfile = require("../../localDebug.js");
-      console.log(checkfile);
+    const buildfrom = true;
+    if (buildfrom) {
+      console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");
-    } catch (e) {
-      console.log("sorry, file not found");
+    } else {
+      console.log("Build from ApiSocket");
       this.$store.commit("setApiSocket", "https://api.drunc.net");
     }
   },
@@ -24,12 +30,19 @@ export default {
 </script>
 
 <style>
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
 }
 
 #nav {

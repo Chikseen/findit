@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="emitData">{{ text }}</button>
+    <button class="button" @click="emitData">{{ text }}</button>
   </div>
 </template>
 
@@ -19,3 +19,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.button {
+  width: 100%;
+  height: 50px;
+}
+</style>

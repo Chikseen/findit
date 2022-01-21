@@ -1,0 +1,17 @@
+{
+    "123123123": {
+        "userName": "123123123",
+        "passwort": "$2b$10$EMovn0ijUbWdTRtsiopncOHrwzjx.BLpGDAtVHjJMq5zfKygZ3Q26",
+        "repeatPasswort": "123123123"
+    },
+    "aaaaaaaa": {
+        "userName": "aaaaaaaa",
+        "passwort": "$2b$10$DU8uHc1yVq/r9xColX5MdeJt3z/04I.5LT.leEWHiW40bC65hiThu",
+        "repeatPasswort": "bbbbbbbb"
+    },
+    "timmenzel": {
+        "userName": "timmenzel",
+        "passwort": "$2b$10$WP08GxbeWLp6tobNVDtUxuPBkrb2eLehOtY/dyHgXjBbFRG9i96sa",
+        "repeatPasswort": "timmenzel"
+    }
+}
