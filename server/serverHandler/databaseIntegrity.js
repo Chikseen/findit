@@ -5,6 +5,10 @@ module.exports = {
       console.log("creating database Folder");
       fs.mkdirSync(pathPreFix + "/database");
     }
+    if (!fs.existsSync(pathPreFix + "/projects")) {
+      console.log("creating projects Folder");
+      fs.mkdirSync(pathPreFix + "/projects");
+    }
 
     if (!fs.existsSync(pathPreFix + "/database/user.json")) {
       console.log("creating user.json");
