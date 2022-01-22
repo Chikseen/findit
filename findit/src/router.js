@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "./views/Home.vue";
 import Login from "./views/Login.vue";
 import Landing from "./views/Landing.vue";
+import ProjectView from "./views/ProjectView.vue";
 
 //import store from "./store"
 
@@ -23,7 +24,11 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
-    meta: { requiresAuth: true },
+  },
+  {
+    path: "/project",
+    name: "ProjectView",
+    component: ProjectView,
   },
 ];
 

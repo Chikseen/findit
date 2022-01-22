@@ -1,30 +1,44 @@
 <template>
-  <div class="home">
-    <h1>This is your Home Screen</h1>
-    <h3>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas, magnam
-      iusto eveniet explicabo ab fuga debitis. Illum repellat libero voluptas
-      unde quasi, labore ratione velit atque cum quod, ad assumenda. Lorem ipsum
-      dolor sit amet consectetur adipisicing elit. Esse consectetur enim fuga
-      pariatur earum voluptas praesentium aspernatur facilis, molestias, fugiat
-      blanditiis? Autem vitae neque omnis libero ullam accusamus officiis
-      voluptate. Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui
-      libero quia repellendus, temporibus corrupti eveniet saepe cupiditate
-      maiores distinctio deleniti voluptatibus consequuntur excepturi est, fugit
-      omnis iste eum eius illo.
-    </h3>
+  <div class="home_wrapper">
+    <h1>Hello {{ userName }}</h1>
+    <div>
+      <h2>Your Projects</h2>
+      <ProjectCluster :projects="projectCluster.ownProjects" />
+    </div>
+    <hr />
+    <div>
+      <h2>Projects Shared by you</h2>
+      <ProjectCluster :projects="projectCluster.sharedByProjects" />
+    </div>
+    <hr />
+    <div>
+      <h2>Projects Shared with you</h2>
+      <ProjectCluster :projects="projectCluster.sharedWithProjects" />
+    </div>
   </div>
 </template>
 
 <script>
+import ProjectCluster from "../components/projectCluster.vue";
+
 import io from "socket.io-client";
 
 export default {
   name: "Home",
+  components: {
+    ProjectCluster,
+  },
   data() {
     return {
       resviedPositivMessage: false,
+      userData: {},
+      projectCluster: {},
     };
+  },
+  computed: {
+    userName() {
+      return localStorage.getItem("usr");
+    },
   },
   created() {
     this.socket = io(this.$store.getters.getApiSocket);
@@ -42,6 +56,13 @@ export default {
         this.$store.commit("setloginStatus", true);
       }
     });
+
+    this.socket.on("currentUserData", (data) => {
+      this.userData = data;
+    });
+    this.socket.on("getProjectData", (data) => {
+      this.projectCluster = data;
+    });
   },
   mounted() {
     console.log("login Status", this.$store.getters.getloginStatus);
@@ -55,8 +76,10 @@ export default {
         });
       }
     }
+    this.socket.emit("requestProjectData", {
+      userName: localStorage.getItem("usr"),
+    });
     setTimeout(() => {
-      console.log("got new Message", this.resviedPositivMessage);
       if (!this.resviedPositivMessage) {
         this.$router.push("/login");
       }
@@ -64,3 +87,11 @@ export default {
   },
 };
 </script>
+
+<style>
+  .home_wrapper {
+    padding: 0 50px;
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+</style>

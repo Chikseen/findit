@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import Button from "../components/functional/Button.vue";
+import Button from "../assets/Button.vue";
 import Logo from "../assets/icons/logo.vue";
 
 import io from "socket.io-client";
@@ -107,8 +107,6 @@ export default {
         passwort: this.passwort,
       });
     },
-    register() {},
-    confirmpasswort() {},
     createUser() {
       this.socket.emit("createUser", {
         userName: this.username,
@@ -120,6 +118,7 @@ export default {
         SID: localStorage.getItem("sessionID"),
       });
       localStorage.setItem("sessionID", "");
+      localStorage.setItem("usr", "");
       this.$store.commit("setloginStatus", false);
     },
   },
@@ -143,11 +142,13 @@ export default {
     });
 
     this.socket.on("response", (data) => {
+      console.log("data", data);
       this.$store.commit("setMessage", data);
     });
     this.socket.on("userDataValidated", (data) => {
       this.$store.commit("setloginStatus", true);
       localStorage.setItem("sessionID", data.sessionID);
+      localStorage.setItem("usr", this.username);
       this.$router.push("home");
     });
   },
@@ -200,7 +201,7 @@ export default {
   .login_wrapper {
     flex-direction: column;
     justify-content: space-evenly;
-    padding: 50px 10px 0 10px;
+    padding: 3rem 10px 0 1rem;
   }
   .login_loginform {
     justify-content: space-evenly;
