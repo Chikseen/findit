@@ -36,15 +36,15 @@ export default {
 <style >
 .message_wrapper {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  bottom: 10px;
+  left: 10px;
+  width: calc(100% - 20px);
 
   z-index: -1;
 
   background-color: rgba(250, 235, 215, 0.445);
 }
 .isError {
-  background-color: rgba(223, 88, 83, 0.747)
+  background-color: rgba(223, 88, 83, 0.747);
 }
 </style>

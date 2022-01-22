@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!--  <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
     <router-view />
     <Messege />
   </div>
@@ -17,7 +13,7 @@ export default {
     Messege,
   },
   created() {
-    const buildfrom = false;
+    const buildfrom = true;
     if (buildfrom) {
       console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");

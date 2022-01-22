@@ -17,7 +17,50 @@
 </template>
 
 <script>
+import io from "socket.io-client";
+
 export default {
   name: "Home",
+  data() {
+    return {
+      resviedPositivMessage: false,
+    };
+  },
+  created() {
+    this.socket = io(this.$store.getters.getApiSocket);
+
+    console.log("create call");
+
+    this.socket.on("respSID", (data) => {
+      console.log("resplog", data.status);
+      if (data.status != "valid") {
+        localStorage.setItem("sessionID", "");
+        this.$router.push("/login");
+      } else {
+        this.resviedPositivMessage = true;
+        console.log("set Login Status true");
+        this.$store.commit("setloginStatus", true);
+      }
+    });
+  },
+  mounted() {
+    console.log("login Status", this.$store.getters.getloginStatus);
+    const SID = localStorage.getItem("sessionID");
+
+    if (localStorage.getItem("sessionID") != null) {
+      if (SID.length != "") {
+        console.log("confrom Login", SID);
+        this.socket.emit("checkSID", {
+          SID: SID,
+        });
+      }
+    }
+    setTimeout(() => {
+      console.log("got new Message", this.resviedPositivMessage);
+      if (!this.resviedPositivMessage) {
+        this.$router.push("/login");
+      }
+    }, 500);
+  },
 };
 </script>

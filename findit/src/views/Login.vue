@@ -7,7 +7,7 @@
       <h1>FindIt</h1>
       <h3>3D store, share and find</h3>
     </div>
-    <div class="login_loginform">
+    <div class="login_loginform" v-if="!validLogin">
       <div class="login_loginform-selection">
         <form action="#">
           <div class="login_loginform_wrapper">
@@ -58,39 +58,15 @@
         </div>
       </div>
     </div>
-
-    <!--     <div>
-      <div>
-        <LabeldText :name="'User Name'" @change="setusername" />
-        <LabeldText :name="'Passwort'" @change="setpasswort" />
-        <LabeldText
-          v-if="registerMode"
-          :name="'Repeat Passwort'"
-          @change="confirmpasswort"
-        />
-        <CTA v-if="!registerMode" :text="'Login'" @click="checkUserData" />
-        <CTA v-if="registerMode" :text="'Create account'" @click="createUser" />
-        <CTA :text="'TESTBTN'" @click="test" />
-        <Button
-          v-if="!registerMode"
-          :text="'Register'"
-          @click="registerMode = true"
-        />
-        <Button
-          v-if="registerMode"
-          :text="'Try Login'"
-          @click="registerMode = false"
-        />
+    <div v-else>
+      <div class="login_loginform_input">
+        <Button :text="'Logout'" @click="logout" />
       </div>
-      <h1>{{ number.number }}</h1>
-      <h1>{{ response }}</h1>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
-//import LabeldText from "../components/functional/LabeledInput.vue";
-//import CTA from "../components/functional/CTA.vue";
 import Button from "../components/functional/Button.vue";
 import Logo from "../assets/icons/logo.vue";
 
@@ -99,8 +75,6 @@ import io from "socket.io-client";
 export default {
   name: "Login",
   components: {
-    //LabeldText,
-    //CTA,
     Button,
     Logo,
   },
@@ -141,17 +115,53 @@ export default {
         passwort: this.passwort,
       });
     },
+    logout() {
+      this.socket.emit("destroySession", {
+        SID: localStorage.getItem("sessionID"),
+      });
+      localStorage.setItem("sessionID", "");
+      this.$store.commit("setloginStatus", false);
+    },
   },
-  mounted() {
+  computed: {
+    validLogin() {
+      return this.$store.getters.getloginStatus;
+    },
+  },
+  created() {
     this.socket = io(this.$store.getters.getApiSocket);
+
+    this.socket.on("respSID", (data) => {
+      console.log("resplog", data.status);
+      if (data.status != "valid") {
+        this.$router.push("/login");
+        localStorage.setItem("sessionID", "");
+      } else {
+        console.log("set Login Status true");
+        this.$store.commit("setloginStatus", true);
+      }
+    });
 
     this.socket.on("response", (data) => {
       this.$store.commit("setMessage", data);
     });
     this.socket.on("userDataValidated", (data) => {
-      console.log("data", data)
-      this.$router.push('home')
+      this.$store.commit("setloginStatus", true);
+      localStorage.setItem("sessionID", data.sessionID);
+      this.$router.push("home");
     });
+  },
+  mounted() {
+    console.log("login Status", this.$store.getters.getloginStatus);
+    const SID = localStorage.getItem("sessionID");
+    if (localStorage.getItem("sessionID") != null) {
+      if (SID.length != "") {
+        console.log("confrom Login", SID);
+        this.socket.emit("checkSID", {
+          SID: SID,
+        });
+      }
+    }
   },
 };
 </script>
@@ -184,5 +194,16 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@media only screen and (max-width: 650px) {
+  .login_wrapper {
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 50px 10px 0 10px;
+  }
+  .login_loginform {
+    justify-content: space-evenly;
+  }
 }
 </style>

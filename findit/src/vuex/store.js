@@ -1,27 +1,34 @@
-import Vuex from 'vuex'
-import Vue from 'vue'
+import Vuex from "vuex";
+import Vue from "vue";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
     apiSocket: null,
-    message: {}
+    message: {},
+    loginStatus: false,
   },
   getters: {
-    getApiSocket: state => {
-      return state.apiSocket
+    getApiSocket: (state) => {
+      return state.apiSocket;
+    },
+    getloginStatus: (state) => {
+      return state.loginStatus;
     },
   },
   mutations: {
     setApiSocket(state, payload) {
-      state.apiSocket = payload
+      state.apiSocket = payload;
     },
     setMessage(state, payload) {
-      state.message = payload
+      state.message = payload;
+    },
+    setloginStatus(state, payload) {
+      state.loginStatus = payload;
     },
   },
-})
+});
 
 /**
  * import Vuex from 'vuex'

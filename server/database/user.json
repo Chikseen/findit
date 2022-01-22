@@ -18,5 +18,10 @@
         "userName": "timmenzel",
         "passwort": "$2b$10$WP08GxbeWLp6tobNVDtUxuPBkrb2eLehOtY/dyHgXjBbFRG9i96sa",
         "repeatPasswort": "timmenzel"
+    },
+    "abcdefghjk": {
+        "userName": "abcdefghjk",
+        "passwort": "$2b$10$HNApi8G4WuWwXu1RIm08Wu8XnJA5Enu1/O2ftA7Z5.ZBEN4GrHFBm",
+        "repeatPasswort": "DevEnv2077"
     }
 }
