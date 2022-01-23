@@ -10,6 +10,7 @@ module.exports = {
         sharedWithProjects: [],
       });
     }
+    console.log("Data for User", projectCluster.get(data))
     return projectCluster.get(data);
   },
 
@@ -48,5 +49,33 @@ module.exports = {
     );
 
     return newProj.storage;
+  },
+
+  deleteProject(projectCluster, fs, pathPreFix, data) {
+    console.log("delete Project with data", data);
+    if (projectCluster.get(data.owner).ownProjects.includes(data.projectID)) {
+      fs.unlinkSync(
+        pathPreFix + "/database/projects/" + data.projectID + ".json"
+      );
+      const index = projectCluster
+        .get(data.owner)
+        .ownProjects.indexOf(data.projectID);
+      if (index > -1) {
+        let temp = projectCluster.get(data.owner);
+        temp.ownProjects.splice(index, 1);
+        projectCluster.set(data.owner, temp);
+        return {
+          isError: false,
+          errormsg: "projectremovesuccess",
+          msg: "Project deleted successfully",
+        };
+      }
+    } else {
+      return {
+        isError: true,
+        errormsg: "errordeletingError",
+        msg: "You may have not the permissions to delete this Project",
+      };
+    }
   },
 };

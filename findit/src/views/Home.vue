@@ -3,18 +3,22 @@
     <h1>Hello {{ userName }}</h1>
     <div>
       <h2>Your Projects</h2>
-      <ProjectCluster :projects="projectCluster.ownProjects" />
+      <ProjectCluster :projects="projectCluster.ownProjects" :hasAdd="true" />
     </div>
     <hr />
     <div>
       <h2>Projects Shared by you</h2>
-      <ProjectCluster :projects="projectCluster.sharedByProjects" />
+      <ProjectCluster
+        :projects="projectCluster.sharedWithProjects"
+        :sharedbyself="true"
+      />
     </div>
     <hr />
     <div>
       <h2>Projects Shared with you</h2>
-      <ProjectCluster :projects="projectCluster.sharedWithProjects" />
+      <ProjectCluster :projects="projectCluster.sharedByProjects" />
     </div>
+    <button @click="test">TEST</button>
   </div>
 </template>
 
@@ -40,9 +44,14 @@ export default {
       return localStorage.getItem("usr");
     },
   },
+  methods: {
+    test() {
+      console.log("test socket id");
+      this.socket.emit("testID")
+    },
+  },
   created() {
     this.socket = io(this.$store.getters.getApiSocket);
-
     console.log("create call");
 
     this.socket.on("respSID", (data) => {
@@ -61,7 +70,12 @@ export default {
       this.userData = data;
     });
     this.socket.on("getProjectData", (data) => {
+      console.log("get Project Data", data);
       this.projectCluster = data;
+    });
+    this.socket.on("response", (data) => {
+      console.log("data", data);
+      this.$store.commit("setMessage", data);
     });
   },
   mounted() {
@@ -76,6 +90,9 @@ export default {
         });
       }
     }
+    this.socket.emit("bindUserConnection", {
+      userName: localStorage.getItem("usr"),
+    });
     this.socket.emit("requestProjectData", {
       userName: localStorage.getItem("usr"),
     });
@@ -89,9 +106,9 @@ export default {
 </script>
 
 <style>
-  .home_wrapper {
-    padding: 0 50px;
-    max-width: 1250px;
-    margin: 0 auto;
-  }
+.home_wrapper {
+  padding: 0 50px;
+  max-width: 1250px;
+  margin: 0 auto;
+}
 </style>

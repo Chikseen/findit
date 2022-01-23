@@ -19,10 +19,7 @@ databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 const user = new JSONdb(pathPreFix + "/database/user.json", {
   asyncWrite: true,
 });
-const projectCluster = new JSONdb(
-  pathPreFix + "/database/projectCluster.json",
-  { asyncWrite: true }
-);
+const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 
 const io = new Server({
   cors: {
@@ -33,6 +30,7 @@ const io = new Server({
 });
 
 let sessionIds = [];
+let userBinds = {};
 
 io.on("connection", (socket) => {
   //CREATEUSER
@@ -42,6 +40,8 @@ io.on("connection", (socket) => {
       await loginValidation.createUser(bcrypt, user, data)
     );
   });
+
+  console.log("CONNECTED", socket.id);
 
   //VALIDATEUSER
   socket.on("validateLogin", async (data) => {
@@ -79,18 +79,148 @@ io.on("connection", (socket) => {
     );
   });
 
-  //REQUESTUSERDATA
+  //CREATEPROJECT
   socket.on("createProject", async (data) => {
     socket.emit(
       "projectData",
-      projectClusterData.createProject(projectCluster, JSONdb, fs, pathPreFix, data.owner)
+      projectClusterData.createProject(
+        projectCluster,
+        JSONdb,
+        fs,
+        pathPreFix,
+        data.owner
+      )
     );
   });
+
+  //GETPROJECTDATA
   socket.on("getProject", async (data) => {
     socket.emit(
       "projectData",
-      projectClusterData.getProject(projectCluster, JSONdb, fs, pathPreFix, data.projectID)
+      projectClusterData.getProject(
+        projectCluster,
+        JSONdb,
+        fs,
+        pathPreFix,
+        data.projectID
+      )
     );
+  });
+
+  //CREATEPROJECT
+  socket.on("deleteProject", async (data) => {
+    console.log("Try to delete Project", data);
+
+    //const tset = io.of("/").sockets
+    console.log("tset ", tset);
+    socket.emit("response", tset);
+
+    socket.emit(
+      "response",
+      projectClusterData.deleteProject(projectCluster, fs, pathPreFix, data)
+    );
+  });
+
+  //SOCKECTHANDLING
+  socket.on("bindUserConnection", (data) => {
+    console.log("Bind User with Socket");
+    const userName = data.userName;
+    Object.assign(userBinds, {
+      [userName]: { socketID: socket.id, name: data.userName },
+    });
+    console.log("User bindigs", userBinds);
+  });
+
+  socket.on("shareProject", async (data) => {
+    console.log("ShareData", data);
+    if (user.has(data.shareWith)) {
+      const allData = projectCluster.get(data.shareBy);
+
+      console.log(
+        "allData.sharedWithProjects",
+        allData.sharedWithProjects[data.projectID]
+      );
+
+      let hasFoundProj = false;
+      allData.sharedWithProjects.forEach((project) => {
+        if (Object.keys(project)[0] === data.projectID) {
+          console.log("we have a match");
+          const projectData = project[data.projectID];
+          if (projectData.includes(data.shareWith)) {
+            console.log("Allradey added");
+            hasFoundProj = true;
+          } else {
+            projectData.push(data.shareWith);
+            allData.sharedWithProjects[data.projectID] =
+              (data.projectID, projectData);
+            console.log("user not added");
+          }
+        }
+      });
+      console.log("hasFoundProj", hasFoundProj);
+      if (hasFoundProj === false) {
+        console.log("create new shared Project Entry");
+        allData.sharedWithProjects.push({ [data.projectID]: [data.shareWith] });
+        projectCluster.set(allData);
+      }
+
+      const userdata = projectCluster.get(data.shareBy, data.shareBy);
+      projectCluster.set(data.shareBy, userdata);
+
+      if (!projectCluster.has(data.shareWith)) {
+        console.log("create User");
+        projectCluster.set(data.shareWith, {
+          ownProjects: [],
+          sharedByProjects: [],
+          sharedWithProjects: [],
+        });
+      }
+
+      const setSharedBY = projectCluster.get(data.shareWith);
+      console.log("setSharedBY", setSharedBY.sharedByProjects);
+      let projectAllreadyExits = false;
+      setSharedBY.sharedByProjects.forEach((proj) => {
+        console.log("proj", proj);
+        if (proj.projectID == data.projectID) {
+          projectAllreadyExits = true;
+        }
+      });
+
+      if (!projectAllreadyExits) {
+        console.log("ADDDD");
+        setSharedBY.sharedByProjects.push({
+          projectID: data.projectID,
+          shareBy: data.shareBy,
+        });
+        projectCluster.set(data.shareWith, setSharedBY);
+      } else {
+        console.log("data allready exits");
+      }
+
+      const UserDAta = await projectClusterData.getData(
+        projectCluster,
+        user,
+        data.shareWith
+      );
+      socket
+        .to(userBinds[data.shareWith].socketID)
+        .emit("getProjectData", UserDAta);
+      socket
+        .to(userBinds[data.shareBy].socketID)
+        .emit("getProjectData", UserDAta);
+    } else {
+      console.log("User not found");
+    }
+  });
+
+  socket.on("testID", () => {
+    console.log("testID", socket.id);
+    console.log("SendTo", userBinds.timmenzel2.socketID);
+    socket.to(userBinds.timmenzel2.socketID).emit("response", socket.id, "msg");
+  });
+  //REMOVE SOCKETDATA ON DISCONNECT
+  socket.on("disconnect", (reason) => {
+    console.log("DISCON", socket.id);
   });
 });
 

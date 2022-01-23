@@ -28,5 +28,9 @@
         "userName": "abcdefghi",
         "passwort": "$2b$10$cc9Vb.weUhd5ipYWQuKJ3e94YptOGitV5saVJOyQraEoc/MBqBvLW",
         "repeatPasswort": "abcdefghi"
+    },
+    "timmenzel2": {
+        "userName": "timmenzel2",
+        "passwort": "$2b$10$avBXnl9fl9LGTjfxyy6RfeHBMTBQc5vNbFL0ofnyB95LsdQ1LPMOK"
     }
 }

@@ -6,6 +6,7 @@
         class="projectcluster_project"
         :project="{ id: 'addProject' }"
         @click="goToProject('-1')"
+        v-if="hasAdd"
       />
       <div
         class="projectcluster_project"
@@ -14,6 +15,10 @@
         @click="goToProject(proj)"
       >
         <ProjectPreview :project="{ id: proj }" />
+        <div v-if="sharedbyself">
+        <!--   <h5>Shared Project: {{ proj.projectID }}</h5>
+          <h5>Shared With: {{ proj.user }}</h5> -->
+        </div>
         <p>{{ proj }}</p>
       </div>
     </div>
@@ -23,12 +28,15 @@
 import ProjectPreview from "./projectPreview.vue";
 
 export default {
-  name: "projects",
+  name: "projectCluster",
   components: {
     ProjectPreview,
   },
   props: {
     projects: { type: Array, default: () => [] },
+    hasAdd: { type: Boolean, default: false },
+    sharedbyself: { type: Boolean, default: false },
+    sharedfrom: { type: Boolean, default: false },
   },
   methods: {
     goToProject(projectID) {

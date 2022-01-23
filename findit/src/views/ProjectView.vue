@@ -3,8 +3,15 @@
     <div>
       <p>project with id {{ projectData.id }}</p>
       <p>Created at {{ projectData.created }}</p>
+
     </div>
-    <button @click="saveProject">Save Project</button>
+    <button @click="deletProject">delete Project</button>
+
+    <div>
+      <h2>Share this Project with</h2>
+      <input type="text" v-model="shareWithText" />
+      <button @click="sendInvite">Send Invite</button>
+    </div>
   </div>
 </template>
 
@@ -16,13 +23,32 @@ export default {
     return {
       ProjectAccessLevel: "",
       projectData: {},
+      shareWithText: "",
     };
   },
   methods: {
-    saveProject() {
-      console.log("try to save");
+    deletProject() {
+      let val = confirm("Are you sure to want delete this Project");
+      if (val == true) {
+        this.socket.emit("deleteProject", {
+          projectID: this.projectData.id,
+          owner: localStorage.getItem("usr"),
+        });
+      } else {
+        console.log("cancel delete request");
+      }
+    },
+    sendInvite() {
+      if (this.shareWithText != "") {
+        this.socket.emit("shareProject", {
+          shareWith: this.shareWithText,
+          shareBy: localStorage.getItem("usr"),
+          projectID: sessionStorage.getItem("projectID"),
+        });
+      }
     },
   },
+
   created() {
     this.socket = io(this.$store.getters.getApiSocket);
 
@@ -40,6 +66,13 @@ export default {
       sessionStorage.setItem("projectID", data.id);
       this.projectData = data;
       this.$router.push({ query: { projectid: data.id } });
+    });
+    this.socket.on("response", (data) => {
+      console.log("data", data);
+      this.$store.commit("setMessage", data);
+      if (data.errormsg == "projectremovesuccess") {
+        this.$router.push("/home");
+      }
     });
   },
 
