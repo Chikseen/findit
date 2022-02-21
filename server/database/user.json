@@ -1,36 +1,6 @@
 {
-    "12345678": {
-        "userName": "12345678",
-        "passwort": "$2b$10$lU.96Af9KaKu8HnYvtzii.qBruZKYXVvS4kx6gN09TfznNSBPAQOG",
-        "repeatPasswort": "12345678"
-    },
-    "123123123": {
-        "userName": "123123123",
-        "passwort": "$2b$10$EMovn0ijUbWdTRtsiopncOHrwzjx.BLpGDAtVHjJMq5zfKygZ3Q26",
-        "repeatPasswort": "123123123"
-    },
-    "aaaaaaaa": {
-        "userName": "aaaaaaaa",
-        "passwort": "$2b$10$DU8uHc1yVq/r9xColX5MdeJt3z/04I.5LT.leEWHiW40bC65hiThu",
-        "repeatPasswort": "bbbbbbbb"
-    },
-    "timmenzel": {
-        "userName": "timmenzel",
-        "passwort": "$2b$10$WP08GxbeWLp6tobNVDtUxuPBkrb2eLehOtY/dyHgXjBbFRG9i96sa",
-        "repeatPasswort": "timmenzel"
-    },
-    "abcdefghjk": {
-        "userName": "abcdefghjk",
-        "passwort": "$2b$10$HNApi8G4WuWwXu1RIm08Wu8XnJA5Enu1/O2ftA7Z5.ZBEN4GrHFBm",
-        "repeatPasswort": "DevEnv2077"
-    },
-    "abcdefghi": {
-        "userName": "abcdefghi",
-        "passwort": "$2b$10$cc9Vb.weUhd5ipYWQuKJ3e94YptOGitV5saVJOyQraEoc/MBqBvLW",
-        "repeatPasswort": "abcdefghi"
-    },
-    "timmenzel2": {
-        "userName": "timmenzel2",
-        "passwort": "$2b$10$avBXnl9fl9LGTjfxyy6RfeHBMTBQc5vNbFL0ofnyB95LsdQ1LPMOK"
+    "abcdefghjk123": {
+        "userName": "abcdefghjk123",
+        "passwort": "$2b$10$pcNGGzlzKS6x24JqpC89guRcxasVgdJYXLeCGnqSOU.Q..v541KUa"
     }
 }

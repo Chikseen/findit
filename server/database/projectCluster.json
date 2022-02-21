@@ -1,60 +1,10 @@
 {
-    "abcdefghjk": {
+    "abcdefghjk123": {
         "ownProjects": [
-            562084642562,
-            830252653896
+            360436172442
         ],
-        "sharedByProjects": [
-            {
-                "projectID": "389811970023",
-                "shareBy": "timmenzel2"
-            },
-            {
-                "projectID": "338320954948",
-                "shareBy": "timmenzel2"
-            }
-        ],
-        "sharedWithProjects": [
-            {
-                "562084642562": [
-                    "timmenzel2"
-                ]
-            },
-            {
-                "830252653896": [
-                    "timmenzel2"
-                ]
-            }
-        ]
+        "sharedByProjects": [],
+        "sharedWithProjects": []
     },
-    "timmenzel2": {
-        "ownProjects": [
-            389811970023,
-            338320954948
-        ],
-        "sharedByProjects": [
-            {
-                "projectID": "562084642562",
-                "shareBy": "abcdefghjk"
-            },
-            {
-                "projectID": "830252653896",
-                "shareBy": "abcdefghjk"
-            }
-        ],
-        "sharedWithProjects": [
-            {
-                "389811970023": [
-                    "abcdefghjk"
-                ]
-            },
-            {
-                "338320954948": [
-                    "abcdefghjk"
-                ]
-            }
-        ]
-    },
-    "timmenzel2.ownProjects": 2,
-    "abcdefghjk.ownProjects": 2
+    "abcdefghjk123.ownProjects": 1
 }

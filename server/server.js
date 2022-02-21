@@ -7,6 +7,7 @@ const path = require("path");
 const loginValidation = require("./serverHandler/loginValidation");
 const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
+const projcthandler = require("./serverHandler/projectHandler");
 
 let pathPreFix = "";
 if (fs.existsSync("../localDebug.js")) {
@@ -107,13 +108,11 @@ io.on("connection", (socket) => {
     );
   });
 
-  //CREATEPROJECT
+  //DELTEPROJECT
   socket.on("deleteProject", async (data) => {
     console.log("Try to delete Project", data);
 
     //const tset = io.of("/").sockets
-    console.log("tset ", tset);
-    socket.emit("response", tset);
 
     socket.emit(
       "response",
@@ -213,11 +212,16 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("testID", () => {
-    console.log("testID", socket.id);
-    console.log("SendTo", userBinds.timmenzel2.socketID);
-    socket.to(userBinds.timmenzel2.socketID).emit("response", socket.id, "msg");
+  socket.on("addElementToParent", async (data) => {
+    console.log("add Element ");
+    const test = projcthandler.addElement(JSONdb, pathPreFix, data);
+    console.log("test", test);
+    socket.emit(
+      "projectStructure",
+      await projcthandler.addElement(JSONdb, pathPreFix, data)
+    );
   });
+
   //REMOVE SOCKETDATA ON DISCONNECT
   socket.on("disconnect", (reason) => {
     console.log("DISCON", socket.id);
