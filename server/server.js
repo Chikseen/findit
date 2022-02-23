@@ -1,9 +1,9 @@
 const { readFileSync } = require("fs");
 const { Server } = require("socket.io");
-const bcrypt = require("bcrypt");
 const JSONdb = require("simple-json-db");
 const fs = require("fs");
 const path = require("path");
+
 const loginValidation = require("./serverHandler/loginValidation");
 const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
@@ -14,13 +14,10 @@ if (fs.existsSync("../localDebug.js")) {
   pathPreFix = ".";
 }
 
-
 databaseIntegrity.init(fs, pathPreFix);
 databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
-const user = new JSONdb(pathPreFix + "/database/user.json", {
-  asyncWrite: true,
-});
+
 const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 
 const io = new Server({
@@ -35,14 +32,6 @@ let sessionIds = [];
 let userBinds = {};
 
 io.on("connection", (socket) => {
-  //CREATEUSER
-  socket.on("createAccount", async (data) => {
-    socket.emit(
-      "response",
-      await loginValidation.createUser(bcrypt, user, data)
-    );
-  });
-
   console.log("CONNECTED", socket.id);
 
   //VALIDATEUSER
