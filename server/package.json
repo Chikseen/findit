@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
-    "express": "^4.16.1",
+    "express": "^4.17.3",
     "fs": "0.0.1-security",
     "ip": "^1.1.5",
     "jsondb": "^1.0.0",

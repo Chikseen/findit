@@ -1,5 +1,6 @@
 <template>
   <div class="login_wrapper">
+    <Button :text="'EXPRESS TEST'" @click="testExp" />
     <div class="login_logo">
       <Logo />
     </div>
@@ -61,6 +62,7 @@
     <div v-else>
       <div class="login_loginform_input">
         <Button :text="'Logout'" @click="logout" />
+        <Button :text="'Home'" @click="tryLogin" />
       </div>
     </div>
   </div>
@@ -88,10 +90,19 @@ export default {
     };
   },
   methods: {
+    testExp() {
+      
+    },
+
     validateLogin() {
       this.socket.emit("validateLogin", {
         userName: this.username,
         passwort: this.passwort,
+      });
+    },
+    tryLogin() {
+      this.socket.emit("validateSession", {
+        sessionID: localStorage.getItem("sessionID"),
       });
     },
     createAccount() {

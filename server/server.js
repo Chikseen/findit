@@ -14,6 +14,7 @@ if (fs.existsSync("../localDebug.js")) {
   pathPreFix = ".";
 }
 
+
 databaseIntegrity.init(fs, pathPreFix);
 databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
@@ -53,6 +54,11 @@ io.on("connection", (socket) => {
       sessionIds.push(newSID);
       socket.emit("userDataValidated", { sessionID: newSID });
     }
+  });
+  socket.on("validateSession", async (data) => {
+    if (sessionIds.has(data.sessionID))
+      socket.emit("sessionValidation", { status: true });
+    else socket.emit("sessionValidation", { status: false });
   });
 
   //CHECKSESSION
