@@ -1,5 +1,5 @@
 module.exports = {
-  async createUser(bcrypt, data) {
+  async createUser(bcrypt, user, data) {
     console.log("Create user", data);
     if (data.userName.length < 8) {
       console.log("userName to short");
@@ -63,8 +63,9 @@ module.exports = {
       }
     }
   },
-  async validateLogin(bcrypt, user, data) {
-    console.log("Check Data");
+  async validateLogin(bcrypt, user, data, newSID) {
+    console.log("Check logindata for", data.userName);
+    console.log("SID", newSID);
 
     //validate userdate
     if (user.has(data.userName)) {
@@ -73,20 +74,26 @@ module.exports = {
       if (await bcrypt.compare(data.passwort, userdata.passwort)) {
         return {
           isError: false,
-          errormsg: "",
-          msg: "Passwort is correct -> proceed",
+          succes: true,
+          errormsg: null,
+          SID: newSID,
+          msg: "Passwort is correct",
         };
       } else {
         return {
           isError: true,
+          succes: false,
           errormsg: "wrongUserdata",
+          SID: null,
           msg: "Wrong username or passwort",
         };
       }
     } else {
       return {
         isError: true,
+        succes: false,
         errormsg: "wrongUserdata",
+        SID: null,
         msg: "Wrong username or passwort",
       };
     }

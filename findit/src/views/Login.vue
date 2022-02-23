@@ -103,13 +103,25 @@ export default {
       this.$store.commit("setMessage", data);
     },
 
-    validateLogin() {
-      this.socket.emit("validateLogin", {
-        userName: this.username,
-        passwort: this.passwort,
-      });
+    async validateLogin() {
+      console.log("check");
+      const data = await api.fetchData(
+        "user/validateLogin",
+        `data=${JSON.stringify({
+          userName: this.username,
+          passwort: this.passwort,
+        })}`
+      );
+      console.log("validateLogin", await data);
+      this.$store.commit("setMessage", data);
+      if (data.succes) {
+        this.$store.commit("setloginStatus", true);
+        localStorage.setItem("sessionID", data.SID);
+        localStorage.setItem("usr", this.username);
+        //this.$router.push("home");
+      }
     },
-    tryLogin() {
+    /*     tryLogin() {
       this.socket.emit("validateSession", {
         sessionID: localStorage.getItem("sessionID"),
       });
@@ -119,7 +131,7 @@ export default {
         userName: this.username,
         passwort: this.passwort,
       });
-    },
+    },*/
     logout() {
       this.socket.emit("destroySession", {
         SID: localStorage.getItem("sessionID"),
@@ -127,6 +139,24 @@ export default {
       localStorage.setItem("sessionID", "");
       localStorage.setItem("usr", "");
       this.$store.commit("setloginStatus", false);
+    },
+
+    async validateSession(SID) {
+      console.log("this session", SID);
+      const data = await api.fetchData(
+        "session/validate",
+        `data=${JSON.stringify({
+          SID: SID,
+        })}`
+      );
+      console.log("FIRST", data);
+      if (data.status == "valid") {
+        this.$store.commit("setloginStatus", true);
+        localStorage.setItem("sessionID", SID);
+        //this.$router.push("home");
+      } else {
+        localStorage.clear();
+      }
     },
   },
   computed: {
@@ -147,27 +177,13 @@ export default {
         this.$store.commit("setloginStatus", true);
       }
     }); */
-
-    /*  this.socket.on("response", (data) => {
-      console.log("data", data);
-      this.$store.commit("setMessage", data);
-    }); */
-    /*  this.socket.on("userDataValidated", (data) => {
-      this.$store.commit("setloginStatus", true);
-      localStorage.setItem("sessionID", data.sessionID);
-      localStorage.setItem("usr", this.username);
-      this.$router.push("home");
-    }); */
   },
   mounted() {
-    console.log("login Status", this.$store.getters.getloginStatus);
+    //console.log("login Status", this.$store.getters.getloginStatus);
     const SID = localStorage.getItem("sessionID");
     if (localStorage.getItem("sessionID") != null) {
       if (SID.length != "") {
-        console.log("confrom Login", SID);
-        this.socket.emit("checkSID", {
-          SID: SID,
-        });
+        this.validateSession(SID);
       }
     }
   },
