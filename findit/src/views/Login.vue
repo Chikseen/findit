@@ -48,7 +48,7 @@
           <Button :text="'Login'" @click="validateLogin" />
         </div>
         <div class="login_loginform_input" v-if="registerMode">
-          <Button :text="'Register'" @click="createAccount" />
+          <Button :text="'Register'" @click="createUser" />
         </div>
         <div class="login_loginform_input" v-if="!registerMode">
           <Button :text="'Create Account'" @click="registerMode = true" />
@@ -61,6 +61,7 @@
     <div v-else>
       <div class="login_loginform_input">
         <Button :text="'Logout'" @click="logout" />
+        <Button :text="'Home'" @click="tryLogin" />
       </div>
     </div>
   </div>
@@ -71,6 +72,7 @@ import Button from "../assets/Button.vue";
 import Logo from "../assets/icons/logo.vue";
 
 import io from "socket.io-client";
+import api from "../apiService";
 
 export default {
   name: "Login",
@@ -88,27 +90,32 @@ export default {
     };
   },
   methods: {
+    async createUser() {
+      const data = await api.fetchData(
+        "user/createAccount",
+        `data=${JSON.stringify({
+          userName: this.username,
+          passwort: this.passwort,
+          repeatPasswort: this.repeatPasswort,
+        })}`
+      );
+      console.log("createUser", await data);
+      this.$store.commit("setMessage", data);
+    },
+
     validateLogin() {
       this.socket.emit("validateLogin", {
         userName: this.username,
         passwort: this.passwort,
       });
     },
-    createAccount() {
-      this.socket.emit("createAccount", {
-        userName: this.username,
-        passwort: this.passwort,
-        repeatPasswort: this.repeatPasswort,
+    tryLogin() {
+      this.socket.emit("validateSession", {
+        sessionID: localStorage.getItem("sessionID"),
       });
     },
     checkUserData() {
       this.socket.emit("checkUser", {
-        userName: this.username,
-        passwort: this.passwort,
-      });
-    },
-    createUser() {
-      this.socket.emit("createUser", {
         userName: this.username,
         passwort: this.passwort,
       });
@@ -130,7 +137,7 @@ export default {
   created() {
     this.socket = io(this.$store.getters.getApiSocket);
 
-    this.socket.on("respSID", (data) => {
+    /*  this.socket.on("respSID", (data) => {
       console.log("resplog", data.status);
       if (data.status != "valid") {
         this.$router.push("/login");
@@ -139,18 +146,18 @@ export default {
         console.log("set Login Status true");
         this.$store.commit("setloginStatus", true);
       }
-    });
+    }); */
 
-    this.socket.on("response", (data) => {
+    /*  this.socket.on("response", (data) => {
       console.log("data", data);
       this.$store.commit("setMessage", data);
-    });
-    this.socket.on("userDataValidated", (data) => {
+    }); */
+    /*  this.socket.on("userDataValidated", (data) => {
       this.$store.commit("setloginStatus", true);
       localStorage.setItem("sessionID", data.sessionID);
       localStorage.setItem("usr", this.username);
       this.$router.push("home");
-    });
+    }); */
   },
   mounted() {
     console.log("login Status", this.$store.getters.getloginStatus);

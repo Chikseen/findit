@@ -100,7 +100,7 @@ export default {
       if (!this.resviedPositivMessage) {
         this.$router.push("/login");
       }
-    }, 500);
+    }, 200);
   },
 };
 </script>

@@ -16,7 +16,7 @@
       >
         <ProjectPreview :project="{ id: proj }" />
         <div v-if="sharedbyself">
-        <!--   <h5>Shared Project: {{ proj.projectID }}</h5>
+          <!--   <h5>Shared Project: {{ proj.projectID }}</h5>
           <h5>Shared With: {{ proj.user }}</h5> -->
         </div>
         <p>{{ proj }}</p>
@@ -42,9 +42,10 @@ export default {
     goToProject(projectID) {
       console.log("go to Project with id", projectID);
       sessionStorage.setItem("projectID", projectID);
+
       this.$router.push({
         name: "ProjectView",
-        params: { projectid: projectID },
+        query: { projectid: projectID },
       });
     },
   },
