@@ -52,7 +52,7 @@ export default {
     },
     async getUserData() {
       if (this.$store.getters.getloginStatus) {
-        const data = await api.fetchData("projectData/metaData", 7081,{
+        const data = await api.test("https://api.drunc.net/projectData/metaData",{
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
