@@ -28,7 +28,7 @@ let sessionIds = [];
 let userSessionRealtion = {};
 
 // Test to check if online
-app.post("/", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ status: "success" });
 });
 

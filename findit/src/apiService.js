@@ -1,11 +1,14 @@
 //const call = "http://192.168.2.100";
-const call = "api.drunc.net";
+const call = "https://auth.drunc.net";
 
 const apiService = {
   //DATA FETCHER
   async fetchData(adress, port, payload) {
+    port;
     try {
-      const request = await fetch(`${call}:${port}/${adress}`, {
+      // const request = await fetch(`${call}:${port}/${adress}`, {
+      console.log("address", `${call}/${adress}`);
+      const request = await fetch(`${call}/${adress}`, {
         body: JSON.stringify(payload),
         headers: {
           "Access-Control-Allow-Origin": "*",
