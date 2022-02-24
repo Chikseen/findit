@@ -70,8 +70,6 @@
 <script>
 import Button from "../assets/Button.vue";
 import Logo from "../assets/icons/logo.vue";
-
-import io from "socket.io-client";
 import api from "../apiService";
 
 export default {
@@ -99,7 +97,6 @@ export default {
       console.log("createUser", await data);
       this.$store.commit("setMessage", data);
     },
-
     async validateLogin() {
       const data = await api.fetchData("user/validateLogin", {
         userName: this.username,
@@ -110,40 +107,49 @@ export default {
         this.$store.commit("setloginStatus", true);
         localStorage.setItem("sessionID", data.SID);
         localStorage.setItem("usr", this.username);
-        //this.$router.push("home");
+        this.tryLogin();
       }
     },
-    tryLogin() {},
-    /*     tryLogin() {
-      this.socket.emit("validateSession", {
-        sessionID: localStorage.getItem("sessionID"),
-      });
-    },
-    checkUserData() {
-      this.socket.emit("checkUser", {
-        userName: this.username,
-        passwort: this.passwort,
-      });
-    },*/
-    logout() {
-      this.socket.emit("destroySession", {
+    async logout() {
+      const data = await api.fetchData("session/destroy", {
         SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
       });
-      localStorage.setItem("sessionID", "");
-      localStorage.setItem("usr", "");
+      this.$store.commit("setMessage", data);
       this.$store.commit("setloginStatus", false);
+      localStorage.clear();
     },
 
     async validateSession(SID) {
-      console.log("this session", SID);
       const data = await api.fetchData("session/validate", {
         SID: SID,
+        user: localStorage.getItem("usr"),
       });
-      if (data.status == "valid") {
+      console.log("isValid", data);
+      if (data.status) {
         this.$store.commit("setloginStatus", true);
         localStorage.setItem("sessionID", SID);
       } else {
+        this.$store.commit("setloginStatus", false);
         localStorage.clear();
+      }
+    },
+    async tryLogin() {
+      if (this.$store.getters.getloginStatus) {
+        const data = await api.fetchData("session/checkUser", {
+          SID: localStorage.getItem("sessionID"),
+          user: localStorage.getItem("usr"),
+        });
+        console.log("data", data);
+        if (data.status) {
+          this.$router.push("/Home");
+        } else {
+          localStorage.clear();
+          this.$store.commit("setloginStatus", false);
+        }
+      } else {
+        localStorage.clear();
+        this.$store.commit("setloginStatus", false);
       }
     },
   },
@@ -152,24 +158,9 @@ export default {
       return this.$store.getters.getloginStatus;
     },
   },
-  created() {
-    this.socket = io(this.$store.getters.getApiSocket);
-
-    /*  this.socket.on("respSID", (data) => {
-      console.log("resplog", data.status);
-      if (data.status != "valid") {
-        this.$router.push("/login");
-        localStorage.setItem("sessionID", "");
-      } else {
-        console.log("set Login Status true");
-        this.$store.commit("setloginStatus", true);
-      }
-    }); */
-  },
   mounted() {
-    //console.log("login Status", this.$store.getters.getloginStatus);
     const SID = localStorage.getItem("sessionID");
-    if (localStorage.getItem("sessionID") != null) {
+    if (SID != null) {
       if (SID.length != "") {
         this.validateSession(SID);
       }

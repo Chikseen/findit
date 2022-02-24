@@ -1,7 +1,7 @@
 module.exports = {
   async createUser(bcrypt, user, data) {
     console.log("Create user", data);
-    if (data.userName.length < 8) {
+    if (data.userName.length < 2) {
       console.log("userName to short");
       return {
         isError: true,

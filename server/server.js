@@ -4,7 +4,6 @@ const JSONdb = require("simple-json-db");
 const fs = require("fs");
 const path = require("path");
 
-const loginValidation = require("./serverHandler/loginValidation");
 const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
@@ -33,39 +32,6 @@ let userBinds = {};
 
 io.on("connection", (socket) => {
   console.log("CONNECTED", socket.id);
-
-  //VALIDATEUSER
-  socket.on("validateLogin", async (data) => {
-    const outPut = await loginValidation.validateLogin(bcrypt, user, data);
-    socket.emit("response", outPut);
-    if (outPut.msg === "Passwort is correct -> proceed") {
-      const newSID = Math.floor(Math.random() * 999999999999);
-      sessionIds.push(newSID);
-      socket.emit("userDataValidated", { sessionID: newSID });
-    }
-  });
-  socket.on("validateSession", async (data) => {
-    if (sessionIds.has(data.sessionID))
-      socket.emit("sessionValidation", { status: true });
-    else socket.emit("sessionValidation", { status: false });
-  });
-
-  //CHECKSESSION
-  socket.on("checkSID", async (data) => {
-    if (sessionIds.includes(parseInt(data.SID))) {
-      socket.emit("respSID", { status: "valid" });
-    } else {
-      socket.emit("respSID", { status: "unvalid" });
-    }
-  });
-
-  //DESTROYSESSION
-  socket.on("destroySession", async (data) => {
-    const index = sessionIds.indexOf(data.SID);
-    if (index > -1) {
-      sessionIds.splice(index, 1);
-    }
-  });
 
   //REQUESTUSERDATA
   socket.on("requestProjectData", async (data) => {

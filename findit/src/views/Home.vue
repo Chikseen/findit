@@ -58,7 +58,7 @@ export default {
       console.log("resplog", data.status);
       if (data.status != "valid") {
         localStorage.setItem("sessionID", "");
-        this.$router.push("/login");
+        //this.$router.push("/login");
       } else {
         this.resviedPositivMessage = true;
         console.log("set Login Status true");
@@ -98,7 +98,7 @@ export default {
     });
     setTimeout(() => {
       if (!this.resviedPositivMessage) {
-        this.$router.push("/login");
+      //  this.$router.push("/login");
       }
     }, 200);
   },

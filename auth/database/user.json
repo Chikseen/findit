@@ -2,5 +2,13 @@
     "abcdefghjk123": {
         "userName": "abcdefghjk123",
         "passwort": "$2b$10$r1cpJKHAYGMmrmWuuv7Fs.eMs9lmKr1MdDBemKqgxYc6dpkUWb8S."
+    },
+    "abcdefghjk": {
+        "userName": "abcdefghjk",
+        "passwort": "$2b$10$ioyxc5.ismHxDAmk/yO3eeJIKTYN/XkcAh/sax97MtFWu2RkJIrxe"
+    },
+    "timmenzel2": {
+        "userName": "timmenzel2",
+        "passwort": "$2b$10$lqG/PNjdhMJPk1xHlILIc.2b5TvvjEyPiZPgekm80aE2/7jtKLwGG"
     }
 }
