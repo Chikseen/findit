@@ -5,11 +5,14 @@ const apiService = {
   async fetchData(adress, payload) {
     try {
       const request = await fetch(`${call}/${adress}`, {
-        body: payload,
+        body: JSON.stringify(payload),
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         method: "POST",
+        mode: "cors",
+        redirect: "follow",
       });
       return await request.json();
     } catch (error) {

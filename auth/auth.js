@@ -6,6 +6,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const JSONdb = require("simple-json-db");
+const cors = require("cors");
 
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
@@ -18,43 +19,35 @@ databaseIntegrity.init(fs, pathPreFix);
 const user = new JSONdb(pathPreFix + "/database/user.json");
 
 const port = 6080;
+
+app.use(cors());
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.listen(port, () => console.log("Connecet with Port: " + port));
 
 let sessionIds = [];
 
 // Test to check if online
-app.get("/", (request, response) => {
-  response.setHeader("Content-Type", "application/json");
-  response.setHeader("Access-Control-Allow-Origin", "*");
-
-  response.json({ status: "success" });
+app.post("/", (req, res) => {
+  console.log(req.body);
+  res.json({ status: "success" });
 });
 
 // Create User
 app.post("/user/createAccount", async (request, response) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Content-Type", "application/json");
-
-  response.json(
-    await userHandling.createUser(bcrypt, user, JSON.parse(request.body.data))
-  );
+  response.json(await userHandling.createUser(bcrypt, user, request.body));
 });
 
 app.post("/user/validateLogin", async (request, response) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Content-Type", "application/json");
   const newSID = Math.floor(Math.random() * 999999999999);
-
   const result = await userHandling.validateLogin(
     bcrypt,
     user,
-    JSON.parse(request.body.data),
+    request.body,
     newSID
   );
-  console.log("reulst", result);
+  console.log("Validation Result", result);
   if (result.msg === "Passwort is correct" && result.succes) {
     sessionIds.push(newSID);
     response.json(result);
@@ -63,10 +56,7 @@ app.post("/user/validateLogin", async (request, response) => {
 });
 
 app.post("/session/validate", async (request, response) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Content-Type", "application/json");
-
-  const data = JSON.parse(request.body.data)
+  const data = request.body;
   console.log("sesion validate", data.SID);
   if (sessionIds.includes(parseInt(data.SID))) {
     console.log("Session exists");

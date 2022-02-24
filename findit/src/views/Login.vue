@@ -91,28 +91,20 @@ export default {
   },
   methods: {
     async createUser() {
-      const data = await api.fetchData(
-        "user/createAccount",
-        `data=${JSON.stringify({
-          userName: this.username,
-          passwort: this.passwort,
-          repeatPasswort: this.repeatPasswort,
-        })}`
-      );
+      const data = await api.fetchData("user/createAccount", {
+        userName: this.username,
+        passwort: this.passwort,
+        repeatPasswort: this.repeatPasswort,
+      });
       console.log("createUser", await data);
       this.$store.commit("setMessage", data);
     },
 
     async validateLogin() {
-      console.log("check");
-      const data = await api.fetchData(
-        "user/validateLogin",
-        `data=${JSON.stringify({
-          userName: this.username,
-          passwort: this.passwort,
-        })}`
-      );
-      console.log("validateLogin", await data);
+      const data = await api.fetchData("user/validateLogin", {
+        userName: this.username,
+        passwort: this.passwort,
+      });
       this.$store.commit("setMessage", data);
       if (data.succes) {
         this.$store.commit("setloginStatus", true);
@@ -121,6 +113,7 @@ export default {
         //this.$router.push("home");
       }
     },
+    tryLogin() {},
     /*     tryLogin() {
       this.socket.emit("validateSession", {
         sessionID: localStorage.getItem("sessionID"),
@@ -143,17 +136,12 @@ export default {
 
     async validateSession(SID) {
       console.log("this session", SID);
-      const data = await api.fetchData(
-        "session/validate",
-        `data=${JSON.stringify({
-          SID: SID,
-        })}`
-      );
-      console.log("FIRST", data);
+      const data = await api.fetchData("session/validate", {
+        SID: SID,
+      });
       if (data.status == "valid") {
         this.$store.commit("setloginStatus", true);
         localStorage.setItem("sessionID", SID);
-        //this.$router.push("home");
       } else {
         localStorage.clear();
       }
