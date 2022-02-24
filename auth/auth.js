@@ -2,15 +2,12 @@
 const express = require("express");
 const app = express();
 const fs = require("fs");
-const path = require("path");
 const bcrypt = require("bcrypt");
-const bodyParser = require("body-parser");
 const JSONdb = require("simple-json-db");
 const cors = require("cors");
 
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
-const { type } = require("os");
 
 let pathPreFix = "";
 if (fs.existsSync("../localDebug.js")) pathPreFix = ".";

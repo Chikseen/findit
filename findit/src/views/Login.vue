@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     async createUser() {
-      const data = await api.fetchData("user/createAccount", {
+      const data = await api.fetchData("user/createAccount", 6080, {
         userName: this.username,
         passwort: this.passwort,
         repeatPasswort: this.repeatPasswort,
@@ -98,7 +98,7 @@ export default {
       this.$store.commit("setMessage", data);
     },
     async validateLogin() {
-      const data = await api.fetchData("user/validateLogin", {
+      const data = await api.fetchData("user/validateLogin", 6080, {
         userName: this.username,
         passwort: this.passwort,
       });
@@ -111,7 +111,7 @@ export default {
       }
     },
     async logout() {
-      const data = await api.fetchData("session/destroy", {
+      const data = await api.fetchData("session/destroy", 6080, {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
@@ -121,7 +121,7 @@ export default {
     },
 
     async validateSession(SID) {
-      const data = await api.fetchData("session/validate", {
+      const data = await api.fetchData("session/validate", 6080, {
         SID: SID,
         user: localStorage.getItem("usr"),
       });
@@ -136,7 +136,7 @@ export default {
     },
     async tryLogin() {
       if (this.$store.getters.getloginStatus) {
-        const data = await api.fetchData("session/checkUser", {
+        const data = await api.fetchData("session/checkUser", 6080, {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });

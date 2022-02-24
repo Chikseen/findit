@@ -1,5 +1,5 @@
 module.exports = {
-  async getData(projectCluster, user, data) {
+  async getData(projectCluster, data) {
     console.log("get Data for", data);
 
     if (!projectCluster.has(data)) {
