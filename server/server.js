@@ -36,6 +36,10 @@ app.use(express.urlencoded({ extended: true }));
 const port = 7081;
 app.listen(port, () => console.log("Connecet with Port: " + port));
 
+app.get("/", (req, res) => {
+  res.json({ status: "success" });
+});
+
 app.post("/projectData/metaData", async (request, response) => {
   console.log("get Project Meta Data for ", request.body.user);
   console.log("authcheck", auth.checkUser(nodefetch, request.body));
