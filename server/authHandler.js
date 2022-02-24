@@ -1,6 +1,7 @@
 module.exports = {
   async checkUser(fetch, payload) {
-    const request = await fetch(`http://192.168.2.100:6080/session/checkUser`, {
+    c//onst request = await fetch(`http://192.168.2.100:6080/session/checkUser`, {
+    const request = await fetch(`auth.drunc.net/session/checkUser`, {
       body: JSON.stringify(payload),
       headers: {
         "Access-Control-Allow-Origin": "*",

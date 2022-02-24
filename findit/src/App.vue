@@ -13,7 +13,7 @@ export default {
     Messege,
   },
   created() {
-    const buildfrom = true;
+    const buildfrom = false;
     if (buildfrom) {
       console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");

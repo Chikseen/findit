@@ -1,4 +1,5 @@
-const call = "http://192.168.2.100";
+//const call = "http://192.168.2.100";
+const call = "api.drunc.net";
 
 const apiService = {
   //DATA FETCHER
