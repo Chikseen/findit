@@ -25,8 +25,6 @@ const port = 6080;
 var nodemailer = require("nodemailer");
 const { sendMail } = require("./mailHandling/mailer.js");
 const initMailTemplate = require("./mailHandling/initMailTemplate.js");
-
-console.log("mailAuth", user);
 var transporter = nodemailer.createTransport({
   service: mailAuth.get("service"),
   auth: {
@@ -41,7 +39,6 @@ const initmail = {
   subject: "Init Mail",
   html: initMailTemplate.initmail(),
 };
-console.log("_", mailAuth.get("name"));
 sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
 //________________________________________________________
 
@@ -61,7 +58,6 @@ app.get("/", async (request, response) => {
 
 // Create User
 app.post("/user/createAccount", async (request, response) => {
-  console.log("temp", request.body);
   const id = helper.generateRandomString();
   const status = await userHandling.createUser(
     bcrypt,
@@ -82,7 +78,7 @@ app.post("/user/createAccount", async (request, response) => {
     };
     sendMail(
       transporter,
-      mailAuth.get("mailData").name,
+      mailAuth.get("name"),
       request.body.email,
       varimail
     );
@@ -105,7 +101,7 @@ app.post("/user/reSendValidation", async (request, response) => {
   };
   sendMail(
     transporter,
-    mailAuth.get("mailData").name,
+    mailAuth.get("name"),
     eur.get(request.body.user),
     varimail
   );
@@ -114,14 +110,10 @@ app.post("/user/reSendValidation", async (request, response) => {
 
 app.post("/user/validateEmail", async (request, response) => {
   const mailToCheck = toValidate[request.body.vid];
-  console.log("--vid]", request.body.vid);
-  console.log("toValidate[request.body.vid]", toValidate[request.body.vid]);
-  console.log("mailtocheck___", mailToCheck);
   if (mailToCheck != undefined) {
     console.log("mailToCheck", mailToCheck);
     const userTempDB = user.get(mailToCheck);
     const vid = userTempDB.varifiyID;
-    console.log("vid", vid);
     if (vid != "") {
       if (vid == request.body.vid) {
         delete toValidate[vid];
@@ -139,7 +131,6 @@ app.post("/user/validateEmail", async (request, response) => {
   } else {
     response.json({ status: false });
   }
-  console.log("nowmailsrealtloptgrejkd+", toValidate);
 });
 
 app.post("/user/validateLogin", async (request, response) => {
@@ -163,7 +154,6 @@ app.post("/user/validateLogin", async (request, response) => {
         userSessionRealtion[request.body.userName] = newSID;
         response.json(result);
       } else {
-        console.log("not Validated");
         response.json({
           status: false,
           msg: "not Validated",
