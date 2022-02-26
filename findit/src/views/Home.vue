@@ -52,7 +52,7 @@ export default {
     },
     async getUserData() {
       if (this.$store.getters.getloginStatus) {
-        const data = await api.test("https://api.drunc.net/projectData/metaData",{
+        const data = await api.projectcall("projectData/metaData", {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
@@ -83,7 +83,7 @@ export default {
     this.socket.on("currentUserData", (data) => {
       this.userData = data;
     });
-/*     this.socket.on("getProjectData", (data) => {
+    /*     this.socket.on("getProjectData", (data) => {
       console.log("get Project Data", data);
       this.projectCluster = data;
     }); */

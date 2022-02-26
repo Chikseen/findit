@@ -15,5 +15,15 @@ module.exports = {
         function (err) {}
       );
     }
+
+    if (!fs.existsSync(pathPreFix + "/database/emailuserrealation.json")) {
+      console.log("creating emailuserrealation.json");
+      fs.writeFile(
+        pathPreFix + "/database/emailuserrealation.json",
+        "",
+        "utf8",
+        function (err) {}
+      );
+    }
   },
 };

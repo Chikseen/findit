@@ -16,10 +16,14 @@
               <input
                 id="loginUserName"
                 type="email"
-                placeholder="E-Mail"
+                placeholder="Username"
                 autocomplete="username"
                 v-model="username"
               />
+            </div>
+            <div class="login_loginform_input" v-if="registerMode">
+              <label for="loginUserPasswort">E-mail</label>
+              <input type="email" placeholder="E-mail" v-model="email" />
             </div>
             <div class="login_loginform_input">
               <label for="loginUserPasswort">Passwort</label>
@@ -56,6 +60,9 @@
         <div class="login_loginform_input" v-if="registerMode">
           <Button :text="'I have a Account'" @click="registerMode = false" />
         </div>
+        <div class="login_loginform_input" v-if="!userValidationStatus">
+          <Button :text="'Send New Validaiotn'" @click="sendValidaitonCode" />
+        </div>
       </div>
     </div>
     <div v-else>
@@ -81,16 +88,19 @@ export default {
   data() {
     return {
       username: "",
+      email: "",
       passwort: "",
       repeatPasswort: "",
       registerMode: false,
       number: 0, // Debug
+      userValidationStatus: true,
     };
   },
   methods: {
     async createUser() {
-      const data = await api.fetchData("user/createAccount", 6080, {
+      const data = await api.fetchData("user/createAccount", {
         userName: this.username,
+        email: this.email,
         passwort: this.passwort,
         repeatPasswort: this.repeatPasswort,
       });
@@ -98,7 +108,7 @@ export default {
       this.$store.commit("setMessage", data);
     },
     async validateLogin() {
-      const data = await api.fetchData("user/validateLogin", 6080, {
+      const data = await api.fetchData("user/validateLogin", {
         userName: this.username,
         passwort: this.passwort,
       });
@@ -108,10 +118,13 @@ export default {
         localStorage.setItem("sessionID", data.SID);
         localStorage.setItem("usr", this.username);
         this.tryLogin();
+      } else if (data.err == "userNotValidated") {
+        console.log("user is not validated");
+        this.userValidationStatus = false;
       }
     },
     async logout() {
-      const data = await api.fetchData("session/destroy", 6080, {
+      const data = await api.fetchData("session/destroy", {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
@@ -121,7 +134,7 @@ export default {
     },
 
     async validateSession(SID) {
-      const data = await api.fetchData("session/validate", 6080, {
+      const data = await api.fetchData("session/validate", {
         SID: SID,
         user: localStorage.getItem("usr"),
       });
@@ -136,7 +149,7 @@ export default {
     },
     async tryLogin() {
       if (this.$store.getters.getloginStatus) {
-        const data = await api.fetchData("session/checkUser", 6080, {
+        const data = await api.fetchData("session/checkUser", {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
@@ -151,6 +164,13 @@ export default {
         localStorage.clear();
         this.$store.commit("setloginStatus", false);
       }
+    },
+    async sendValidaitonCode() {
+      console.log("resendvaliation");
+      const data = await api.fetchData("user/reSendValidation", {
+        user: this.username,
+      });
+      this.$store.commit("setMessage", await data);
     },
   },
   computed: {
