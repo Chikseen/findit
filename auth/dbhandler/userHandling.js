@@ -1,5 +1,5 @@
 module.exports = {
-  async createUser(bcrypt, user, data) {
+  async createUser(bcrypt, user, eur, data, id) {
     console.log("Create user", data);
     if (data.userName.length < 2) {
       console.log("userName to short");
@@ -8,6 +8,14 @@ module.exports = {
         succes: false,
         errormsg: "usernameToShort",
         msg: "Your username needs to be at least 8 characters long",
+      };
+    } else if (data.email.length < 4) {
+      console.log("E-Mail validation failed");
+      return {
+        isError: true,
+        succes: false,
+        errormsg: "wrongemailformat",
+        msg: "your E-Mail address dident pass verification",
       };
     } else if (data.passwort.length < 8) {
       console.log("passwort to short");
@@ -28,29 +36,42 @@ module.exports = {
     } else {
       try {
         console.log("Validation correct");
+        if (!user.has(data.email)) {
+          if (!eur.has(data.userName)) {
+            console.log("create user: ", data.email);
 
-        if (!user.has(data.userName)) {
-          console.log("create user: ", data.userName);
+            const salt = await bcrypt.genSalt();
+            data.passwort = await bcrypt.hash(data.passwort, salt);
+            delete data.repeatPasswort;
+            data.isValidated = false;
+            data.varifiyID = id;
 
-          const salt = await bcrypt.genSalt();
-          data.passwort = await bcrypt.hash(data.passwort, salt);
-          delete data.repeatPasswort;
-
-          user.set(data.userName, data);
-          return {
-            isError: false,
-            succes: true,
-            errormsg: "",
-            msg: "User created successfully",
-          };
+            user.set(data.email, data);
+            eur.set(data.userName, data.email);
+            return {
+              isError: false,
+              succes: true,
+              errormsg: "",
+              msg: "User created successfully",
+            };
+          } else {
+            console.log("useName is allrady in use");
+            return {
+              isError: true,
+              succes: false,
+              loginSucces: false,
+              errormsg: "usernameexits",
+              msg: "Usename is allrady in use",
+            };
+          }
         } else {
-          console.log("User allrady exits");
+          console.log("E-Mail address is allrady used");
           return {
             isError: true,
             succes: false,
             loginSucces: false,
-            errormsg: "userExits",
-            msg: "The username allrady exits",
+            errormsg: "emailExits",
+            msg: "E-Mail address is allrady used",
           };
         }
       } catch (e) {
@@ -63,13 +84,13 @@ module.exports = {
       }
     }
   },
-  async validateLogin(bcrypt, user, data, newSID) {
+  async validateLogin(bcrypt, user, eur, data, newSID) {
     console.log("Check logindata for", data.userName);
     console.log("SID", newSID);
 
     //validate userdate
-    if (user.has(data.userName)) {
-      const userdata = user.get(data.userName);
+    if (user.has(eur.get(data.userName))) {
+      const userdata = user.get(eur.get(data.userName));
 
       if (await bcrypt.compare(data.passwort, userdata.passwort)) {
         return {

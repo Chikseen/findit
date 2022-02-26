@@ -4,6 +4,7 @@ import Home from "./views/Home.vue";
 import Login from "./views/Login.vue";
 import Landing from "./views/Landing.vue";
 import ProjectView from "./views/ProjectView.vue";
+import Varifyer from "./views/Varifyer.vue";
 
 //import store from "./store"
 
@@ -29,6 +30,11 @@ const routes = [
     path: "/project",
     name: "ProjectView",
     component: ProjectView,
+  },
+  {
+    path: "/varifyer",
+    name: "Varifyer",
+    component: Varifyer,
   },
 ];
 
