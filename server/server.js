@@ -1,25 +1,25 @@
-const { readFileSync } = require("fs");
 const { Server } = require("socket.io");
 const JSONdb = require("simple-json-db");
 const fs = require("fs");
-const path = require("path");
+const express = require("express");
+const cors = require("cors");
+const nodefetch = require("node-fetch");
 
-const loginValidation = require("./serverHandler/loginValidation");
 const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
+const auth = require("./authHandler");
 
 let pathPreFix = "";
 if (fs.existsSync("../localDebug.js")) {
   pathPreFix = ".";
 }
 
+// DATAINIT
 databaseIntegrity.init(fs, pathPreFix);
 databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
-
 const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
-
 const io = new Server({
   cors: {
     origin: `*`,
@@ -28,52 +28,43 @@ const io = new Server({
   },
 });
 
-let sessionIds = [];
-let userBinds = {};
+// EXPRESS SETUP
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+const port = 7081;
+app.listen(port, () => console.log("Connecet with Port: " + port));
 
+app.get("/", (req, res) => {
+  res.json({ status: "success" });
+});
+
+app.post("/projectData/metaData", async (request, response) => {
+  console.log("get Project Meta Data for ", request.body.user);
+  console.log("authcheck", auth.checkUser(nodefetch, request.body));
+  if (await auth.checkUser(nodefetch, request.body)) {
+    response.json(
+      await projectClusterData.getData(projectCluster, request.body.user)
+    );
+  } else {
+    response.json({ status: "validation Error" });
+  }
+});
+
+let userBinds = {};
+//_____________________________________________________________________________________________________________________
+// SOCKET
 io.on("connection", (socket) => {
   console.log("CONNECTED", socket.id);
 
-  //VALIDATEUSER
-  socket.on("validateLogin", async (data) => {
-    const outPut = await loginValidation.validateLogin(bcrypt, user, data);
-    socket.emit("response", outPut);
-    if (outPut.msg === "Passwort is correct -> proceed") {
-      const newSID = Math.floor(Math.random() * 999999999999);
-      sessionIds.push(newSID);
-      socket.emit("userDataValidated", { sessionID: newSID });
-    }
-  });
-  socket.on("validateSession", async (data) => {
-    if (sessionIds.has(data.sessionID))
-      socket.emit("sessionValidation", { status: true });
-    else socket.emit("sessionValidation", { status: false });
-  });
-
-  //CHECKSESSION
-  socket.on("checkSID", async (data) => {
-    if (sessionIds.includes(parseInt(data.SID))) {
-      socket.emit("respSID", { status: "valid" });
-    } else {
-      socket.emit("respSID", { status: "unvalid" });
-    }
-  });
-
-  //DESTROYSESSION
-  socket.on("destroySession", async (data) => {
-    const index = sessionIds.indexOf(data.SID);
-    if (index > -1) {
-      sessionIds.splice(index, 1);
-    }
-  });
-
-  //REQUESTUSERDATA
+  /*   //REQUESTUSERDATA
   socket.on("requestProjectData", async (data) => {
     socket.emit(
       "getProjectData",
       await projectClusterData.getData(projectCluster, user, data.userName)
     );
-  });
+  }); */
 
   //CREATEPROJECT
   socket.on("createProject", async (data) => {

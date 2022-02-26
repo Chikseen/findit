@@ -26,6 +26,7 @@
 import ProjectCluster from "../components/projectCluster.vue";
 
 import io from "socket.io-client";
+import api from "../apiService";
 
 export default {
   name: "Home",
@@ -47,7 +48,20 @@ export default {
   methods: {
     test() {
       console.log("test socket id");
-      this.socket.emit("testID")
+      this.socket.emit("testID");
+    },
+    async getUserData() {
+      if (this.$store.getters.getloginStatus) {
+        const data = await api.test("https://api.drunc.net/projectData/metaData",{
+          SID: localStorage.getItem("sessionID"),
+          user: localStorage.getItem("usr"),
+        });
+        console.log("data", data);
+        this.projectCluster = data;
+      } else {
+        localStorage.clear();
+        this.$router.push("/login");
+      }
     },
   },
   created() {
@@ -58,7 +72,7 @@ export default {
       console.log("resplog", data.status);
       if (data.status != "valid") {
         localStorage.setItem("sessionID", "");
-        this.$router.push("/login");
+        //this.$router.push("/login");
       } else {
         this.resviedPositivMessage = true;
         console.log("set Login Status true");
@@ -69,10 +83,10 @@ export default {
     this.socket.on("currentUserData", (data) => {
       this.userData = data;
     });
-    this.socket.on("getProjectData", (data) => {
+/*     this.socket.on("getProjectData", (data) => {
       console.log("get Project Data", data);
       this.projectCluster = data;
-    });
+    }); */
     this.socket.on("response", (data) => {
       console.log("data", data);
       this.$store.commit("setMessage", data);
@@ -80,8 +94,9 @@ export default {
   },
   mounted() {
     console.log("login Status", this.$store.getters.getloginStatus);
-    const SID = localStorage.getItem("sessionID");
+    this.getUserData();
 
+    const SID = localStorage.getItem("sessionID");
     if (localStorage.getItem("sessionID") != null) {
       if (SID.length != "") {
         console.log("confrom Login", SID);
@@ -93,14 +108,15 @@ export default {
     this.socket.emit("bindUserConnection", {
       userName: localStorage.getItem("usr"),
     });
-    this.socket.emit("requestProjectData", {
+
+    /*     this.socket.emit("requestProjectData", {
       userName: localStorage.getItem("usr"),
     });
     setTimeout(() => {
       if (!this.resviedPositivMessage) {
-        this.$router.push("/login");
+      //  this.$router.push("/login");
       }
-    }, 200);
+    }, 200); */
   },
 };
 </script>
