@@ -9,7 +9,7 @@ const cors = require("cors");
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
 const helper = require("./dbhandler/helper.js");
-let pathPreFix = ".";
+let pathPreFix = "";
 if (fs.existsSync("../localDebug.js")) pathPreFix = ".";
 
 databaseIntegrity.init(fs, pathPreFix);
