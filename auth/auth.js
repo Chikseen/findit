@@ -31,17 +31,15 @@ var transporter = nodemailer.createTransport({
     user: mailAuth.get("name"),
     pass: mailAuth.get("apKey"),
   },
-  port: "587",
-    tls: {
-        ciphers: "SSLv3",
-        rejectUnauthorized: false,
-    },
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
 });
 
 // Send init mail on server start
 console.log("Send init mail");
 console.log("to", mailAuth.get("name"));
-console.log("user", user)
+console.log("user", user);
 const initmail = {
   subject: "Init Mail",
   html: initMailTemplate.initmail(),
