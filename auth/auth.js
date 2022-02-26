@@ -9,7 +9,7 @@ const cors = require("cors");
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
 const helper = require("./dbhandler/helper.js");
-let pathPreFix = "";
+let pathPreFix = ".";
 if (fs.existsSync("../localDebug.js")) pathPreFix = ".";
 
 databaseIntegrity.init(fs, pathPreFix);
@@ -26,11 +26,12 @@ var nodemailer = require("nodemailer");
 const { sendMail } = require("./mailHandling/mailer.js");
 const initMailTemplate = require("./mailHandling/initMailTemplate.js");
 
+console.log("mailAuth", user);
 var transporter = nodemailer.createTransport({
-  service: mailAuth.get("mailData").service,
+  service: mailAuth.get("service"),
   auth: {
-    user: mailAuth.get("mailData").name,
-    pass: mailAuth.get("mailData").apKey,
+    user: mailAuth.get("name"),
+    pass: mailAuth.get("apKey"),
   },
 });
 
@@ -40,13 +41,8 @@ const initmail = {
   subject: "Init Mail",
   html: initMailTemplate.initmail(),
 };
- 
-sendMail(
-  transporter,
-  mailAuth.storage.mailData.name,
-  mailAuth.storage.mailData.name,
-  initmail
-); 
+console.log("_", mailAuth.get("name"));
+sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
 //________________________________________________________
 
 app.use(cors());
