@@ -31,6 +31,11 @@ var transporter = nodemailer.createTransport({
     user: mailAuth.get("name"),
     pass: mailAuth.get("apKey"),
   },
+  port: "587",
+    tls: {
+        ciphers: "SSLv3",
+        rejectUnauthorized: false,
+    },
 });
 
 // Send init mail on server start
