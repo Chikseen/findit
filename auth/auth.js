@@ -35,6 +35,8 @@ var transporter = nodemailer.createTransport({
 
 // Send init mail on server start
 console.log("Send init mail");
+console.log("to", mailAuth.get("name"));
+console.log("user", user)
 const initmail = {
   subject: "Init Mail",
   html: initMailTemplate.initmail(),
@@ -76,12 +78,7 @@ app.post("/user/createAccount", async (request, response) => {
       subject: "Validate your E-Mail address",
       html: initMailTemplate.valimail(id),
     };
-    sendMail(
-      transporter,
-      mailAuth.get("name"),
-      request.body.email,
-      varimail
-    );
+    sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
   }
   response.json(status);
 });
