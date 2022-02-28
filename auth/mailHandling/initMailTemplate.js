@@ -1,3 +1,4 @@
+require("dotenv").config();
 module.exports = {
   initmail() {
     /*  let initMailTemplate = fs.readFile(__dirname + "/g.html", "utf8", (data) => {
@@ -17,7 +18,7 @@ module.exports = {
       <body>
         <h1>The authservice for drunc.net just started</h1>
         <p>see the currrent status @...</p>
-        <a href="http://localhost:6080/">checkSite</a>
+        <a href="${process.env.NODE_ENV == "development" ? "http://localhost:8080" : "drunc.net"}">checkSite</a>
       </body>
     </html>`;
   },
@@ -33,7 +34,7 @@ module.exports = {
       <body>
         <h1>Please validate your E-Mail address to use the drunc service</h1>
         <p>just click this Button and the magic Wizard will validate your account</p>
-        <a href="${"http://localhost:8080/#/varifyer?verificationID=" + id}">Validate me</a>
+        <a href="${process.env.NODE_ENV == 'development' ? 'http://localhost:8080' : 'drunc.net'}/#/varifyer?verificationID=${id}">Validate me</a>
       </body>
     </html>
     `;

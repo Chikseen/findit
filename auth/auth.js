@@ -17,6 +17,15 @@ if (process.env.NODE_ENV === "development") {
   pathPreFix = ".";
 } else {
   console.log("server is running in Prod mode");
+  // Send init mail on server start
+  console.log("Send init mail");
+  console.log("to", mailAuth.get("name"));
+  console.log("mailFile", mailAuth);
+  const initmail = {
+    subject: "Init Mail",
+    html: initMailTemplate.initmail(),
+  };
+  sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
   pathPreFix = "";
 }
 
@@ -44,15 +53,6 @@ var transporter = nodemailer.createTransport({
   secure: true,
 });
 
-// Send init mail on server start
-console.log("Send init mail");
-console.log("to", mailAuth.get("name"));
-console.log("mailFile", mailAuth);
-const initmail = {
-  subject: "Init Mail",
-  html: initMailTemplate.initmail(),
-};
-sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
 //________________________________________________________
 
 app.use(cors());
