@@ -1,16 +1,10 @@
 {
-    "abcdefghjk123": {
+    "drunc": {
         "ownProjects": [
-            360436172442,
-            702539010671
+            827135085723
         ],
         "sharedByProjects": [],
         "sharedWithProjects": []
     },
-    "abcdefghjk123.ownProjects": 2,
-    "drunc": {
-        "ownProjects": [],
-        "sharedByProjects": [],
-        "sharedWithProjects": []
-    }
+    "drunc.ownProjects": 1
 }

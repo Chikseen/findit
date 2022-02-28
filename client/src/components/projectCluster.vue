@@ -2,23 +2,10 @@
   <div class="projectCluster_wrapper">
     <p v-if="projects.length == 0">Looks quiet empty here</p>
     <div class="projectcluster_preview">
-      <ProjectPreview
-        class="projectcluster_project"
-        :project="{ id: 'addProject' }"
-        @click="goToProject('-1')"
-        v-if="hasAdd"
-      />
-      <div
-        class="projectcluster_project"
-        v-for="proj in projects"
-        :key="proj"
-        @click="goToProject(proj)"
-      >
+      <ProjectPreview class="projectcluster_project" :project="{ id: 'addProject' }" @click="goToProject('-1')" v-if="hasAdd" />
+      <div class="projectcluster_project" v-for="proj in projects" :key="proj" @click="goToProject(proj)">
         <ProjectPreview :project="{ id: proj }" />
-        <div v-if="sharedbyself">
-          <!--   <h5>Shared Project: {{ proj.projectID }}</h5>
-          <h5>Shared With: {{ proj.user }}</h5> -->
-        </div>
+        <div v-if="sharedbyself"></div>
         <p>{{ proj }}</p>
       </div>
     </div>
@@ -26,6 +13,8 @@
 </template>
 <script>
 import ProjectPreview from "./projectPreview.vue";
+
+import api from "../apiService";
 
 export default {
   name: "projectCluster",
@@ -39,14 +28,23 @@ export default {
     sharedfrom: { type: Boolean, default: false },
   },
   methods: {
-    goToProject(projectID) {
-      console.log("go to Project with id", projectID);
-      sessionStorage.setItem("projectID", projectID);
-
-      this.$router.push({
-        name: "ProjectView",
-        query: { projectid: projectID },
+    async goToProject(projectID) {
+      const data = await api.projectcall("projects/loading", {
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        projectID: projectID,
       });
+      console.log("data", data);
+      if (toString(data.id).length == 18) {
+        sessionStorage.setItem("projectID", data.id);
+
+        this.$router.push({
+          name: "ProjectView",
+          query: { projectid: data.id },
+        });
+      } else {
+        console.log("projecthandling: an error eccoured");
+      }
     },
   },
 };
