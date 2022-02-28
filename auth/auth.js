@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === "development") {
   pathPreFix = ".";
 } else {
   console.log("server is running in Prod mode");
+  pathPreFix = "";
   // Send init mail on server start
 }
 
@@ -35,7 +36,6 @@ if (process.env.NODE_ENV != "development") {
     html: initMailTemplate.initmail(),
   };
   sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
-  pathPreFix = "";
 }
 
 const port = 6080;
