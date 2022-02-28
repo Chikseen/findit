@@ -1,18 +1,27 @@
+require("dotenv").config();
+
 const { Server } = require("socket.io");
 const JSONdb = require("simple-json-db");
 const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
-const nodefetch = require("node-fetch");
 
 const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
-const auth = require("./authHandler");
+const auth = require("./serverHandler/authHandler");
 
-let pathPreFix = "";
-if (fs.existsSync("../localDebug.js")) {
+let pathPreFix;
+let authCall;
+
+if (process.env.NODE_ENV === "development") {
+  console.log("server is running in Dev mode");
+  authCall = "http://192.168.2.100:6080/";
   pathPreFix = ".";
+} else {
+  console.log("server is running in Prod mode");
+  authCall = "https://auth.drunc.net/";
+  pathPreFix = "";
 }
 
 // DATAINIT
@@ -42,11 +51,9 @@ app.get("/", (req, res) => {
 
 app.post("/projectData/metaData", async (request, response) => {
   console.log("get Project Meta Data for ", request.body.user);
-  console.log("authcheck", auth.checkUser(nodefetch, request.body));
-  if (await auth.checkUser(nodefetch, request.body)) {
-    response.json(
-      await projectClusterData.getData(projectCluster, request.body.user)
-    );
+  console.log("authcheck", auth.checkUser(authCall, "session/checkUser", request.body));
+  if (await auth.checkUser(authCall, "session/checkUser", request.body)) {
+    response.json(await projectClusterData.getData(projectCluster, request.body.user));
   } else {
     response.json({ status: "validation Error" });
   }
@@ -68,30 +75,12 @@ io.on("connection", (socket) => {
 
   //CREATEPROJECT
   socket.on("createProject", async (data) => {
-    socket.emit(
-      "projectData",
-      projectClusterData.createProject(
-        projectCluster,
-        JSONdb,
-        fs,
-        pathPreFix,
-        data.owner
-      )
-    );
+    socket.emit("projectData", projectClusterData.createProject(projectCluster, JSONdb, fs, pathPreFix, data.owner));
   });
 
   //GETPROJECTDATA
   socket.on("getProject", async (data) => {
-    socket.emit(
-      "projectData",
-      projectClusterData.getProject(
-        projectCluster,
-        JSONdb,
-        fs,
-        pathPreFix,
-        data.projectID
-      )
-    );
+    socket.emit("projectData", projectClusterData.getProject(projectCluster, JSONdb, fs, pathPreFix, data.projectID));
   });
 
   //DELTEPROJECT
@@ -100,10 +89,7 @@ io.on("connection", (socket) => {
 
     //const tset = io.of("/").sockets
 
-    socket.emit(
-      "response",
-      projectClusterData.deleteProject(projectCluster, fs, pathPreFix, data)
-    );
+    socket.emit("response", projectClusterData.deleteProject(projectCluster, fs, pathPreFix, data));
   });
 
   //SOCKECTHANDLING
@@ -121,10 +107,7 @@ io.on("connection", (socket) => {
     if (user.has(data.shareWith)) {
       const allData = projectCluster.get(data.shareBy);
 
-      console.log(
-        "allData.sharedWithProjects",
-        allData.sharedWithProjects[data.projectID]
-      );
+      console.log("allData.sharedWithProjects", allData.sharedWithProjects[data.projectID]);
 
       let hasFoundProj = false;
       allData.sharedWithProjects.forEach((project) => {
@@ -136,8 +119,7 @@ io.on("connection", (socket) => {
             hasFoundProj = true;
           } else {
             projectData.push(data.shareWith);
-            allData.sharedWithProjects[data.projectID] =
-              (data.projectID, projectData);
+            allData.sharedWithProjects[data.projectID] = (data.projectID, projectData);
             console.log("user not added");
           }
         }
@@ -182,17 +164,9 @@ io.on("connection", (socket) => {
         console.log("data allready exits");
       }
 
-      const UserDAta = await projectClusterData.getData(
-        projectCluster,
-        user,
-        data.shareWith
-      );
-      socket
-        .to(userBinds[data.shareWith].socketID)
-        .emit("getProjectData", UserDAta);
-      socket
-        .to(userBinds[data.shareBy].socketID)
-        .emit("getProjectData", UserDAta);
+      const UserDAta = await projectClusterData.getData(projectCluster, user, data.shareWith);
+      socket.to(userBinds[data.shareWith].socketID).emit("getProjectData", UserDAta);
+      socket.to(userBinds[data.shareBy].socketID).emit("getProjectData", UserDAta);
     } else {
       console.log("User not found");
     }
@@ -202,10 +176,7 @@ io.on("connection", (socket) => {
     console.log("add Element ");
     const test = projcthandler.addElement(JSONdb, pathPreFix, data);
     console.log("test", test);
-    socket.emit(
-      "projectStructure",
-      await projcthandler.addElement(JSONdb, pathPreFix, data)
-    );
+    socket.emit("projectStructure", await projcthandler.addElement(JSONdb, pathPreFix, data));
   });
 
   //REMOVE SOCKETDATA ON DISCONNECT
