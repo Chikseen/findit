@@ -6,6 +6,7 @@
 </template>
 
 <script>
+require("dotenv").config();
 import Messege from "./assets/messageComponent.vue";
 
 export default {
@@ -13,8 +14,7 @@ export default {
     Messege,
   },
   created() {
-    const buildfrom = false;
-    if (buildfrom) {
+    if (process.env.NODE_ENV === "development") {
       console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");
     } else {

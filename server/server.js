@@ -10,6 +10,7 @@ const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
 const auth = require("./serverHandler/authHandler");
+const { setTimeout } = require("timers");
 
 let pathPreFix;
 let authCall;
@@ -49,39 +50,46 @@ app.get("/", (req, res) => {
   res.json({ status: "success" });
 });
 
-app.post("/projectData/metaData", async (request, response) => {
-  console.log("get Project Meta Data for ", request.body.user);
-  console.log("authcheck", auth.checkUser(authCall, "session/checkUser", request.body));
+let userBinds = {};
+
+app.post("/home/projectData/metaData", async (request, response) => {
+  console.log("get Project Meta Data for ", request.body);
   if (await auth.checkUser(authCall, "session/checkUser", request.body)) {
     response.json(await projectClusterData.getData(projectCluster, request.body.user));
   } else {
-    response.json({ status: "validation Error" });
+    response.json({ status: "validation Error", msg: "validation Error" });
   }
 });
 
-let userBinds = {};
+app.post("/home/projectData/bindUserConnection", async (request, response) => {
+  const userName = request.body.userName;
+  Object.assign(userBinds, {
+    [userName]: { socketID: request.body.socketID, name: userName },
+  });
+  console.log("User bindigs", userBinds);
+  response.end();
+});
+
+app.post("/projects/loading", async (request, response) => {
+  console.log("loadProject", request.body);
+  if (await auth.checkUser(authCall, "session/checkUser", request.body)) {
+    if (request.body.projectID == "-1") {
+      console.log("create Proj");
+      response.json(await projectClusterData.createProject(projectCluster, JSONdb, fs, pathPreFix, request.body.user));
+    } else {
+      console.log("load Proj");
+      response.json(await projectClusterData.getProject(projectCluster, JSONdb, fs, pathPreFix, request.body.projectID));
+    }
+  } else {
+    response.json({ status: "validation Error", msg: "validation Error" });
+  }
+  response.end();
+});
+
 //_____________________________________________________________________________________________________________________
 // SOCKET
 io.on("connection", (socket) => {
   console.log("CONNECTED", socket.id);
-
-  /*   //REQUESTUSERDATA
-  socket.on("requestProjectData", async (data) => {
-    socket.emit(
-      "getProjectData",
-      await projectClusterData.getData(projectCluster, user, data.userName)
-    );
-  }); */
-
-  //CREATEPROJECT
-  socket.on("createProject", async (data) => {
-    socket.emit("projectData", projectClusterData.createProject(projectCluster, JSONdb, fs, pathPreFix, data.owner));
-  });
-
-  //GETPROJECTDATA
-  socket.on("getProject", async (data) => {
-    socket.emit("projectData", projectClusterData.getProject(projectCluster, JSONdb, fs, pathPreFix, data.projectID));
-  });
 
   //DELTEPROJECT
   socket.on("deleteProject", async (data) => {
@@ -93,14 +101,14 @@ io.on("connection", (socket) => {
   });
 
   //SOCKECTHANDLING
-  socket.on("bindUserConnection", (data) => {
+  /* socket.on("bindUserConnection", (data) => {
     console.log("Bind User with Socket");
     const userName = data.userName;
     Object.assign(userBinds, {
       [userName]: { socketID: socket.id, name: data.userName },
     });
     console.log("User bindigs", userBinds);
-  });
+  }); */
 
   socket.on("shareProject", async (data) => {
     console.log("ShareData", data);
@@ -167,6 +175,9 @@ io.on("connection", (socket) => {
       const UserDAta = await projectClusterData.getData(projectCluster, user, data.shareWith);
       socket.to(userBinds[data.shareWith].socketID).emit("getProjectData", UserDAta);
       socket.to(userBinds[data.shareBy].socketID).emit("getProjectData", UserDAta);
+
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      //THIS IS TO SEND NEW PROJECTDATA TO SOMEONE !!!!!!!!!!!!!!!!!
     } else {
       console.log("User not found");
     }

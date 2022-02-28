@@ -10,17 +10,6 @@ module.exports = {
       fs.mkdirSync(pathPreFix + "/database/projects");
     }
 
-    if (!fs.existsSync(pathPreFix + "/database/user.json")) {
-      console.log("creating user.json");
-      fs.writeFile(
-        pathPreFix + "/database/user.json",
-        "",
-        "utf8",
-        function (err) {}
-      );
-      //fs.appendFile(pathPreFix + "/database/user.json");
-    }
-
     if (!fs.existsSync(pathPreFix + "/database/projectcluster.json")) {
       console.log("creating projectcluster.json");
       fs.writeFile(

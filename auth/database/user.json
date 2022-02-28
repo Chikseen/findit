@@ -5,5 +5,12 @@
         "passwort": "$2b$10$AJMkLvWkh5w8hu0hE.c9xeV0hCztGi4fJArKpfVixH6hLv7O3wT6e",
         "isValidated": true,
         "varifiyID": ""
+    },
+    "druncservice": {
+        "userName": "druncservice",
+        "email": "druncservice",
+        "passwort": "$2b$10$RkaiAOLSJUTYEGPp8Fn10uNJqVegs9QNJ3TZh.jP2XtWwHhvXhZWC",
+        "isValidated": true,
+        "varifiyID": ""
     }
 }
