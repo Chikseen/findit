@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const fs = require("fs");
@@ -9,8 +10,15 @@ const cors = require("cors");
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
 const helper = require("./dbhandler/helper.js");
-let pathPreFix = ".";
-if (fs.existsSync("../localDebug.js")) pathPreFix = ".";
+
+let pathPreFix;
+if (process.env.NODE_ENV === "development") {
+  console.log("server is running in Dev mode");
+  pathPreFix = ".";
+} else {
+  console.log("server is running in Prod mode");
+  pathPreFix = "";
+}
 
 databaseIntegrity.init(fs, pathPreFix);
 
