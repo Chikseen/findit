@@ -6,6 +6,8 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const JSONdb = require("simple-json-db");
 const cors = require("cors");
+const { sendMail } = require("./mailHandling/mailer.js");
+const initMailTemplate = require("./mailHandling/initMailTemplate.js");
 
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
@@ -43,8 +45,7 @@ const port = 6080;
 //________________________________________________________
 
 var nodemailer = require("nodemailer");
-const { sendMail } = require("./mailHandling/mailer.js");
-const initMailTemplate = require("./mailHandling/initMailTemplate.js");
+
 var transporter = nodemailer.createTransport({
   service: mailAuth.get("service"),
   auth: {
