@@ -6,8 +6,9 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const JSONdb = require("simple-json-db");
 const cors = require("cors");
-const { sendMail } = require("./mailHandling/mailer.js");
+const mailer= require("./mailHandling/mailer.js");
 const initMailTemplate = require("./mailHandling/initMailTemplate.js");
+const nodemailer = require("nodemailer");
 
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
@@ -29,22 +30,6 @@ const user = new JSONdb(pathPreFix + "/database/user.json", { asyncWrite: false,
 const mailAuth = new JSONdb(pathPreFix + "/database/mailAuth.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 
-if (process.env.NODE_ENV != "development") {
-  console.log("Send init mail");
-  console.log("to", mailAuth.get("name"));
-  console.log("mailFile", mailAuth);
-  const initmail = {
-    subject: "Init Mail",
-    html: initMailTemplate.initmail(),
-  };
-  sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
-}
-
-const port = 6080;
-
-//________________________________________________________
-
-var nodemailer = require("nodemailer");
 
 var transporter = nodemailer.createTransport({
   service: mailAuth.get("service"),
@@ -57,7 +42,18 @@ var transporter = nodemailer.createTransport({
   secure: true,
 });
 
-//________________________________________________________
+if (process.env.NODE_ENV != "development") {
+  console.log("Send init mail");
+  console.log("to", mailAuth.get("name"));
+  console.log("mailFile", mailAuth);
+  const initmail = {
+    subject: "Init Mail",
+    html: initMailTemplate.initmail(),
+  };
+  mailer.sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
+}
+
+const port = 6080;
 
 app.use(cors());
 app.use(express.json());
@@ -87,7 +83,7 @@ app.post("/user/createAccount", async (request, response) => {
       subject: "Validate your E-Mail address",
       html: initMailTemplate.valimail(id),
     };
-    sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
+    mailer.sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
   }
   response.json(status);
 });
@@ -105,7 +101,7 @@ app.post("/user/reSendValidation", async (request, response) => {
     subject: "Validate your E-Mail address",
     html: initMailTemplate.valimail(id),
   };
-  sendMail(transporter, mailAuth.get("name"), eur.get(request.body.user), varimail);
+  mailer.sendMail(transporter, mailAuth.get("name"), eur.get(request.body.user), varimail);
   response.json({ done: "done" });
 });
 
