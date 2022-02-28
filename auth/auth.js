@@ -38,7 +38,7 @@ var transporter = nodemailer.createTransport({
     pass: mailAuth.get("apKey"),
   },
   host: "smtp.gmail.com",
-  port: 465,
+  port: 587,
   secure: true,
 });
 
