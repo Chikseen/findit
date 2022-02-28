@@ -2,15 +2,15 @@
     "druncservice@gmail.com": {
         "userName": "drunc",
         "email": "druncservice@gmail.com",
-        "passwort": "$2b$10$AJMkLvWkh5w8hu0hE.c9xeV0hCztGi4fJArKpfVixH6hLv7O3wT6e",
+        "passwort": "$2b$10$aVOytmE/Fk6CBXJamP.d8ePHiF/Hgu8hBux3d8W24rJbFzweJXWiq",
         "isValidated": true,
         "varifiyID": ""
     },
-    "druncservice": {
-        "userName": "druncservice",
-        "email": "druncservice",
-        "passwort": "$2b$10$RkaiAOLSJUTYEGPp8Fn10uNJqVegs9QNJ3TZh.jP2XtWwHhvXhZWC",
-        "isValidated": true,
-        "varifiyID": ""
+    "druncserm": {
+        "userName": "druncservice@gmail.com",
+        "email": "druncserm",
+        "passwort": "$2b$10$cad7L6r4Z0bdOFN.bZrHOO.Lkwh0JTKutqW4eHS38Gthg./CtqlZu",
+        "isValidated": false,
+        "varifiyID": "LRBMBLLLAKELKNNCFLGC"
     }
 }

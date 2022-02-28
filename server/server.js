@@ -175,7 +175,6 @@ io.on("connection", (socket) => {
       const UserDAta = await projectClusterData.getData(projectCluster, user, data.shareWith);
       socket.to(userBinds[data.shareWith].socketID).emit("getProjectData", UserDAta);
       socket.to(userBinds[data.shareBy].socketID).emit("getProjectData", UserDAta);
-
       //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       //THIS IS TO SEND NEW PROJECTDATA TO SOMEONE !!!!!!!!!!!!!!!!!
     } else {

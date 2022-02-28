@@ -18,6 +18,15 @@ if (process.env.NODE_ENV === "development") {
 } else {
   console.log("server is running in Prod mode");
   // Send init mail on server start
+}
+
+databaseIntegrity.init(fs, pathPreFix);
+
+const user = new JSONdb(pathPreFix + "/database/user.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
+const mailAuth = new JSONdb(pathPreFix + "/database/mailAuth.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
+const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
+
+if (process.env.NODE_ENV != "development") {
   console.log("Send init mail");
   console.log("to", mailAuth.get("name"));
   console.log("mailFile", mailAuth);
@@ -28,12 +37,6 @@ if (process.env.NODE_ENV === "development") {
   sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
   pathPreFix = "";
 }
-
-databaseIntegrity.init(fs, pathPreFix);
-
-const user = new JSONdb(pathPreFix + "/database/user.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
-const mailAuth = new JSONdb(pathPreFix + "/database/mailAuth.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
-const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 
 const port = 6080;
 
