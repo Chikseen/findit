@@ -32,7 +32,6 @@ const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { async
 
 
 var transporter = nodemailer.createTransport({
-  service: mailAuth.get("service"),
   auth: {
     user: mailAuth.get("name"),
     pass: mailAuth.get("apKey"),
@@ -41,6 +40,7 @@ var transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   secure: false,
 });
+
 
 if (process.env.NODE_ENV != "development") {
   console.log("Send init mail");
