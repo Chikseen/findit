@@ -38,11 +38,11 @@ var transporter = nodemailer.createTransport({
     pass: mailAuth.get("apKey"),
   },
   host: "smtp.gmail.com",
-  port: "587",
   secure: true,
+  tls: true
 });
 
-if (process.env.NODE_ENV != "development") {
+if (process.env.NODE_ENV == "development") {
   console.log("Send init mail");
   console.log("to", mailAuth.get("name"));
   console.log("mailFile", mailAuth);
