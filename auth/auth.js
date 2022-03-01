@@ -37,15 +37,24 @@ var transporter = nodemailer.createTransport({
     user: mailAuth.get("name"),
     pass: mailAuth.get("apKey"),
   },
+  port: 587,
   host: "smtp.gmail.com",
-  secure: true,
-  tls: true
+  secure: false,
 });
 
-if (process.env.NODE_ENV == "development") {
+if (process.env.NODE_ENV != "development") {
   console.log("Send init mail");
   console.log("to", mailAuth.get("name"));
   console.log("mailFile", mailAuth);
+
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Server is ready to take our messages");
+    }
+  });
+
   const initmail = {
     subject: "Init Mail",
     html: initMailTemplate.initmail(),
