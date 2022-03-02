@@ -6,6 +6,9 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const JSONdb = require("simple-json-db");
 const cors = require("cors");
+const mailer= require("./mailHandling/mailer.js");
+const initMailTemplate = require("./mailHandling/initMailTemplate.js");
+const nodemailer = require("nodemailer");
 
 const databaseIntegrity = require("./dbhandler/dbinit.js");
 const userHandling = require("./dbhandler/userHandling.js");
@@ -17,16 +20,8 @@ if (process.env.NODE_ENV === "development") {
   pathPreFix = ".";
 } else {
   console.log("server is running in Prod mode");
-  // Send init mail on server start
-  console.log("Send init mail");
-  console.log("to", mailAuth.get("name"));
-  console.log("mailFile", mailAuth);
-  const initmail = {
-    subject: "Init Mail",
-    html: initMailTemplate.initmail(),
-  };
-  sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
   pathPreFix = "";
+  // Send init mail on server start
 }
 
 databaseIntegrity.init(fs, pathPreFix);
@@ -35,25 +30,39 @@ const user = new JSONdb(pathPreFix + "/database/user.json", { asyncWrite: false,
 const mailAuth = new JSONdb(pathPreFix + "/database/mailAuth.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 
-const port = 6080;
 
-//________________________________________________________
-
-var nodemailer = require("nodemailer");
-const { sendMail } = require("./mailHandling/mailer.js");
-const initMailTemplate = require("./mailHandling/initMailTemplate.js");
 var transporter = nodemailer.createTransport({
-  service: mailAuth.get("service"),
   auth: {
     user: mailAuth.get("name"),
     pass: mailAuth.get("apKey"),
   },
+  port: 587,
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  secure: false,
 });
 
-//________________________________________________________
+
+if (process.env.NODE_ENV != "development") {
+  console.log("Send init mail");
+  console.log("to", mailAuth.get("name"));
+  console.log("mailFile", mailAuth);
+
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Server is ready to take our messages");
+    }
+  });
+
+  const initmail = {
+    subject: "Init Mail",
+    html: initMailTemplate.initmail(),
+  };
+  mailer.sendMail(transporter, mailAuth.get("name"), mailAuth.get("name"), initmail);
+}
+
+const port = 6080;
 
 app.use(cors());
 app.use(express.json());
@@ -83,7 +92,7 @@ app.post("/user/createAccount", async (request, response) => {
       subject: "Validate your E-Mail address",
       html: initMailTemplate.valimail(id),
     };
-    sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
+    mailer.sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
   }
   response.json(status);
 });
@@ -101,7 +110,7 @@ app.post("/user/reSendValidation", async (request, response) => {
     subject: "Validate your E-Mail address",
     html: initMailTemplate.valimail(id),
   };
-  sendMail(transporter, mailAuth.get("name"), eur.get(request.body.user), varimail);
+  mailer.sendMail(transporter, mailAuth.get("name"), eur.get(request.body.user), varimail);
   response.json({ done: "done" });
 });
 
