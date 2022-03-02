@@ -24,6 +24,7 @@
 
 <script>
 import io from "socket.io-client";
+import api from "../apiService";
 
 export default {
   data() {
@@ -36,8 +37,45 @@ export default {
     };
   },
   methods: {
-    deletProject() {
+    async deletProject() {
       let val = confirm("Are you sure to want delete this Project");
+      if (val == true) {
+        const data = await api.projectcall("projects/delete", {
+          projectID: this.projectData.id,
+          SID: localStorage.getItem("sessionID"),
+          user: localStorage.getItem("usr"),
+        });
+        console.log("data", data);
+      } else {
+        console.log("cancel delete request");
+      }
+    },
+    async loadProject() {
+      console.log("sending");
+      const data = await api.projectcall("projects/load", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+      });
+      console.log("data", data);
+      if (data.isError) {
+        this.$store.commit("setMessage", data);
+      } else {
+        this.projectData = data;
+      }
+    },
+    async sendInvite() {
+      console.log("sendInvite to ", this.shareWithText);
+      const data = await api.projectcall("projects/sendInvite", {
+        shareWith: this.shareWithText,
+        shareBy: localStorage.getItem("usr"),
+        projectID: sessionStorage.getItem("projectID"),
+      });
+      console.log("data", data);
+      this.$store.commit("setMessage", data);
+    },
+
+    /*       let val = confirm("Are you sure to want delete this Project");
       if (val == true) {
         this.socket.emit("deleteProject", {
           projectID: this.projectData.id,
@@ -45,8 +83,8 @@ export default {
         });
       } else {
         console.log("cancel delete request");
-      }
-    },
+      } */
+    /* 
     sendInvite() {
       if (this.shareWithText != "") {
         this.socket.emit("shareProject", {
@@ -55,7 +93,7 @@ export default {
           projectID: sessionStorage.getItem("projectID"),
         });
       }
-    },
+    }, */
     addElement() {
       this.socket.emit("addElementToParent", {
         project: sessionStorage.getItem("projectID"),
@@ -66,8 +104,6 @@ export default {
   },
 
   created() {
-    this.socket = io(this.$store.getters.getApiSocket);
-
     console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {
       console.log("exits");
@@ -77,7 +113,9 @@ export default {
       this.$router.push("/login");
     }
 
-    this.socket.on("getUserAccess", (data) => {
+    this.socket = io(this.$store.getters.getApiSocket);
+
+    /*     this.socket.on("getUserAccess", (data) => {
       this.ProjectAccessLevel = data.access;
     });
     this.socket.on("projectData", (data) => {
@@ -95,42 +133,15 @@ export default {
     });
     this.socket.on("projectStructure", (data) => {
       console.log("data", data);
-      /*  this.$store.commit("setMessage", data);
+        this.$store.commit("setMessage", data);
       if (data.errormsg == "projectremovesuccess") {
         this.$router.push("/home");
-      } */
-    });
+      }  
+    });*/
   },
 
   mounted() {
-    console.log("try to create", sessionStorage.getItem("projectID"));
-    if (sessionStorage.getItem("projectID") == "-1") {
-      if (
-        localStorage.getItem("usr") &&
-        sessionStorage.getItem("projectID") == "-1"
-      ) {
-        console.log("create");
-        this.socket.emit("createProject", {
-          owner: localStorage.getItem("usr"),
-        });
-      } else {
-        this.$router.push("/home");
-      }
-    } else if (
-      sessionStorage.getItem("projectID") != null &&
-      sessionStorage.getItem("projectID") != "undefined"
-    ) {
-      console.log("getProject", sessionStorage.getItem("projectID"));
-      this.socket.emit("getProject", {
-        projectID: sessionStorage.getItem("projectID"),
-      });
-    } else {
-      this.$router.push("/login");
-    }
-
-    this.socket.emit("checkUserAccess", {
-      projectID: sessionStorage.getItem("projectID"),
-    });
+    this.loadProject();
   },
 };
 </script>

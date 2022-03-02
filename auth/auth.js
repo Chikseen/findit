@@ -6,7 +6,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const JSONdb = require("simple-json-db");
 const cors = require("cors");
-const mailer= require("./mailHandling/mailer.js");
+const mailer = require("./mailHandling/mailer.js");
 const initMailTemplate = require("./mailHandling/initMailTemplate.js");
 const nodemailer = require("nodemailer");
 
@@ -30,7 +30,6 @@ const user = new JSONdb(pathPreFix + "/database/user.json", { asyncWrite: false,
 const mailAuth = new JSONdb(pathPreFix + "/database/mailAuth.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 const eur = new JSONdb(pathPreFix + "/database/emailuserrealation.json", { asyncWrite: false, syncOnWrite: true, jsonSpaces: 4 });
 
-
 var transporter = nodemailer.createTransport({
   auth: {
     user: mailAuth.get("name"),
@@ -40,7 +39,6 @@ var transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   secure: false,
 });
-
 
 if (process.env.NODE_ENV != "development") {
   console.log("Send init mail");
@@ -216,4 +214,30 @@ app.post("/session/checkUser", async (request, response) => {
     console.log("Session not exists");
     response.json({ status: false });
   }
+});
+
+// Server API auth calls
+app.post("/session/checkMail", async (request, response) => {
+  console.log("check if mail exits", request.body);
+  response.json({ result: user.has(request.body.email) });
+});
+
+app.post("/session/getMail", async (request, response) => {
+  console.log("get mail from user", request.body);
+  response.json({ result: eur.get(request.body) });
+});
+
+app.post("/session/getUser", async (request, response) => {
+  console.log("get user from mail", request.body);
+  console.log("get user from mail", user.get(request.body.email));
+  response.json({ result: user.get(request.body.email).userName });
+});
+
+app.post("/session/sendMailForInvite", async (request, response) => {
+  console.log("sendmail for invite info", request.body.email);
+  const varimail = {
+    subject: "INVITER_NAME has invited you to his Project",
+    html: initMailTemplate.projinvite(),
+  };
+  mailer.sendMail(transporter, mailAuth.get("name"), request.body.email, varimail);
 });
