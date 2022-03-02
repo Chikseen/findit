@@ -35,7 +35,9 @@ module.exports = {
         <h1>Please validate your E-Mail address to use the drunc service</h1>
         <p>just click this Button and the magic Wizard will validate your account</p>
         <a href="${process.env.NODE_ENV == 'development' ? 'http://localhost:8080' : 'drunc.net'}/#/varifyer?verificationID=${id}">Validate me</a>
-      </body>
+        <p>Your mailer dosent support HTML ??? try copy this link in the browsers searchbar</p>
+        <p>${process.env.NODE_ENV == 'development' ? 'http://localhost:8080' : 'drunc.net'}/#/varifyer?verificationID=${id}</p>
+        </body>
     </html>
     `;
   },
