@@ -1,6 +1,7 @@
 const nodefetch = require("../node_modules/node-fetch");
 module.exports = {
   async checkUser(call, address, payload) {
+    console.log("Req to authhandler")
     const request = await nodefetch(`${call}${address}`, {
       body: JSON.stringify(payload),
       headers: {

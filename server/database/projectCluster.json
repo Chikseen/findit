@@ -1,8 +1,26 @@
 {
-    "drunc": {
+    "tim": {
         "ownProjects": [],
-        "sharedByProjects": [],
+        "sharedByProjects": [
+            {
+                "projectID": "454031114531",
+                "shareBy": "drunc"
+            }
+        ],
         "sharedWithProjects": []
     },
-    "drunc.ownProjects": 2
+    "drunc": {
+        "ownProjects": [
+            454031114531
+        ],
+        "sharedByProjects": [],
+        "sharedWithProjects": [
+            {
+                "454031114531": [
+                    "tim"
+                ]
+            }
+        ]
+    },
+    "drunc.ownProjects": 1
 }

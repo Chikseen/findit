@@ -64,6 +64,16 @@ export default {
         this.projectData = data;
       }
     },
+    async sendInvite() {
+      console.log("sendInvite to ", this.shareWithText);
+      const data = await api.projectcall("projects/sendInvite", {
+        shareWith: this.shareWithText,
+        shareBy: localStorage.getItem("usr"),
+        projectID: sessionStorage.getItem("projectID"),
+      });
+      console.log("data", data);
+      this.$store.commit("setMessage", data);
+    },
 
     /*       let val = confirm("Are you sure to want delete this Project");
       if (val == true) {
@@ -74,7 +84,7 @@ export default {
       } else {
         console.log("cancel delete request");
       } */
-
+    /* 
     sendInvite() {
       if (this.shareWithText != "") {
         this.socket.emit("shareProject", {
@@ -83,7 +93,7 @@ export default {
           projectID: sessionStorage.getItem("projectID"),
         });
       }
-    },
+    }, */
     addElement() {
       this.socket.emit("addElementToParent", {
         project: sessionStorage.getItem("projectID"),

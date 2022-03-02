@@ -12,5 +12,12 @@
         "passwort": "$2b$10$cad7L6r4Z0bdOFN.bZrHOO.Lkwh0JTKutqW4eHS38Gthg./CtqlZu",
         "isValidated": false,
         "varifiyID": "LRBMBLLLAKELKNNCFLGC"
+    },
+    "timtimtim": {
+        "userName": "tim",
+        "email": "timtimtim",
+        "passwort": "$2b$10$J4ISS2GH8mbxggGlM9QPAOEJ6w0jb6zNpL2yZnRh0vDvP0zqge/6G",
+        "isValidated": true,
+        "varifiyID": ""
     }
 }
