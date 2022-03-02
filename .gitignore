@@ -1,8 +1,5 @@
 # debug
 localDebug.js
-emailuserrealation.json
-user.json
-*/database/*
 
 # Logs
 logs
@@ -10,7 +7,6 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-mailAuth.json
 lerna-debug.log*
 
 #docker
@@ -48,7 +44,7 @@ bower_components
 build/Release
 
 # Dependency directories
-server/database/projects/
+database/
 node_modules/
 jspm_packages/
 
