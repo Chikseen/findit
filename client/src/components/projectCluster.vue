@@ -29,18 +29,17 @@ export default {
   },
   methods: {
     async goToProject(projectID) {
-      const data = await api.projectcall("projects/loading", {
+      const id = await api.projectcall("projects/getID", {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
         projectID: projectID,
       });
-      console.log("data", data);
-      if (toString(data.id).length == 18) {
-        sessionStorage.setItem("projectID", data.id);
+      if (toString(id).length == 18) {
+        sessionStorage.setItem("projectID", id);
 
         this.$router.push({
           name: "ProjectView",
-          query: { projectid: data.id },
+          query: { projectid: id },
         });
       } else {
         console.log("projecthandling: an error eccoured");
