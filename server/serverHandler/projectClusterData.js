@@ -24,7 +24,7 @@ module.exports = {
     newProj.set("owner", owner);
     newProj.set("created", new Date());
     newProj.set("id", projectID);
-    newProj.set("main", { pcr: {}, data: {} });
+    newProj.set("main", { pcr: {}, data: { maxLevel: 0 } });
 
     if (!projectCluster.get(owner).ownProjects.includes(projectID)) {
       console.log("set Owenr");

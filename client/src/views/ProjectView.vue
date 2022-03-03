@@ -8,8 +8,12 @@
     <button @click="deletProject">delete Project</button>
 
     <div class="elemHandler">
-      <select v-if="projectData.main.data" name="cars" id="cars" v-model="parentSelected">
-        <option v-for="parent in projectData.main.data[0]" :key="parent">{{ parent }}</option>
+      <select v-if="projectData.main.data" v-model="curretLevel">
+        <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">{{ i }}</option>
+      </select>
+      <select v-if="projectData.main.data" v-model="parentSelected">
+        <option></option>
+        <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">{{ parent }}</option>
       </select>
       <input type="text" v-model="elementToAdd" />
       <button @click="addElement">Add</button>
@@ -20,11 +24,40 @@
       <input type="text" v-model="shareWithText" />
       <button @click="sendInvite">Send Invite</button>
     </div>
+
+    <div class="projectList" v-if="projectData.main.data">
+      <div class="overlook">
+        <div v-if="parseInt(curretLevel) - 1 >= 0">
+          <h3>Previus Level</h3>
+          <p v-for="parent in projectData.main.data[parseInt(curretLevel) - 1]" :key="parent + (curretLevel - 1)">{{ parent }}</p>
+        </div>
+        <div v-else>
+          <h5>Du bist bereits Toplevel</h5>
+        </div>
+      </div>
+      <div class="overlook">
+        <div v-if="projectData.main.data">
+          <h3>This Level</h3>
+          <p v-for="parent in projectData.main.data[parseInt(curretLevel)]" :key="parent + curretLevel">{{ parent }}</p>
+        </div>
+        <div v-else>
+          <h5>No Data</h5>
+        </div>
+      </div>
+      <div class="overlook">
+        <div v-if="projectData.main.data[parseInt(curretLevel) + 1]">
+          <h3>Next Level</h3>
+          <p v-for="parent in projectData.main.data[parseInt(curretLevel) + 1]" :key="parent + (curretLevel + 1)">{{ parent }}</p>
+        </div>
+        <div v-else>
+          <h5>Es gibt keine weiteren Elemnte mehr in dieser reihenfolge</h5>
+        </div>
+      </div>
+    </div>
+
+    <div></div>
+
     <h6>{{ projectData }}</h6>
-    <p>___</p>
-    <p>{{ projectData.main.data }}</p>
-    <p>___</p>
-    <p>{{ projectData.main.pcr }}</p>
   </div>
 </template>
 
@@ -41,6 +74,7 @@ export default {
       elementToAdd: "",
       parentSelected: "",
       userdata: 0,
+      curretLevel: 0,
     };
   },
   methods: {
@@ -187,5 +221,12 @@ export default {
 .elemHandler {
   padding: 20px;
   background-color: aqua;
+}
+.projectList {
+  background-color: bisque;
+}
+.overlook {
+  display: flex;
+  flex: row;
 }
 </style>

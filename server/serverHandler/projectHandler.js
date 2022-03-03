@@ -12,7 +12,10 @@ module.exports = {
     project.pcr[data.child] = { parent: data.parent, level: level };
 
     // Add new level if not exits
-    if (!project.data[level]) project.data[level] = [];
+    if (!project.data[level]) {
+      project.data[level] = [];
+      project.data.maxLevel = level
+    }
     project.data[level].push(data.child);
 
     projectall.set("main", project);
