@@ -10,6 +10,7 @@ const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
 const auth = require("./serverHandler/authHandler");
+const projectHandler = require("./serverHandler/projectHandler");
 
 let pathPreFix;
 let authCall;
@@ -50,11 +51,12 @@ app.get("/", (req, res) => {
 });
 
 let userBinds = {};
+let userInProj = {};
 
 app.post("/home/projectData/metaData", async (request, response) => {
   console.log("get Project Meta Data for ", request.body);
   if (!projectCluster.has(request.body)) {
-    console.log("Create Projectcluster for user")
+    console.log("Create Projectcluster for user");
     projectCluster.set(request.body, {
       ownProjects: [],
       sharedByProjects: [],
@@ -107,26 +109,44 @@ app.post("/projects/load", async (request, response) => {
 app.post("/projects/sendInvite", async (request, response) => {
   response.json(await projectClusterData.sendInvite(JSONdb, fs, pathPreFix, request.body, authCall, io, userBinds));
 });
+
+app.post("/projects/addElement", async (request, response) => {
+  response.json(await projcthandler.addElement(JSONdb, pathPreFix, request.body));
+  sendNewDataToWatcher(request.body.projectID);
+});
+
+app.post("/projects/adduserInProj", async (request, response) => {
+  console.log("add user as watcher", request.body);
+  if (userInProj[request.body.projectID] == undefined) userInProj[request.body.projectID] = [];
+  userInProj[request.body.projectID].push(request.body.socketID);
+  console.log("userInProj", userInProj);
+  sendUserData(request.body.projectID);
+  response.end();
+});
+
+app.post("/projects/removeuserInProj", async (request, response) => {
+  console.log("remove user as watcher", request.body);
+  userInProj[request.body.projectID].splice(userInProj[request.body.projectID].indexOf(request.body.socketID), 2);
+  sendUserData(request.body.projectID);
+  response.end();
+});
+
 //_____________________________________________________________________________________________________________________
 // SOCKET
 io.on("connection", (socket) => {
   console.log("CONNECTED", socket.id);
 
   //DELTEPROJECT
-  socket.on("deleteProject", async (data) => {
-    console.log("Try to delete Project", data);
-    socket.emit("response", projectClusterData.deleteProject(projectCluster, fs, pathPreFix, data));
-  });
 
   socket.on("shareProject", async (data) => {});
 
-  socket.on("addElementToParent", async (data) => {
+  /*   socket.on("addElementToParent", async (data) => {
     console.log("add Element ");
     const test = projcthandler.addElement(JSONdb, pathPreFix, data);
     console.log("test", test);
     socket.emit("projectStructure", await projcthandler.addElement(JSONdb, pathPreFix, data));
   });
-
+ */
   //REMOVE SOCKETDATA ON DISCONNECT
   socket.on("disconnect", (reason) => {
     console.log("DISCON", socket.id);
@@ -134,3 +154,21 @@ io.on("connection", (socket) => {
 });
 
 io.listen(7080);
+
+async function sendNewDataToWatcher(id) {
+  console.log("send new data to all watcher of", id);
+
+  const data = await projectHandler.getMain(JSONdb, pathPreFix, id);
+  console.log("data", data);
+  userInProj[id].forEach((user) => {
+    console.log("for ", user);
+    io.sockets.to(user).emit("newProjData", data);
+  });
+}
+
+async function sendUserData(id) {
+  userInProj[id].forEach((user) => {
+    console.log("for ", user);
+    io.sockets.to(user).emit("newUserData", { user: userInProj[id].length });
+  });
+}

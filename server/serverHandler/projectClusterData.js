@@ -24,7 +24,7 @@ module.exports = {
     newProj.set("owner", owner);
     newProj.set("created", new Date());
     newProj.set("id", projectID);
-    newProj.set("data", {});
+    newProj.set("main", { pcr: {}, data: {} });
 
     if (!projectCluster.get(owner).ownProjects.includes(projectID)) {
       console.log("set Owenr");
@@ -37,7 +37,7 @@ module.exports = {
   getProject(JSONdb, pathPreFix, projectID) {
     console.log("get Project Data", projectID);
     const newProj = new JSONdb(pathPreFix + "/database/projects/" + projectID + ".json");
-    if (newProj.has("data")) {
+    if (newProj.has("main")) {
       return newProj.storage;
     } else {
       return {

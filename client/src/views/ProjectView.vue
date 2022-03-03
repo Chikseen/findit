@@ -3,12 +3,13 @@
     <div>
       <p>project with id {{ projectData.id }}</p>
       <p>Created at {{ projectData.created }}</p>
+      <p>Users currectly in this project {{ userdata }}</p>
     </div>
     <button @click="deletProject">delete Project</button>
 
     <div class="elemHandler">
-      <select name="cars" id="cars" v-model="parentSelected">
-        <!--    <option v-for="elem in elems" :key="elem">{{ elem }}</option> -->
+      <select v-if="projectData.main.data" name="cars" id="cars" v-model="parentSelected">
+        <option v-for="parent in projectData.main.data[0]" :key="parent">{{ parent }}</option>
       </select>
       <input type="text" v-model="elementToAdd" />
       <button @click="addElement">Add</button>
@@ -19,6 +20,11 @@
       <input type="text" v-model="shareWithText" />
       <button @click="sendInvite">Send Invite</button>
     </div>
+    <h6>{{ projectData }}</h6>
+    <p>___</p>
+    <p>{{ projectData.main.data }}</p>
+    <p>___</p>
+    <p>{{ projectData.main.pcr }}</p>
   </div>
 </template>
 
@@ -30,10 +36,11 @@ export default {
   data() {
     return {
       ProjectAccessLevel: "",
-      projectData: {},
+      projectData: { main: {} },
       shareWithText: "",
       elementToAdd: "",
       parentSelected: "",
+      userdata: 0,
     };
   },
   methods: {
@@ -74,6 +81,17 @@ export default {
       console.log("data", data);
       this.$store.commit("setMessage", data);
     },
+    async addElement() {
+      const data = await api.projectcall("projects/addElement", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        child: this.elementToAdd,
+        parent: this.parentSelected,
+      });
+      console.log("data", data);
+      this.projectData.main = data;
+    },
 
     /*       let val = confirm("Are you sure to want delete this Project");
       if (val == true) {
@@ -94,16 +112,16 @@ export default {
         });
       }
     }, */
-    addElement() {
-      this.socket.emit("addElementToParent", {
-        project: sessionStorage.getItem("projectID"),
-        parent: this.parentSelected,
-        toAdd: this.elementToAdd,
-      });
-    },
   },
 
   created() {
+    window.onbeforeunload = async function () {
+      await api.projectcall("projects/removeuserInProj", {
+        projectID: sessionStorage.getItem("projectID"),
+        socketID: this.id,
+      });
+    };
+
     console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {
       console.log("exits");
@@ -114,6 +132,25 @@ export default {
     }
 
     this.socket = io(this.$store.getters.getApiSocket);
+    this.socket.on("newProjData", (data) => {
+      console.log("incomming data", data);
+      if (!data.isError) {
+        this.projectData.main = data;
+      }
+    });
+    this.socket.on("newUserData", (data) => {
+      console.log("incomming data", data);
+      if (!data.isError) {
+        this.userdata = data;
+      }
+    });
+
+    this.socket.on("connect", async function () {
+      await api.projectcall("projects/adduserInProj", {
+        projectID: sessionStorage.getItem("projectID"),
+        socketID: this.id,
+      });
+    });
 
     /*     this.socket.on("getUserAccess", (data) => {
       this.ProjectAccessLevel = data.access;
