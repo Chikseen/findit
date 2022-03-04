@@ -108,13 +108,16 @@ export default {
       this.$store.commit("setMessage", data);
     },
     async validateLogin() {
+      console.log("set validaiton")
       const data = await api.fetchData("user/validateLogin", {
         userName: this.username,
         passwort: this.passwort,
       });
       this.$store.commit("setMessage", data);
       if (data.succes) {
+        console.log("validation succed")
         this.$store.commit("setloginStatus", true);
+        console.log("getttttt", this.$store.getters.getloginStatus)
         localStorage.setItem("sessionID", data.SID);
         localStorage.setItem("usr", this.username);
         this.tryLogin();
@@ -149,16 +152,19 @@ export default {
     },
     async tryLogin() {
       if (this.$store.getters.getloginStatus) {
+        console.log("::::::::::::::::::::::",localStorage.getItem("sessionID"))
+        console.log("::::::::::::::::::::::",localStorage.getItem("usr"))
         const data = await api.fetchData("session/checkUser", {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
-        console.log("data", data);
+        console.log("data______", data.status);
         if (data.status) {
+          console.log("pushed Home")
           this.$router.push("/Home");
         } else {
-          localStorage.clear();
-          this.$store.commit("setloginStatus", false);
+        //  localStorage.clear();
+        //  this.$store.commit("setloginStatus", false);
         }
       } else {
         localStorage.clear();

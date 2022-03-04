@@ -1,12 +1,17 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import { store } from './vuex/store'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+//import { store } from './vuex/store'
+import { createStore } from 'vuex'
+import vueStore from "./vuex/store"
 
-Vue.config.productionTip = false
+// Create a new store instance.
+const store = createStore(vueStore)
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+const app = createApp(App);
+
+app.use(router);
+app.use(store)
+
+app.mount("#app");
+

@@ -33,7 +33,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .message_wrapper {
   position: absolute;
   bottom: 10px;

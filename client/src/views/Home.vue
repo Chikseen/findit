@@ -51,6 +51,8 @@ export default {
       this.projectCluster = data;
     },
     async checkUserValidation() {
+      console.log("checkwith", localStorage.getItem("sessionID"));
+      console.log("checkwith", localStorage.getItem("usr"));
       const data = await api.fetchData("session/checkUser", {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),

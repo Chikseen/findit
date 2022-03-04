@@ -6,21 +6,19 @@
 </template>
 
 <script>
-require("dotenv").config();
 import Messege from "./assets/messageComponent.vue";
-
 export default {
   components: {
     Messege,
   },
   created() {
-    if (process.env.NODE_ENV === "development") {
-      console.log("Build from Local");
-      this.$store.commit("setApiSocket", "http://localhost:7080");
-    } else {
+    //   if (process.env.NODE_ENV === "development") {
+    console.log("Build from Local");
+    this.$store.commit("setApiSocket", "http://localhost:7080");
+    /*     } else {
       console.log("Build from ApiSocket");
       this.$store.commit("setApiSocket", "https://api.drunc.net");
-    }
+    } */
   },
 };
 </script>
