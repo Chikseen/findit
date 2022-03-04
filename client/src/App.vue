@@ -7,18 +7,20 @@
 
 <script>
 import Messege from "./assets/messageComponent.vue";
+import envvar from "../envReplace.json";
+
 export default {
   components: {
     Messege,
   },
   created() {
-    //   if (process.env.NODE_ENV === "development") {
-    console.log("Build from Local");
-    this.$store.commit("setApiSocket", "http://localhost:7080");
-    /*     } else {
+    if (envvar.mode === "development") {
+      console.log("Build from Local");
+      this.$store.commit("setApiSocket", "http://localhost:7080");
+    } else {
       console.log("Build from ApiSocket");
       this.$store.commit("setApiSocket", "https://api.drunc.net");
-    } */
+    }
   },
 };
 </script>

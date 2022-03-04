@@ -1,7 +1,10 @@
-const runIn = "development";
+import envvar from "../envReplace.json";
+const runIn = envvar.mode;
+
 const apiService = {
   //DATA FETCHER
   async fetchData(adress, payload) {
+    console.log("runIn", runIn);
     let call;
     if (runIn == "development") {
       call = "http://192.168.2.100:6080";
