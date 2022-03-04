@@ -158,35 +158,15 @@ export default {
       console.log("data", data);
       this.projectData.main = data;
     },
-
-    /*       let val = confirm("Are you sure to want delete this Project");
-      if (val == true) {
-        this.socket.emit("deleteProject", {
-          projectID: this.projectData.id,
-          owner: localStorage.getItem("usr"),
-        });
-      } else {
-        console.log("cancel delete request");
-      } */
-    /* 
-    sendInvite() {
-      if (this.shareWithText != "") {
-        this.socket.emit("shareProject", {
-          shareWith: this.shareWithText,
-          shareBy: localStorage.getItem("usr"),
-          projectID: sessionStorage.getItem("projectID"),
-        });
-      }
-    }, */
   },
 
   created() {
-    window.onbeforeunload = async function () {
+   /*  window.onbeforeunload = async function () {
       await api.projectcall("projects/removeuserInProj", {
         projectID: sessionStorage.getItem("projectID"),
         socketID: this.id,
       });
-    };
+    }; */
 
     console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {
