@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+envReplace.json
+
 node_modules
 .DS_Store
 dist

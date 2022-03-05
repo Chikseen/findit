@@ -115,6 +115,11 @@ app.post("/projects/addElement", async (request, response) => {
   sendNewDataToWatcher(request.body.projectID);
 });
 
+app.post("/projects/removeElement", async (request, response) => {
+  response.json(await projcthandler.removeElement(JSONdb, pathPreFix, request.body));
+  sendNewDataToWatcher(request.body.projectID);
+});
+
 app.post("/projects/adduserInProj", async (request, response) => {
   console.log("add user as watcher", request.body);
   if (userInProj[request.body.projectID] == undefined) userInProj[request.body.projectID] = [];
