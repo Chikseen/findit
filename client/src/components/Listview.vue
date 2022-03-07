@@ -28,7 +28,7 @@
               </div>
               <div class="addElem">
                 <label for="addElem">New element</label>
-                <input id="addElem" type="text" @keyup.enter="addElement(parent, $event.target.value)" />
+                <input id="addElem" type="text" :ref="'Ichild' + parent" @keyup.enter="addElement(parent, $event.target.value, 'Ichild' + parent)" />
                 <button style="background: red" @mouseup="removeChild(parent)">Delete this elem (it has to be empty)</button>
               </div>
             </div>
@@ -38,24 +38,21 @@
               <h4>
                 {{ parent }}
               </h4>
-              <div
-                @mouseup="increaseCurrentLevel(child)"
-                class="parentListChild"
-                v-for="child in projectData.main.data[curretLevel + 1]"
-                :key="child + curretLevel"
-              >
-                <p v-if="projectData.main.pcr[child].parent == parent">{{ child }}</p>
+              <div @mouseup="increaseCurrentLevel(child)" v-for="child in projectData.main.data[curretLevel + 1]" :key="child + curretLevel">
+                <div v-if="projectData.main.pcr[child].parent == parent" class="parentListChild">
+                  <p>{{ child }}</p>
+                </div>
               </div>
               <div class="addElem">
-                <label for="addElem">New element</label>
-                <input id="addElem" type="text" @keyup.enter="addElement(parent, $event.target.value)" />
+                <label for="addElem2">New element</label>
+                <input id="addElem2" type="text" :ref="'Ichild' + parent" @keyup.enter="addElement(parent, $event.target.value, 'Ichild' + parent)" />
                 <button style="background: red" @mouseup="removeChild(parent)">Delete this elem (it has to be empty)</button>
               </div>
             </div>
           </div>
           <div class="addParent parentlist" v-if="curretLevel == 0">
-            <label for="addElem">New element</label>
-            <input id="addElem" type="text" @keyup.enter="addElement('', $event.target.value)" />
+            <label for="addElem3">New element</label>
+            <input id="addElem3" type="text" :ref="'Iroot'" @keyup.enter="addElement('', $event.target.value, 'Iroot')" />
           </div>
         </div>
       </div>
@@ -89,9 +86,10 @@ export default {
     };
   },
   methods: {
-    async addElement(parent, child) {
+    async addElement(parent, child, ref) {
       console.log("add child", child);
       console.log("to parent", parent);
+      console.log("ref", ref);
       const data = await api.projectcall("projects/addElement", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),
@@ -99,6 +97,7 @@ export default {
         parent: parent,
         child: child,
       });
+      this.$refs[ref].value = "";
       console.log("data", data);
       this.projectData.main = data;
     },
