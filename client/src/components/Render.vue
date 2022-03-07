@@ -2,11 +2,6 @@
   <Renderer ref="renderer" antialias alpha class="render-wrapper" resize="window / 2" orbit-ctrl>
     <Camera ref="camera" :position="{ z: 150, x: 0, y: 0 }" :fov="100" />
     <Raycaster
-      @pointerEnter="onPointerEvent"
-      @pointerOver="onPointerOver"
-      @pointerMove="onPointerEvent"
-      @pointerLeave="onPointerEvent"
-      @click="onPointerEvent"
     />
     <Scene>
       <PointLight :position="{ y: 20, z: 100, x: 100 }" :intensity="0" />
@@ -49,23 +44,8 @@ export default {
       zoffset: 100,
     };
   },
-  methods: {
-    onPointerEvent(event) {
-      console.log(event);
-    },
-    onPointerOver(event) {
-      event.component.mesh.material.color.set(event.over ? 0xff0000 : 0xffffff);
-    },
-    rotateRight() {
-      camera.rotation.y = (camera.rotation.y * Math.PI) / 180;
-    },
-  },
-  mounted() {
-    const camera = this.$refs.camera.camera;
-    console.log("camera", camera);
-
-  
-  },
+  methods: {},
+  mounted() {},
 };
 </script>
 

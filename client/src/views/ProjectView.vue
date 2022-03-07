@@ -33,7 +33,7 @@
       <input id="levelSlider" type="range" v-model="curretLevel" min="0" :max="projectData.main.data.maxLevel + 1" />
       <label for="levelSlider">{{ curretLevel }}</label>
     </div>
-    <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" />
+    <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" @increaseCurrentLevel="increaseCurrentLevel" />
     <Render />
 
     <h6>{{ projectData }}</h6>
@@ -113,16 +113,22 @@ export default {
       console.log("data", data);
       this.projectData.main = data;
     },
+    increaseCurrentLevel(istrue) {
+      console.log("istrue", istrue);
+      if (istrue) this.curretLevel++;
+      else this.curretLevel--;
+    },
   },
 
   created() {
-    if (import.meta.env.MODE == "development"){
-    window.onbeforeunload = async function () {
-      await api.projectcall("projects/removeuserInProj", {
-        projectID: sessionStorage.getItem("projectID"),
-        socketID: this.id,
-      });
-    }}
+    if (import.meta.env.MODE != "development") {
+      window.onbeforeunload = async function () {
+        await api.projectcall("projects/removeuserInProj", {
+          projectID: sessionStorage.getItem("projectID"),
+          socketID: this.id,
+        });
+      };
+    }
 
     console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {

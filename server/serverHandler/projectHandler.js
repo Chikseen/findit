@@ -50,7 +50,9 @@ module.exports = {
     allfirstChilds.forEach((elem) => {
       delete project.pcr[elem];
     });
-    project.pcr[project.pcr[data.parent].parent].childs.splice(project.pcr[project.pcr[data.parent].parent].childs.indexOf(data.parent), 1);
+    if (level != 0) {
+      project.pcr[project.pcr[data.parent].parent].childs.splice(project.pcr[project.pcr[data.parent].parent].childs.indexOf(data.parent), 1);
+    }
     delete project.pcr[data.parent];
 
     project.data[level].splice(project.data[level].indexOf(data.parent), 1);
