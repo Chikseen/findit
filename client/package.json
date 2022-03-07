@@ -8,11 +8,16 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "connect-history-api-fallback": "^1.6.0",
     "dotenv": "^16.0.0",
     "dotenv-webpack": "^7.1.0",
+    "express": "^4.17.3",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
     "next": "^12.1.0",
+    "path": "^0.12.7",
     "require.js": "^1.0.0",
-    "socket-io": "^1.0.0",
+    "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "three": "^0.134.0",
     "troisjs": "^0.3.4",
