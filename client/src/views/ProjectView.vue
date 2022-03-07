@@ -5,7 +5,7 @@
       <p>Created at {{ projectData.created }}</p>
       <p>Users currectly in this project {{ userdata }}</p>
     </div>
-    <button @click="deletProject">delete Project</button>
+    <button @mouseup="deletProject">delete Project</button>
 
     <div class="elemHandler">
       <select v-if="projectData.main.data" v-model="curretLevel">
@@ -20,13 +20,13 @@
         </option>
       </select>
       <input type="text" v-model="elementToAdd" />
-      <button @click="addElement">Add</button>
+      <button @mouseup="addElement">Add</button>
     </div>
 
     <div>
       <h2>Share this Project with</h2>
       <input type="text" v-model="shareWithText" />
-      <button @click="sendInvite">Send Invite</button>
+      <button @mouseup="sendInvite">Send Invite</button>
     </div>
     <div class="levelSlider" v-if="projectData.main.data">
       <label for="levelSlider">Current level to watch</label>
@@ -116,7 +116,7 @@ export default {
     increaseCurrentLevel(istrue) {
       console.log("istrue", istrue);
       if (istrue) this.curretLevel++;
-      else this.curretLevel--;
+      else if (this.curretLevel > 0) this.curretLevel--;
     },
   },
 

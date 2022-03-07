@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === "development") {
 
 // DATAINIT
 databaseIntegrity.init(fs, pathPreFix);
-databaseIntegrity.checkProjectCluster(fs, pathPreFix);
+//databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
 const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 const io = new Server({

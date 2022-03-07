@@ -15,34 +15,31 @@
     <div class="overlook mainDataWrapper">
       <div v-if="projectData.main.data">
         <div class="mainData">
-          <div v-for="parent in projectData.main.data[curretLevel]" :key="parent + curretLevel" class="parentlist">
-            <div v-if="watchChild == ''">
+          <div v-for="parent in projectData.main.data[curretLevel]" :key="parent + curretLevel">
+            <div v-if="watchChild == ''" class="parentlist">
               <!-- SAME AS THIS, CHANGE -->
               <h4>
                 {{ parent }}
               </h4>
-              <div
-                @click="increaseCurrentLevel(child)"
-                class="parentListChild"
-                v-for="child in projectData.main.data[curretLevel + 1]"
-                :key="child + curretLevel"
-              >
-                <p v-if="projectData.main.pcr[child].parent == parent">{{ child }}</p>
+              <div @mouseup="increaseCurrentLevel(child)" v-for="child in projectData.main.data[curretLevel + 1]" :key="child + curretLevel">
+                <div v-if="projectData.main.pcr[child].parent == parent" class="parentListChild">
+                  <p>{{ child }}</p>
+                </div>
               </div>
               <div class="addElem">
                 <label for="addElem">New element</label>
                 <input id="addElem" type="text" @keyup.enter="addElement(parent, $event.target.value)" />
-                <button style="background: red" @click="removeChild(parent)">Delete this elem (it has to be empty)</button>
+                <button style="background: red" @mouseup="removeChild(parent)">Delete this elem (it has to be empty)</button>
               </div>
             </div>
-            <div v-else-if="parent == watchChild">
-              <button @click="goBack">Go Up</button>
+            <div v-else-if="parent == watchChild" class="parentlist">
+              <button @mouseup="goBack">Go Up</button>
               <!-- SAME AS THIS, CHANGE -->
               <h4>
                 {{ parent }}
               </h4>
               <div
-                @click="increaseCurrentLevel(child)"
+                @mouseup="increaseCurrentLevel(child)"
                 class="parentListChild"
                 v-for="child in projectData.main.data[curretLevel + 1]"
                 :key="child + curretLevel"
@@ -52,7 +49,7 @@
               <div class="addElem">
                 <label for="addElem">New element</label>
                 <input id="addElem" type="text" @keyup.enter="addElement(parent, $event.target.value)" />
-                <button style="background: red" @click="removeChild(parent)">Delete this elem (it has to be empty)</button>
+                <button style="background: red" @mouseup="removeChild(parent)">Delete this elem (it has to be empty)</button>
               </div>
             </div>
           </div>
@@ -122,13 +119,11 @@ export default {
       this.$emit("increaseCurrentLevel", true);
     },
     goBack() {
-      console.log("watching this", this.watchChild);
-      console.log("parent is", this.projectData.main.pcr[this.watchChild].parent);
       this.watchChild = this.projectData.main.pcr[this.watchChild].parent;
-      this.$emit("increaseCurrentLevel", false);
-      if (this.curretLevel == 0) {
+      if (this.curretLevel - 1 == 0) {
         this.watchChild = "";
       }
+      this.$emit("increaseCurrentLevel", false);
     },
   },
 };

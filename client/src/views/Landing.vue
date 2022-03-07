@@ -33,7 +33,7 @@
     <hr />
     <hr />
     <hr />
-    <button @click="login">LOGIN</button>
+    <button @mouseup="login">LOGIN</button>
   </div>
 </template>
 

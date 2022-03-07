@@ -10,17 +10,17 @@ module.exports = {
       fs.mkdirSync(pathPreFix + "/database/projects");
     }
 
-    if (!fs.existsSync(pathPreFix + "/database/projectcluster.json")) {
-      console.log("creating projectcluster.json");
+    if (!fs.existsSync(pathPreFix + "/database/projectCluster.json")) {
+      console.log("creating projectCluster.json");
       fs.writeFile(
-        pathPreFix + "/database/projectcluster.json",
+        pathPreFix + "/database/projectCluster.json",
         "",
         "utf8",
         function (err) {}
       );
-      //fs.appendFile(pathPreFix + "/database/projectcluster.json");
+      //fs.appendFile(pathPreFix + "/database/projectCluster.json");
     }
   },
 
-  checkProjectCluster() {},
+  checkprojectCluster() {},
 };

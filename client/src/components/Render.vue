@@ -25,7 +25,7 @@
     </div>
     <div>
       <button>Rotate camera to the left</button>
-      <button @click="rotateRight">Rotate camera to the rigth</button>
+      <button @mouseup="rotateRight">Rotate camera to the rigth</button>
     </div>
   </Renderer>
 </template>

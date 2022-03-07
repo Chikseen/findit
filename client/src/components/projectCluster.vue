@@ -3,7 +3,7 @@
     <p v-if="projects.length == 0">Looks quiet empty here</p>
     <div class="projectcluster_preview">
       <ProjectPreview class="projectcluster_project" :project="{ id: 'addProject' }" @mouseup="goToProject('-1')" v-if="hasAdd" />
-      <div class="projectcluster_project" v-for="proj in projects" :key="proj" @click="goToProject(proj.projectID)">
+      <div class="projectcluster_project" v-for="proj in projects" :key="proj" @mouseup="goToProject(proj.projectID)">
         <ProjectPreview :project="{ id: proj }" />
         <div v-if="sharedbyself"></div>
         <p>{{ proj }}</p>

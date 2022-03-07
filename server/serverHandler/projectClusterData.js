@@ -1,7 +1,7 @@
 const authhandler = require("../serverHandler/authHandler");
 module.exports = {
   async getData(JSONdb, pathPreFix, data) {
-    const projectCluster = new JSONdb(pathPreFix + "/database/projectcluster.json");
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
     console.log("get Data for", data);
     if (!projectCluster.has(data)) {
       console.log("init new user");
@@ -16,7 +16,7 @@ module.exports = {
   },
 
   createProject(JSONdb, fs, pathPreFix, owner) {
-    const projectCluster = new JSONdb(pathPreFix + "/database/projectcluster.json");
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
     const projectID = Math.floor(Math.random() * 999999999999);
     fs.writeFile(pathPreFix + "/database/projects/" + projectID + ".json", "", "utf8", function (err) {});
 
@@ -57,7 +57,7 @@ module.exports = {
   },
 
   deleteProject(JSONdb, fs, pathPreFix, data) {
-    const projectCluster = new JSONdb(pathPreFix + "/database/projectcluster.json");
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
     if (projectCluster.get(data.user).ownProjects.includes(data.projectID)) {
       fs.unlinkSync(pathPreFix + "/database/projects/" + data.projectID + ".json");
       const index = projectCluster.get(data.user).ownProjects.indexOf(data.projectID);
@@ -80,7 +80,7 @@ module.exports = {
     }
   },
   async sendInvite(JSONdb, fs, pathPreFix, data, call, io, userBinds) {
-    const projectCluster = new JSONdb(pathPreFix + "/database/projectcluster.json");
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 
     console.log("ShareData", data);
     console.log("call", call);

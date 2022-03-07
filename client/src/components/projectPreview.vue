@@ -1,5 +1,5 @@
 <template>
-  <div class="projectPreview_wrapper" @click="emitClick">
+  <div class="projectPreview_wrapper" @mouseup="emitClick">
     <div v-if="project.id === 'addProject'">
       <AddIcon />
     </div>
