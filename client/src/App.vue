@@ -13,8 +13,6 @@ export default {
     Messege,
   },
   created() {
-
-    console.log("ttt", import.meta.env.MODE);
     if (import.meta.env.MODE == "development") {
       console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");

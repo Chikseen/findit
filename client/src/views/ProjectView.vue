@@ -116,12 +116,13 @@ export default {
   },
 
   created() {
+    if (import.meta.env.MODE == "development"){
     window.onbeforeunload = async function () {
       await api.projectcall("projects/removeuserInProj", {
         projectID: sessionStorage.getItem("projectID"),
         socketID: this.id,
       });
-    };
+    }}
 
     console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {

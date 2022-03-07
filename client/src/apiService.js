@@ -1,12 +1,9 @@
-import envvar from "../envReplace.json";
-const runIn = envvar.mode;
 
 const apiService = {
   //DATA FETCHER
   async fetchData(adress, payload) {
-    console.log("runIn", runIn);
     let call;
-    if (runIn == "development") {
+    if (import.meta.env.MODE == "development") {
       call = "http://192.168.2.100:6080";
     } else {
       call = "https://auth.drunc.net";
@@ -34,7 +31,7 @@ const apiService = {
   },
   async projectcall(adress, payload) {
     let call;
-    if (runIn == "development") {
+    if (import.meta.env.MODE == "development") {
       call = "http://192.168.2.100:7081";
     } else {
       call = "https://api.drunc.net";
