@@ -1,5 +1,10 @@
 <template>
   <div class="projectList" v-if="projectData.main.data">
+    <div class="levelSlider" v-if="watchChild == ''">
+      <label for="levelSlider">Current level to watch</label>
+      <input id="levelSlider" type="range" v-model="curretLevel" min="0" :max="projectData.main.data.maxLevel + 1" />
+      <label for="levelSlider">{{ curretLevel }}</label>
+    </div>
     <div class="overlook">
       <div v-if="curretLevel - 1 >= 0">
         <h3>All Parents</h3>
@@ -11,6 +16,7 @@
         <h5>There are no parents</h5>
       </div>
     </div>
+
     <!-- Main Data -->
     <div class="overlook mainDataWrapper">
       <div v-if="projectData.main.data">

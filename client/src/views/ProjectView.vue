@@ -1,42 +1,53 @@
 <template>
   <div>
-    <div>
-      <p>project with id {{ projectData.id }}</p>
-      <p>Created at {{ projectData.created }}</p>
-      <p>Users currectly in this project {{ userdata }}</p>
+    <div v-if="isLoading">
+      <h1>Page is Loading</h1>
     </div>
-    <button @mouseup="deletProject">delete Project</button>
+    <div v-if="!isLoading">
+      <div class="project_header">
+        <div class="project_header_metaInfo">
+          <div class="project_header_projName">
+            <input class="project_header_projName_input" v-model="projectName" @blur="setNewProjname($event.target.value)" />
+          </div>
+          <div class="project_header_detailes">
+            <p>Project ID: {{ projectData.id }}</p>
+            <p>Created At: {{ projectData.created }}</p>
+          </div>
+        </div>
+        <div class="project_header_userInfo">
+          <p>Currently watching: {{ userdata.user }}</p>
+          <p>This project is shared with: {{ projectData.sharedWith }}</p>
+        </div>
+      </div>
+      <button @mouseup="deletProject">delete Project</button>
 
-    <div class="elemHandler">
-      <select v-if="projectData.main.data" v-model="curretLevel">
-        <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
-          {{ i }}
-        </option>
-      </select>
-      <select v-if="projectData.main.data" v-model="parentSelected">
-        <option></option>
-        <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
-          {{ parent }}
-        </option>
-      </select>
-      <input type="text" v-model="elementToAdd" />
-      <button @mouseup="addElement">Add</button>
-    </div>
+      <div class="elemHandler">
+        <select v-if="projectData.main.data" v-model="curretLevel">
+          <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
+            {{ i }}
+          </option>
+        </select>
+        <select v-if="projectData.main.data" v-model="parentSelected">
+          <option></option>
+          <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
+            {{ parent }}
+          </option>
+        </select>
+        <input type="text" v-model="elementToAdd" />
+        <button @mouseup="addElement">Add</button>
+      </div>
 
-    <div>
-      <h2>Share this Project with</h2>
-      <input type="text" v-model="shareWithText" />
-      <button @mouseup="sendInvite">Send Invite</button>
-    </div>
-    <div class="levelSlider" v-if="projectData.main.data">
-      <label for="levelSlider">Current level to watch</label>
-      <input id="levelSlider" type="range" v-model="curretLevel" min="0" :max="projectData.main.data.maxLevel + 1" />
-      <label for="levelSlider">{{ curretLevel }}</label>
-    </div>
-    <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" @increaseCurrentLevel="increaseCurrentLevel" />
-    <Render />
+      <div>
+        <h2>Share this Project with</h2>
+        <input type="text" v-model="shareWithText" />
+        <button @mouseup="sendInvite">Send Invite</button>
+      </div>
+     
+      <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" @increaseCurrentLevel="increaseCurrentLevel" />
+      <Render />
 
-    <h6>{{ projectData }}</h6>
+      <h6>{{ projectData }}</h6>
+    </div>
   </div>
 </template>
 
@@ -59,8 +70,10 @@ export default {
       shareWithText: "",
       elementToAdd: "",
       parentSelected: "",
+      projectName: "",
       userdata: 0,
       curretLevel: 0,
+      isLoading: true,
     };
   },
   methods: {
@@ -87,6 +100,8 @@ export default {
         this.$store.commit("setMessage", data);
       } else {
         this.projectData = data;
+        this.projectName = data.name;
+        this.isLoading = false;
       }
     },
     async sendInvite() {
@@ -106,6 +121,34 @@ export default {
         parent: this.parentSelected,
       });
       this.projectData.main = data;
+    },
+    async setNewProjname(name) {
+      if (name != this.projectData.name) {
+        if (name.length >= 3) {
+          const data = await api.projectcall("projects/setNewName", {
+            projectID: sessionStorage.getItem("projectID"),
+            SID: localStorage.getItem("sessionID"),
+            user: localStorage.getItem("usr"),
+            name: name,
+          });
+          this.projectData.name = data.name;
+          this.projectName = data.name;
+        } else {
+          console.log("The project is to short");
+          this.projectName = this.projectData.name;
+          this.$store.commit("setMessage", {
+            isError: true,
+            msg: "The project is to short",
+          });
+        }
+      } else {
+        console.log("The project name cant be the same");
+        this.projectName = this.projectData.name;
+        this.$store.commit("setMessage", {
+          isError: true,
+          msg: "The project name cant be the same",
+        });
+      }
     },
     increaseCurrentLevel(istrue) {
       if (istrue) this.curretLevel++;
@@ -155,7 +198,52 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.project_header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(209, 209, 221);
+  width: calc(100% - 20px);
+  height: 5rem;
+  padding: 10px;
+
+  &_metaInfo {
+    display: flex;
+  }
+
+  &_projName {
+    display: flex;
+    width: 15rem;
+
+    &_input {
+      width: 100%;
+      font-size: 1.75rem;
+      background-color: rgba(0, 0, 0, 0);
+      border: 0;
+      border-right: 1px solid;
+      border-radius: 10px;
+    }
+  }
+
+  &_detailes {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0 10px;
+  }
+  &_detailes p {
+    margin: auto 0;
+    text-align: start;
+  }
+
+  &_userInfo {
+    max-width: 20rem;
+  }
+}
+
+/* __________________ */
+
 .elemHandler {
   padding: 20px;
   background-color: aqua;

@@ -1,8 +1,7 @@
 <template>
-  <Renderer ref="renderer" antialias alpha class="render-wrapper" resize="window / 2" orbit-ctrl>
+  <Renderer ref="renderer" antialias alpha class="render-wrapper" resize="window" orbit-ctrl>
     <Camera ref="camera" :position="{ z: 150, x: 0, y: 0 }" :fov="100" />
-    <Raycaster
-    />
+    <Raycaster />
     <Scene>
       <PointLight :position="{ y: 20, z: 100, x: 100 }" :intensity="0" />
       <AmbientLight color="#ffffff" :intensity="0.1" />
@@ -50,8 +49,8 @@ export default {
 </script>
 
 <style>
-/*   .render-wrapper {
-    width: 75%;
-    height: 500px;
-  } */
+.render-wrapper {
+  width: 50%;
+  border: 1px solid;
+}
 </style>

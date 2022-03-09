@@ -119,6 +119,13 @@ app.post("/projects/removeElement", async (request, response) => {
   sendNewDataToWatcher(request.body.projectID);
 });
 
+app.post("/projects/setNewName", async (request, response) => {
+  const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
+  proj.set("name", request.body.name);
+  console.log("set new Name", request.body.name);
+  response.json({ name: proj.get("name") });
+});
+
 app.post("/projects/adduserInProj", async (request, response) => {
   console.log("add user as watcher", request.body);
   if (userInProj[request.body.projectID] == undefined) userInProj[request.body.projectID] = [];
