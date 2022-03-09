@@ -47,12 +47,9 @@ export default {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
-      console.log("data", data);
       this.projectCluster = data;
     },
     async checkUserValidation() {
-      console.log("checkwith", localStorage.getItem("sessionID"));
-      console.log("checkwith", localStorage.getItem("usr"));
       const data = await api.fetchData("session/checkUser", {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
@@ -80,7 +77,6 @@ export default {
     });
   },
   mounted() {
-    console.log("login Status", this.$store.getters.getloginStatus);
     this.getUserData();
   },
 };

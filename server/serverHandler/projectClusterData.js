@@ -82,9 +82,6 @@ module.exports = {
   async sendInvite(JSONdb, fs, pathPreFix, data, call, io, userBinds) {
     const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 
-    console.log("ShareData", data);
-    console.log("call", call);
-
     console.log("data.shareWith", data.shareWith);
     console.log("data.shareBy", data.shareBy);
     if (data.shareWith != undefined && data.shareBy != undefined) {
@@ -101,11 +98,7 @@ module.exports = {
           const shareWithjson = await authhandler.checkUser(call, "session/getUser", { email: data.shareWith });
           const shareWith = shareWithjson.result;
 
-          console.log("___shareWith ", shareWith);
-
           const allData = projectCluster.get(data.shareBy);
-          console.log("allData", allData);
-          console.log("allData.sharedWithProjects", allData.sharedWithProjects[data.projectID]);
 
           let hasFoundProj = false;
           let foundOn;
@@ -154,7 +147,6 @@ module.exports = {
             });
 
             if (!projectAllreadyExits) {
-              console.log("ADDDD");
               setSharedBY.sharedByProjects.push({
                 projectID: data.projectID,
                 shareBy: data.shareBy,
@@ -165,7 +157,6 @@ module.exports = {
             }
 
             const UserDAta = await this.getData(JSONdb, pathPreFix, shareWith);
-            console.log("data.shareWith", shareWith);
             console.log("userbinds", userBinds);
             io.sockets.to(userBinds[shareWith].socketID).emit("newProjData", UserDAta);
             //send mail to infom inveted person about invite

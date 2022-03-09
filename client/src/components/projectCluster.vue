@@ -30,7 +30,6 @@ export default {
   methods: {
     async goToProject(goto) {
       let projectID;
-      console.log("HITIS", typeof goto)
       if (typeof goto == "object") {
         projectID = goto.projectID;
       } else {
@@ -41,7 +40,6 @@ export default {
         user: localStorage.getItem("usr"),
         projectID: projectID,
       });
-      console.log("got to id", id);
       if (toString(id).length == 18) {
         sessionStorage.setItem("projectID", id);
 

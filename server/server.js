@@ -20,7 +20,6 @@ if (process.env.NODE_ENV === "development") {
   authCall = "http://192.168.2.100:6080/";
   pathPreFix = ".";
 } else {
-  console.log("server is running in Prod mode");
   authCall = "https://auth.drunc.net/";
   pathPreFix = "";
 }
@@ -141,18 +140,6 @@ app.post("/projects/removeuserInProj", async (request, response) => {
 io.on("connection", (socket) => {
   console.log("CONNECTED", socket.id);
 
-  //DELTEPROJECT
-
-  socket.on("shareProject", async (data) => {});
-
-  /*   socket.on("addElementToParent", async (data) => {
-    console.log("add Element ");
-    const test = projcthandler.addElement(JSONdb, pathPreFix, data);
-    console.log("test", test);
-    socket.emit("projectStructure", await projcthandler.addElement(JSONdb, pathPreFix, data));
-  });
- */
-  //REMOVE SOCKETDATA ON DISCONNECT
   socket.on("disconnect", (reason) => {
     console.log("DISCON", socket.id);
   });

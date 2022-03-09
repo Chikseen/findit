@@ -72,20 +72,17 @@ export default {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
-        console.log("data", data);
         this.$router.push("/Home");
       } else {
         console.log("cancel delete request");
       }
     },
     async loadProject() {
-      console.log("sending");
       const data = await api.projectcall("projects/load", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
-      console.log("data", data);
       if (data.isError) {
         this.$store.commit("setMessage", data);
       } else {
@@ -93,13 +90,11 @@ export default {
       }
     },
     async sendInvite() {
-      console.log("sendInvite to ", this.shareWithText);
       const data = await api.projectcall("projects/sendInvite", {
         shareWith: this.shareWithText,
         shareBy: localStorage.getItem("usr"),
         projectID: sessionStorage.getItem("projectID"),
       });
-      console.log("data", data);
       this.$store.commit("setMessage", data);
     },
     async addElement() {
@@ -110,18 +105,16 @@ export default {
         child: this.elementToAdd,
         parent: this.parentSelected,
       });
-      console.log("data", data);
       this.projectData.main = data;
     },
     increaseCurrentLevel(istrue) {
-      console.log("istrue", istrue);
       if (istrue) this.curretLevel++;
       else if (this.curretLevel > 0) this.curretLevel--;
     },
   },
 
   created() {
-    if (import.meta.env.MODE != "development") {
+    if (process.env.NODE_ENV != "development") {
       window.onbeforeunload = async function () {
         await api.projectcall("projects/removeuserInProj", {
           projectID: sessionStorage.getItem("projectID"),
@@ -130,24 +123,19 @@ export default {
       };
     }
 
-    console.log("check if params exits");
     if (this.$route.query.projectid != undefined) {
-      console.log("exits");
       sessionStorage.setItem("projectID", this.$route.query.projectid);
     } else {
-      console.log("params not exits");
       this.$router.push("/login");
     }
 
     this.socket = io(this.$store.getters.getApiSocket);
     this.socket.on("newProjData", (data) => {
-      console.log("incomming data", data);
       if (!data.isError) {
         this.projectData.main = data;
       }
     });
     this.socket.on("newUserData", (data) => {
-      console.log("incomming data", data);
       if (!data.isError) {
         this.userdata = data;
       }
@@ -159,30 +147,6 @@ export default {
         socketID: this.id,
       });
     });
-
-    /*     this.socket.on("getUserAccess", (data) => {
-      this.ProjectAccessLevel = data.access;
-    });
-    this.socket.on("projectData", (data) => {
-      console.log("projectData", data);
-      sessionStorage.setItem("projectID", data.id);
-      this.projectData = data;
-      this.$router.push({ query: { projectid: data.id } });
-    });
-    this.socket.on("response", (data) => {
-      console.log("data", data);
-      this.$store.commit("setMessage", data);
-      if (data.errormsg == "projectremovesuccess") {
-        this.$router.push("/home");
-      }
-    });
-    this.socket.on("projectStructure", (data) => {
-      console.log("data", data);
-        this.$store.commit("setMessage", data);
-      if (data.errormsg == "projectremovesuccess") {
-        this.$router.push("/home");
-      }  
-    });*/
   },
 
   mounted() {

@@ -35,7 +35,6 @@ module.exports = {
   },
 
   async removeElement(JSONdb, pathPreFix, data) {
-    console.log("remove", data);
     const projectall = new JSONdb(pathPreFix + "/database/projects/" + data.projectID + ".json");
     let project = projectall.get("main");
     console.log("remove" + data.parent + " from the project");

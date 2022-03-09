@@ -1,12 +1,6 @@
 require("dotenv").config();
 module.exports = {
   initmail() {
-    /*  let initMailTemplate = fs.readFile(__dirname + "/g.html", "utf8", (data) => {
-        return data
-    })
-
-    console.log("this is mail", initMailTemplate);
- */
     return `<!DOCTYPE html>
     <html lang="en">
       <head>

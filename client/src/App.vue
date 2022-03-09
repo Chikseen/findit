@@ -14,10 +14,8 @@ export default {
   },
   created() {
     if (process.env.NODE_ENV == "development") {
-      console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");
     } else {
-      console.log("Build from ApiSocket");
       this.$store.commit("setApiSocket", "https://api.drunc.net");
     }
   },

@@ -87,9 +87,6 @@ export default {
   },
   methods: {
     async addElement(parent, child, ref) {
-      console.log("add child", child);
-      console.log("to parent", parent);
-      console.log("ref", ref);
       const data = await api.projectcall("projects/addElement", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),
@@ -97,14 +94,10 @@ export default {
         parent: parent,
         child: child,
       });
-      console.log("ref2", this.$refs[ref]);
-      console.log("ref2", this.$refs[ref].value);
       this.$refs[ref].value = "";
-      console.log("data", data);
       this.projectData.main = data;
     },
     async removeChild(parent) {
-      console.log("remove elem", parent);
       this.goBack();
       const data = await api.projectcall("projects/removeElement", {
         projectID: sessionStorage.getItem("projectID"),
@@ -112,7 +105,6 @@ export default {
         user: localStorage.getItem("usr"),
         parent: parent,
       });
-      console.log("data", data);
       this.projectData.main = data;
     },
     increaseCurrentLevel(elem) {
