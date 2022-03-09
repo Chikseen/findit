@@ -3,7 +3,8 @@ const apiService = {
   //DATA FETCHER
   async fetchData(adress, payload) {
     let call;
-    if (import.meta.env.MODE == "development") {
+    console.log("env", process.env.NODE_ENV)
+    if (process.env.NODE_ENV == "development") {
       call = "http://192.168.2.100:6080";
     } else {
       call = "https://auth.drunc.net";
@@ -31,7 +32,7 @@ const apiService = {
   },
   async projectcall(adress, payload) {
     let call;
-    if (import.meta.env.MODE == "development") {
+    if (process.env.NODE_ENV == "development") {
       call = "http://192.168.2.100:7081";
     } else {
       call = "https://api.drunc.net";

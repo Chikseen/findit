@@ -13,7 +13,7 @@ export default {
     Messege,
   },
   created() {
-    if (import.meta.env.MODE == "development") {
+    if (process.env.NODE_ENV == "development") {
       console.log("Build from Local");
       this.$store.commit("setApiSocket", "http://localhost:7080");
     } else {
@@ -24,32 +24,25 @@ export default {
 };
 </script>
 
-<style>
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
 }
 
-#nav {
+nav {
   padding: 30px;
-}
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>

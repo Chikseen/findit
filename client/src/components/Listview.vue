@@ -97,6 +97,8 @@ export default {
         parent: parent,
         child: child,
       });
+      console.log("ref2", this.$refs[ref]);
+      console.log("ref2", this.$refs[ref].value);
       this.$refs[ref].value = "";
       console.log("data", data);
       this.projectData.main = data;
