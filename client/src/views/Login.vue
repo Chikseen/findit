@@ -8,10 +8,10 @@
         <h2>Store it, Find it, Share</h2>
       </div>
       <form class="login_form" v-if="!validLogin">
-        <ReactiveInputField :text="'E-Mail'" @change="typeof $event == 'string' ? (userName = $event) : ''" v-if="registerMode" />
+        <ReactiveInputField :text="'E-Mail'" @change="typeof $event == 'string' ? (email = $event) : ''" isMail v-if="registerMode" />
         <ReactiveInputField :text="'Username'" @change="typeof $event == 'string' ? (userName = $event) : ''" />
         <ReactiveInputField :text="'Password'" @change="typeof $event == 'string' ? (password = $event) : ''" isPassword />
-        <ReactiveInputField :text="'Repeat Password'" @change="typeof $event == 'string' ? (password = $event) : ''" isPassword v-if="registerMode" />
+        <ReactiveInputField :text="'Repeat Password'" @change="typeof $event == 'string' ? (repeatPassword = $event) : ''" isPassword v-if="registerMode" />
       </form>
       <div class="login_buttons">
         <CTA :text="'Login'" v-if="!registerMode && !validLogin" @mouseup="validateLogin" />

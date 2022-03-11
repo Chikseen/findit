@@ -1,8 +1,9 @@
 <template>
   <div class="reactiveInputField">
     <label :class="['reactiveInputField_label', value != '' ? 'reactiveInputField_label_up' : 'reactiveInputField_label_down']">{{ text }}</label>
-    <input v-if="!isPassword" class="reactiveInputField_input" type="text" v-model="value" />
+    <input v-if="!isPassword && !isMail" class="reactiveInputField_input" type="text" v-model="value" />
     <input v-if="isPassword" class="reactiveInputField_input" type="password" v-model="value" />
+    <input v-if="isMail" class="reactiveInputField_input" type="email" v-model="value" />
   </div>
 </template>
 
@@ -11,6 +12,7 @@ export default {
   props: {
     text: { type: String, default: "" },
     isPassword: { type: Boolean, default: false },
+    isMail: { type: Boolean, default: false },
   },
   data() {
     return {
