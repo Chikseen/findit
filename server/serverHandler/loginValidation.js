@@ -8,19 +8,19 @@ module.exports = {
         errormsg: "usernameToShort",
         msg: "Your username needs to be at least 8 characters long",
       };
-    } else if (data.passwort.length < 8) {
-      console.log("passwort to short");
+    } else if (data.password.length < 8) {
+      console.log("password to short");
       return {
         isError: true,
-        errormsg: "passwortToShort",
-        msg: "Your passwort needs to be at least 8 characters long",
+        errormsg: "passwordToShort",
+        msg: "Your password needs to be at least 8 characters long",
       };
-    } else if (data.passwort != data.repeatPasswort) {
-      console.log("passwort is not the same");
+    } else if (data.password != data.repeatPassword) {
+      console.log("password is not the same");
       return {
         isError: true,
-        errormsg: "passwortNotSame",
-        msg: "You have diffrent passworts",
+        errormsg: "passwordNotSame",
+        msg: "You have diffrent passwords",
       };
     } else {
       try {
@@ -30,8 +30,8 @@ module.exports = {
           console.log("create user: ", data.userName);
 
           const salt = await bcrypt.genSalt();
-          data.passwort = await bcrypt.hash(data.passwort, salt);
-          delete data.repeatPasswort;
+          data.password = await bcrypt.hash(data.password, salt);
+          delete data.repeatPassword;
 
           user.set(data.userName, data);
           return {
@@ -63,24 +63,24 @@ module.exports = {
     if (user.has(data.userName)) {
       const userdata = user.get(data.userName);
 
-      if (await bcrypt.compare(data.passwort, userdata.passwort)) {
+      if (await bcrypt.compare(data.password, userdata.password)) {
         return {
           isError: false,
           errormsg: "",
-          msg: "Passwort is correct -> proceed",
+          msg: "Password is correct -> proceed",
         };
       } else {
         return {
           isError: true,
           errormsg: "wrongUserdata",
-          msg: "Wrong username or passwort",
+          msg: "Wrong username or password",
         };
       }
     } else {
       return {
         isError: true,
         errormsg: "wrongUserdata",
-        msg: "Wrong username or passwort",
+        msg: "Wrong username or password",
       };
     }
   },

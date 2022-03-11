@@ -17,21 +17,21 @@ module.exports = {
         errormsg: "wrongemailformat",
         msg: "your E-Mail address dident pass verification",
       };
-    } else if (data.passwort.length < 8) {
-      console.log("passwort to short");
+    } else if (data.password.length < 8) {
+      console.log("password to short");
       return {
         isError: true,
         succes: false,
-        errormsg: "passwortToShort",
-        msg: "Your passwort needs to be at least 8 characters long",
+        errormsg: "passwordToShort",
+        msg: "Your password needs to be at least 8 characters long",
       };
-    } else if (data.passwort != data.repeatPasswort) {
-      console.log("passwort is not the same");
+    } else if (data.password != data.repeatPassword) {
+      console.log("password is not the same");
       return {
         isError: true,
         succes: false,
-        errormsg: "passwortNotSame",
-        msg: "You have diffrent passworts",
+        errormsg: "passwordNotSame",
+        msg: "You have diffrent passwords",
       };
     } else {
       try {
@@ -41,8 +41,8 @@ module.exports = {
             console.log("create user: ", data.email);
 
             const salt = await bcrypt.genSalt();
-            data.passwort = await bcrypt.hash(data.passwort, salt);
-            delete data.repeatPasswort;
+            data.password = await bcrypt.hash(data.password, salt);
+            delete data.repeatPassword;
             data.isValidated = false;
             data.varifiyID = id;
 
@@ -88,34 +88,48 @@ module.exports = {
     console.log("Check logindata for", data.userName);
     console.log("SID", newSID);
 
-    //validate userdate
-    if (user.has(eur.get(data.userName))) {
-      const userdata = user.get(eur.get(data.userName));
+    try {
+      //validate userdate
+      if (user.has(eur.get(data.userName))) {
+        const userdata = user.get(eur.get(data.userName));
 
-      if (await bcrypt.compare(data.passwort, userdata.passwort)) {
-        return {
-          isError: false,
-          succes: true,
-          errormsg: null,
-          SID: newSID,
-          msg: "Passwort is correct",
-        };
+        console.log("DDAATTAA", data);
+        console.log("DDAATTAA", data.password);
+        console.log("DDAATTAA", userdata.password);
+
+        if (await bcrypt.compare(data.password, userdata.password)) {
+          return {
+            isError: false,
+            succes: true,
+            errormsg: null,
+            SID: newSID,
+            msg: "Password is correct",
+          };
+        } else {
+          return {
+            isError: true,
+            succes: false,
+            errormsg: "wrongUserdata",
+            SID: null,
+            msg: "Wrong username or password",
+          };
+        }
       } else {
         return {
           isError: true,
           succes: false,
           errormsg: "wrongUserdata",
           SID: null,
-          msg: "Wrong username or passwort",
+          msg: "Wrong username or password",
         };
       }
-    } else {
+    } catch (error) {
       return {
         isError: true,
         succes: false,
-        errormsg: "wrongUserdata",
+        errormsg: "",
         SID: null,
-        msg: "Wrong username or passwort",
+        msg: "Something unexpected happend",
       };
     }
   },

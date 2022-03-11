@@ -139,7 +139,7 @@ app.post("/user/validateLogin", async (request, response) => {
   const newSID = helper.generateRandomString();
   const result = await userHandling.validateLogin(bcrypt, user, eur, request.body, newSID);
   console.log("Validation Result", result);
-  if (result.msg === "Passwort is correct" && result.succes) {
+  if (result.msg === "Password is correct" && result.succes) {
     if (request.body.userName.length > 2) {
       console.log("is user validated", user.get(eur.get(request.body.userName)).isValidated);
       if (user.get(eur.get(request.body.userName)).isValidated) {

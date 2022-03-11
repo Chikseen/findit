@@ -21,7 +21,8 @@ export default {
 <style lang="scss">
 .CTA {
   height: 100%;
-  width: 100%;
+  width: calc(100% - 20px);
+  margin: 10px;
   border-radius: 10px;
   border: 0;
   font-size: 1.5rem;
