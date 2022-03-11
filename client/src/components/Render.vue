@@ -4,11 +4,19 @@
     <Raycaster />
     <Scene>
       <PointLight :position="{ y: 20, z: 100, x: 100 }" :intensity="0" />
+      <PointLight :position="{ y: 20, z: 100, x: 100 }" />
       <AmbientLight color="#aaaaaa" :intensity="0.1" />
       <Sphere :position="{ x: 0, y: 0, z: 0 }" :radius="5">
         <LambertMaterial />
       </Sphere>
       <BoxFrame ref="boxframe" :z_offset="0" :position="{ z: zoffset, x: xoffset, y: yoffset }" :scale="{ z: zscale, x: xscale, y: yscale }" />
+      <BoxFrame ref="boxframe" :z_offset="0" :position="{ z: zoffset, x: xoffset, y: yoffset }" :scale="{ z: zscale / 2, x: xscale / 2, y: yscale / 2 }" />
+      <BoxFrame
+        ref="boxframe"
+        :z_offset="0"
+        :position="{ z: zoffset + 50 * zscale, x: xoffset + 50 * xscale, y: yoffset + 50 * yscale }"
+        :scale="{ z: zscale / 2, x: xscale / 2, y: yscale / 2 }"
+      />
     </Scene>
     <div>
       <h1>Position</h1>
