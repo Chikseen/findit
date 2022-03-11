@@ -6,7 +6,6 @@
       <div class="projectcluster_project" v-for="proj in projects" :key="proj" @mouseup="goToProject(proj)">
         <ProjectPreview :project="{ id: proj }" />
         <div v-if="sharedbyself"></div>
-        <p>{{ proj }}</p>
       </div>
     </div>
   </div>
@@ -55,21 +54,27 @@ export default {
 };
 </script>
 
-<style>
-.projectcluster_preview {
-  display: flex;
-  flex-direction: row;
-  height: 250px;
-}
-.projectcluster_project {
-  margin: 0 10px;
+<style lang="scss">
+.projectcluster {
+  &_preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12.5px;
+  }
+  &_project {
+    height: 250px;
+    min-width: 200px;
+    max-width: 300px;
 
-  width: auto;
-  height: 100px;
-}
-@media only screen and (max-width: 650px) {
-  .projectCluster_wrapper {
-    overflow-x: scroll;
+    background-color: $main-lighter;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px 1px rgba(50, 50, 10, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  &_project:hover {
+    box-shadow: 2px 2px 10px 1px rgba(50, 50, 10, 0.2);
   }
 }
 </style>

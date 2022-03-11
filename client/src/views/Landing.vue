@@ -96,7 +96,7 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      background-color: $mainYellow;
+      background-color: $main-yellow;
       box-shadow: 0px 0px 20px 10px #3f3f3f60;
       z-index: 1;
     }

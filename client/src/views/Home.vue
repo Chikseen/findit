@@ -3,17 +3,17 @@
     <h1>Hello {{ userName }}</h1>
     <div>
       <h2>Your Projects</h2>
-      <ProjectCluster :projects="projectCluster.ownProjects" :hasAdd="true" />
+      <ProjectCluster :projects="projectCluster.ownData" :hasAdd="true" />
     </div>
     <hr />
     <div>
       <h2>Projects Shared by you</h2>
-      <ProjectCluster :projects="projectCluster.sharedWithProjects" :sharedbyself="true" />
+      <ProjectCluster :projects="projectCluster.sharedWith" :sharedbyself="true" />
     </div>
     <hr />
     <div>
       <h2>Projects Shared with you</h2>
-      <ProjectCluster :projects="projectCluster.sharedByProjects" />
+      <ProjectCluster :projects="projectCluster.sharedBy" />
     </div>
   </div>
 </template>

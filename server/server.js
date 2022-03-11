@@ -28,7 +28,6 @@ if (process.env.NODE_ENV === "development") {
 databaseIntegrity.init(fs, pathPreFix);
 //databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
-const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
 const io = new Server({
   cors: {
     origin: `*`,
@@ -53,10 +52,12 @@ let userBinds = {};
 let userInProj = {};
 
 app.post("/home/projectData/metaData", async (request, response) => {
+  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   console.log("get Project Meta Data for ", request.body);
-  if (!projectCluster.has(request.body)) {
+  console.log("storage keys", projectCluster.has(request.body.user));
+  if (!projectCluster.has(request.body.user)) {
     console.log("Create Projectcluster for user");
-    projectCluster.set(request.body, {
+    projectCluster.set(request.body.user, {
       ownProjects: [],
       sharedByProjects: [],
       sharedWithProjects: [],
@@ -79,6 +80,7 @@ app.post("/home/projectData/bindUserConnection", async (request, response) => {
 });
 
 app.post("/projects/getID", async (request, response) => {
+  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   console.log("load Project", request.body);
   if (await auth.checkUser(authCall, "session/checkUser", request.body)) {
     if (request.body.projectID == "-1") {
@@ -95,17 +97,20 @@ app.post("/projects/getID", async (request, response) => {
 });
 
 app.post("/projects/delete", async (request, response) => {
+  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   console.log("delete Project", request.body);
   response.json(await projectClusterData.deleteProject(JSONdb, fs, pathPreFix, request.body));
 });
 
 app.post("/projects/load", async (request, response) => {
+  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   console.log("load Project", request.body);
   //Validate if user can load thisProject here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   response.json(await projectClusterData.getProject(JSONdb, pathPreFix, request.body.projectID));
 });
 
 app.post("/projects/sendInvite", async (request, response) => {
+  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   response.json(await projectClusterData.sendInvite(JSONdb, fs, pathPreFix, request.body, authCall, io, userBinds));
 });
 

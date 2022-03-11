@@ -1,10 +1,15 @@
 <template>
-  <div class="projectPreview_wrapper" @mouseup="emitClick">
-    <div v-if="project.id === 'addProject'">
-      <AddIcon />
+  <div class="" @mouseup="emitClick">
+    <AddIcon v-if="project.id === 'addProject'" />
+    <h1>{{ project.id.name }}</h1>
+    <h5 v-if="!project.id.sharedWith && !project.id.sharedBy">{{ project.id.projectID }}</h5>
+    <div v-if="project.id.sharedWith">
+      <h3>Shared With:</h3>
+      <h4 v-for="(name, index) in project.id.sharedWith" :key="index + name">{{ name }}</h4>
     </div>
-    <div v-else>
-      <h6>SHOW PROJECT HERE</h6>
+    <div v-if="project.id.sharedBy">
+      <h3>Shared By:</h3>
+      <h4>{{ project.id.sharedBy }}</h4>
     </div>
   </div>
 </template>
@@ -29,9 +34,8 @@ export default {
 
 <style>
 .projectPreview_wrapper {
-  min-width: 100px;
-  min-height: 100px;
-  padding: 50px;
+  width: 100%;
+  height: 100%;
 
   background-color: rgba(187, 193, 197, 0.288);
   border-radius: 10px;
