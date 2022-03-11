@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="app">
     <router-view />
     <Messege />
   </div>
@@ -27,6 +27,7 @@ body,
 html {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 #app {
@@ -35,6 +36,14 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100px;
+}
+
+.app {
+  height: 100px;
 }
 
 nav {
@@ -48,5 +57,19 @@ nav {
       color: #42b983;
     }
   }
+}
+.footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background-color: #2b2c2e;
+  color: aliceblue;
+  justify-content: center;
+}
+
+.footer > p {
+  cursor: pointer;
 }
 </style>

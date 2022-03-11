@@ -35,7 +35,7 @@ export default {
 
 <style>
 .message_wrapper {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 10px;
   width: calc(100% - 20px);

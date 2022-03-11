@@ -75,9 +75,9 @@
 </template>
 
 <script>
-import Button from "../assets/Button.vue";
-import Logo from "../assets/icons/logo.vue";
-import api from "../apiService";
+import Button from "@/assets/Button.vue";
+import Logo from "@/assets/icons/logo.vue";
+import api from "@/apiService";
 
 export default {
   name: "Login",

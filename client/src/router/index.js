@@ -4,6 +4,7 @@ import Login from "../views/Login.vue";
 import Landing from "../views/Landing.vue";
 import ProjectView from "../views/ProjectView.vue";
 import Varifyer from "../views/Varifyer.vue";
+import PrivacyPolicy from "../views/PrivacyPolicy.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/varifyer",
     name: "Varifyer",
     component: Varifyer,
+  },
+  {
+    path: "/privacyPolicy",
+    name: "PrivacyPolicy",
+    component: PrivacyPolicy,
   },
 ];
 

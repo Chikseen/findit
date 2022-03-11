@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pp">
     <h1>Privacy Policy</h1>
 
     <h3>Collected Data</h3>
@@ -21,9 +21,16 @@
     <br />
     <h3>Impresum</h3>
     <p>Tim Menzel</p>
-    <p>Stöhnear Straße 3</p>
     <p>04564 Böhlen</p>
     <p>Germany</p>
     <p>Phone: 0176 62929704</p>
+    <p>E-Mail: druncservice@gmail.de</p>
   </div>
 </template>
+
+<style lang="scss">
+    .pp {
+        padding: 25px;
+        text-align: left;
+    }
+</style>
