@@ -96,8 +96,8 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      backdrop-filter: blur(5px);
-      background-color: $mainColor;
+      background-color: $mainYellow;
+      box-shadow: 0px 0px 20px 10px #3f3f3f60;
       z-index: 1;
     }
 
@@ -107,7 +107,7 @@ export default {
 
     &_login {
       width: 100px;
-      padding: 5px;
+      height: 50px;
     }
   }
 
@@ -115,7 +115,7 @@ export default {
     display: flex;
     height: 400px;
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 100px auto;
     padding: 0 20px;
 
     &_text {
