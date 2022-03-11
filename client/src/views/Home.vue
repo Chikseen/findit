@@ -47,7 +47,6 @@ export default {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
-      console.log("data", data);
       this.projectCluster = data;
     },
     async checkUserValidation() {
@@ -78,7 +77,6 @@ export default {
     });
   },
   mounted() {
-    console.log("login Status", this.$store.getters.getloginStatus);
     this.getUserData();
   },
 };

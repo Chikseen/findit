@@ -1,14 +1,9 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "./views/Home.vue";
-import Login from "./views/Login.vue";
-import Landing from "./views/Landing.vue";
-import ProjectView from "./views/ProjectView.vue";
-import Varifyer from "./views/Varifyer.vue";
-
-//import store from "./store"
-
-Vue.use(VueRouter);
+import { createRouter, createWebHistory } from "vue-router";
+import Home from "../views/Home.vue";
+import Login from "../views/Login.vue";
+import Landing from "../views/Landing.vue";
+import ProjectView from "../views/ProjectView.vue";
+import Varifyer from "../views/Varifyer.vue";
 
 const routes = [
   {
@@ -38,7 +33,8 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 });
 

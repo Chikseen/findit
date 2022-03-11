@@ -49,26 +49,26 @@
       </div>
       <div class="login_loginform-selection">
         <div class="login_loginform_input" v-if="!registerMode">
-          <Button :text="'Login'" @click="validateLogin" />
+          <Button :text="'Login'" @mouseup="validateLogin" />
         </div>
         <div class="login_loginform_input" v-if="registerMode">
-          <Button :text="'Register'" @click="createUser" />
+          <Button :text="'Register'" @mouseup="createUser" />
         </div>
         <div class="login_loginform_input" v-if="!registerMode">
-          <Button :text="'Create Account'" @click="registerMode = true" />
+          <Button :text="'Create Account'" @mouseup="registerMode = true" />
         </div>
         <div class="login_loginform_input" v-if="registerMode">
-          <Button :text="'I have a Account'" @click="registerMode = false" />
+          <Button :text="'I have a Account'" @mouseup="registerMode = false" />
         </div>
         <div class="login_loginform_input" v-if="!userValidationStatus">
-          <Button :text="'Send New Validaiotn'" @click="sendValidaitonCode" />
+          <Button :text="'Send New Validaiotn'" @mouseup="sendValidaitonCode" />
         </div>
       </div>
     </div>
     <div v-else>
       <div class="login_loginform_input">
-        <Button :text="'Logout'" @click="logout" />
-        <Button :text="'Home'" @click="tryLogin" />
+        <Button :text="'Logout'" @mouseup="logout" />
+        <Button :text="'Home'" @mouseup="tryLogin" />
       </div>
     </div>
   </div>
@@ -104,7 +104,6 @@ export default {
         passwort: this.passwort,
         repeatPasswort: this.repeatPasswort,
       });
-      console.log("createUser", await data);
       this.$store.commit("setMessage", data);
     },
     async validateLogin() {
@@ -138,7 +137,6 @@ export default {
         SID: SID,
         user: localStorage.getItem("usr"),
       });
-      console.log("isValid", data);
       if (data.status) {
         this.$store.commit("setloginStatus", true);
         localStorage.setItem("sessionID", SID);
@@ -153,12 +151,11 @@ export default {
           SID: localStorage.getItem("sessionID"),
           user: localStorage.getItem("usr"),
         });
-        console.log("data", data);
         if (data.status) {
           this.$router.push("/Home");
         } else {
-          localStorage.clear();
-          this.$store.commit("setloginStatus", false);
+        //  localStorage.clear();
+        //  this.$store.commit("setloginStatus", false);
         }
       } else {
         localStorage.clear();

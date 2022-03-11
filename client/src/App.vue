@@ -6,7 +6,6 @@
 </template>
 
 <script>
-require("dotenv").config();
 import Messege from "./assets/messageComponent.vue";
 
 export default {
@@ -14,43 +13,40 @@ export default {
     Messege,
   },
   created() {
-    if (process.env.NODE_ENV === "development") {
-      console.log("Build from Local");
+    if (process.env.NODE_ENV == "development") {
       this.$store.commit("setApiSocket", "http://localhost:7080");
     } else {
-      console.log("Build from ApiSocket");
       this.$store.commit("setApiSocket", "https://api.drunc.net");
     }
   },
 };
 </script>
 
-<style>
-html,
-body {
-  height: 100%;
+<style lang="scss">
+body,
+html {
   margin: 0;
   padding: 0;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
 }
 
-#nav {
+nav {
   padding: 30px;
-}
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>

@@ -1,17 +1,15 @@
-require("dotenv").config();
 
 const apiService = {
   //DATA FETCHER
   async fetchData(adress, payload) {
-    console.log("is running in", process.env.NODE_ENV);
     let call;
     if (process.env.NODE_ENV == "development") {
+      console.log("mode is development")
       call = "http://192.168.2.100:6080";
     } else {
       call = "https://auth.drunc.net";
     }
     try {
-      console.log("call ", call)
       const request = await fetch(`${call}/${adress}`, {
         body: JSON.stringify(payload),
         headers: {

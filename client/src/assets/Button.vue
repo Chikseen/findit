@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="button" @click="emitData">{{ text }}</button>
+    <button class="button" @mouseup="emitData">{{ text }}</button>
   </div>
 </template>
 

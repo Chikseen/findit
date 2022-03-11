@@ -1,12 +1,7 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import { store } from './vuex/store'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import { TroisJSVuePlugin } from "troisjs";
 
-Vue.config.productionTip = false
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+createApp(App).use(store).use(router).use(TroisJSVuePlugin).mount("#app");

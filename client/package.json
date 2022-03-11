@@ -1,60 +1,44 @@
 {
-  "name": "findit",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "prod": " NODE_ENV=production vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "vue-cli-service build"
   },
   "dependencies": {
-    "aws-sdk": "^2.1058.0",
-    "bcrypt": "^5.0.0",
-    "bcryptjs": "^2.4.3",
-    "core-js": "^3.6.5",
-    "dotenv": "^16.0.0",
-    "express": "^4.16.1",
-    "ip": "^1.1.5",
-    "mock-aws-s3": "^4.0.2",
-    "nock": "^13.2.2",
-    "request": "^2.79.0",
+    "connect-history-api-fallback": "^1.6.0",
+    "core-js": "^3.8.3",
+    "express": "^4.17.3",
+    "fs": "^0.0.1-security",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
-    "vue": "^2.6.11",
-    "vue-router": "^3.5.3",
-    "vue-socket.io": "^3.0.10",
-    "vuex": "^3.6.2"
+    "three": "^0.138.3",
+    "three.js": "^0.77.1",
+    "troisjs": "^0.3.4",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.15",
-    "@vue/cli-service": "~4.5.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "node-sass": "^7.0.1",
-    "sass": "^1.49.0",
-    "vue-template-compiler": "^2.6.11"
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "sass": "^1.32.7",
+    "sass-loader": "^12.0.0"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead"
+    "not dead",
+    "not ie 11"
   ]
 }

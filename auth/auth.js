@@ -43,13 +43,12 @@ var transporter = nodemailer.createTransport({
 if (process.env.NODE_ENV != "development") {
   console.log("Send init mail");
   console.log("to", mailAuth.get("name"));
-  console.log("mailFile", mailAuth);
 
   transporter.verify(function (error, success) {
     if (error) {
       console.log(error);
     } else {
-      console.log("Server is ready to take our messages");
+      console.log("Server is ready to handle e-mails");
     }
   });
 
@@ -123,7 +122,6 @@ app.post("/user/validateEmail", async (request, response) => {
         delete toValidate[vid];
         userTempDB.isValidated = true;
         userTempDB.varifiyID = "";
-        console.log("set with this", userTempDB);
         user.set(mailToCheck, userTempDB);
         response.json({ status: true });
       } else {
@@ -228,7 +226,6 @@ app.post("/session/getMail", async (request, response) => {
 });
 
 app.post("/session/getUser", async (request, response) => {
-  console.log("get user from mail", request.body);
   console.log("get user from mail", user.get(request.body.email));
   response.json({ result: user.get(request.body.email).userName });
 });

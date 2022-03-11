@@ -65,7 +65,7 @@ typings/
 .rts2_cache_cjs/
 .rts2_cache_es/
 .rts2_cache_umd/
-
+.envReplace.*
 # Optional REPL history
 .node_repl_history
 
@@ -74,7 +74,7 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
-
+envReplace.json
 # dotenv environment variables file
 .env
 .env.test
