@@ -42,10 +42,19 @@
         <input type="text" v-model="shareWithText" />
         <button @mouseup="sendInvite">Send Invite</button>
       </div>
-     
-      <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" @increaseCurrentLevel="increaseCurrentLevel" />
-      <Render />
 
+      <Listview
+        :projectData="projectData"
+        :curretLevel="parseInt(curretLevel)"
+        @increaseCurrentLevel="increaseCurrentLevel"
+        @newParent="typeof $event == 'string' ? (parentSelected = $event) : ''"
+      />
+
+      <p>parentSelected</p>
+      <p>{{ parentSelected }}</p>
+      <p>numberOfBoxesToRender</p>
+      <p>{{ numberOfBoxesToRender }}</p>
+      <Render :numberOfBoxesToRender="numberOfBoxesToRender" :numberOfBoxesToRenderChild="numberOfBoxesToRenderChild" />
       <h6>{{ projectData }}</h6>
     </div>
   </div>
@@ -74,6 +83,8 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
+      numberOfBoxesToRender: 0,
+      numberOfBoxesToRenderChild: [],
     };
   },
   methods: {
@@ -101,6 +112,10 @@ export default {
       } else {
         this.projectData = data;
         this.projectName = data.name;
+        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
+        this.projectData.main.data[0].forEach((elm) => {
+          this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
+        });
         this.isLoading = false;
       }
     },
@@ -175,6 +190,10 @@ export default {
     this.socket = io(this.$store.getters.getApiSocket);
     this.socket.on("newProjData", (data) => {
       if (!data.isError) {
+        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
+        this.projectData.main.data[0].forEach((elm) => {
+          this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
+        });
         this.projectData.main = data;
       }
     });
@@ -191,9 +210,16 @@ export default {
       });
     });
   },
-
   mounted() {
     this.loadProject();
+  },
+  watch: {
+    parentSelected() {
+      if (this.curretLevel == 0) {
+        console.log(this.projectData.main.data[0].length);
+        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
+      }
+    },
   },
 };
 </script>

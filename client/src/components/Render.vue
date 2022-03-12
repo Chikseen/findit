@@ -1,72 +1,67 @@
 <template>
-  <Renderer ref="renderer" antialias alpha class="render-wrapper" resize="window" orbit-ctrl>
+  <Renderer ref="rendererC" antialias alpha class="render-wrapper" resize="window" orbit-ctrl>
     <Camera ref="camera" :position="{ z: 150, x: 0, y: 0 }" :fov="100" />
     <Raycaster />
     <Scene>
       <PointLight :position="{ y: 20, z: 100, x: 100 }" :intensity="0" />
       <PointLight :position="{ y: 20, z: 100, x: 100 }" />
       <AmbientLight color="#aaaaaa" :intensity="0.1" />
+
       <Sphere :position="{ x: 0, y: 0, z: 0 }" :radius="5">
         <LambertMaterial />
       </Sphere>
-      <BoxFrame ref="boxframe" :z_offset="0" :position="{ z: zoffset, x: xoffset, y: yoffset }" :scale="{ z: zscale, x: xscale, y: yscale }" />
-      <BoxFrame ref="boxframe" :z_offset="0" :position="{ z: zoffset, x: xoffset, y: yoffset }" :scale="{ z: zscale / 2, x: xscale / 2, y: yscale / 2 }" />
+
+      <Group v-for="(item1, index1) in numberOfBoxesToRender" :key="index1">
+        <!-- Print Main BOX -->
+        <BoxFrame ref="boxframe" :position="{ x: 100 * (item1 - 1), y: index1 * 10 }" />
+        <!-- Print BOX -1 One -->
+        <Group v-for="(item2, index2) in numberOfBoxesToRenderChild[index1]" :key="index2">
+          <BoxFrame
+            ref="boxframe"
+            :position="{ x: 100 * (item1 - 1) + (100 / numberOfBoxesToRenderChild[index1]) * index2, y: index1 * 10 }"
+            :scale="{ x: 1 / numberOfBoxesToRenderChild[index1], y: 1 / 1.5, z: 1 / 2 }"
+          />
+        </Group>
+      </Group>
+
+      <!--  <BoxFrame ref="boxframe" :z_offset="0" :position="{ z: zoffset, x: xoffset, y: yoffset }" :scale="{ z: zscale / 2, x: xscale / 2, y: yscale / 2 }" />
       <BoxFrame
         ref="boxframe"
         :z_offset="0"
         :position="{ z: zoffset + 50 * zscale, x: xoffset + 50 * xscale, y: yoffset + 50 * yscale }"
         :scale="{ z: zscale / 2, x: xscale / 2, y: yscale / 2 }"
-      />
+      /> -->
     </Scene>
-    <div>
-      <h1>Position</h1>
-      <div>
-        <label for="yoffset">Y-Offset</label>
-        <input type="range" id="yoffset" min="0" max="100" v-model="yoffset" />
-        <label for="yoffset"></label>
-      </div>
-      <div>
-        <label for="xoffset">X-Offset</label>
-        <input type="range" id="xoffset" min="0" max="100" v-model="xoffset" />
-        <label for="xoffset"></label>
-      </div>
-      <div>
-        <label for="zoffset">Z-Offset</label>
-        <input type="range" id="zoffset" min="0" max="200" v-model="zoffset" />
-        <label for="zoffset"></label>
-      </div>
-      <div>
-        <button>Rotate camera to the left</button>
-        <button @mouseup="getcurrentdata">getData</button>
-      </div>
-    </div>
-    <div>
-      <h1>Scale</h1>
-      <div>
-        <label for="yscale">Y-scale</label>
-        <input type="range" id="yoffset" min="0" max="5" step="0.01" v-model="yscale" />
-        <label for="yscale"></label>
-      </div>
-      <div>
-        <label for="xoffset">X-scale</label>
-        <input type="range" id="xoffset" min="0" max="5" step="0.01" v-model="xscale" />
-        <label for="xoffset"></label>
-      </div>
-      <div>
-        <label for="zscale">Z-Offset</label>
-        <input type="range" id="zscale" min="0" max="5" step="0.01" v-model="zscale" />
-        <label for="zscale"></label>
-      </div>
-    </div>
   </Renderer>
 </template>
 
 <script>
+/*
+
+import { ref, onMounted } from 'vue'
+import { Box, Camera, LambertMaterial, PointLight, Renderer, Scene } from 'troisjs'
+const rendererC = ref()
+const meshC = ref()
+onMounted(() => {
+  const mesh = meshC.value.mesh
+  renderer.onBeforeRender(() => {
+    mesh.rotation.x += 0.01
+  })
+})
+
+*/
 import BoxFrame from "./render/BoxFrame.vue";
+import { ref } from "vue";
+const rendererC = ref();
+const meshC = ref();
 
 export default {
   components: {
     BoxFrame,
+  },
+  props: {
+    numberOfBoxesToRender: { type: Number, default: 0 },
+    numberOfBoxesToRenderChild: { type: Array, default: () => [] },
   },
   data() {
     return {
@@ -83,7 +78,6 @@ export default {
       console.log("get box data", this.$refs.boxframe);
     },
   },
-  mounted() {},
 };
 </script>
 

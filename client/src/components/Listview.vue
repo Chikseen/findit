@@ -125,6 +125,11 @@ export default {
       this.$emit("increaseCurrentLevel", false);
     },
   },
+  watch: {
+    watchChild() {
+      this.$emit("newParent", this.watchChild);
+    },
+  },
 };
 </script>
 
