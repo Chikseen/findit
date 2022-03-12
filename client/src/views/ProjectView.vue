@@ -112,10 +112,12 @@ export default {
       } else {
         this.projectData = data;
         this.projectName = data.name;
-        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
-        this.projectData.main.data[0].forEach((elm) => {
-          this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
-        });
+        if (this.projectData.main.data[0]) {
+          this.numberOfBoxesToRender = this.projectData.main.data[0].length;
+          this.projectData.main.data[0].forEach((elm) => {
+            this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
+          });
+        }
         this.isLoading = false;
       }
     },
@@ -135,6 +137,12 @@ export default {
         child: this.elementToAdd,
         parent: this.parentSelected,
       });
+      if (data.data[0]) {
+        this.numberOfBoxesToRender = data.data[0].length;
+        data.data[0].forEach((elm) => {
+          this.numberOfBoxesToRenderChild.push(data.pcr[elm].childs.length);
+        });
+      }
       this.projectData.main = data;
     },
     async setNewProjname(name) {
@@ -190,11 +198,13 @@ export default {
     this.socket = io(this.$store.getters.getApiSocket);
     this.socket.on("newProjData", (data) => {
       if (!data.isError) {
-        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
-        this.projectData.main.data[0].forEach((elm) => {
-          this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
-        });
         this.projectData.main = data;
+        if (data.data[0]) {
+          this.numberOfBoxesToRender = data.data[0].length;
+          data.data[0].forEach((elm) => {
+            this.numberOfBoxesToRenderChild.push(data.pcr[elm].childs.length);
+          });
+        }
       }
     });
     this.socket.on("newUserData", (data) => {
