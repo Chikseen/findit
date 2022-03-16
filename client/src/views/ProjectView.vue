@@ -62,7 +62,7 @@
 
 <script>
 import Render from "../components/Render.vue";
-import Listview from "../components/Listview.vue";
+import Listview from "../components/ListComponent.vue";
 
 import io from "socket.io-client";
 import api from "../apiService";
