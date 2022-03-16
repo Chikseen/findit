@@ -1,62 +1,71 @@
 <template>
   <div>
-    <div v-if="isLoading">
-      <h1>Page is Loading</h1>
-    </div>
-    <div v-if="!isLoading">
-      <div class="project_header">
-        <div class="project_header_metaInfo">
-          <div class="project_header_projName">
-            <input class="project_header_projName_input" v-model="projectName" @blur="setNewProjname($event.target.value)" />
+    <div v-if="!threeView">
+      <div v-if="isLoading">
+        <h1>Page is Loading</h1>
+      </div>
+      <div v-if="!isLoading">
+        <div class="project_header">
+          <div class="project_header_metaInfo">
+            <div class="project_header_projName">
+              <input class="project_header_projName_input" v-model="projectName" @blur="setNewProjname($event.target.value)" />
+            </div>
+            <div class="project_header_detailes">
+              <p>Project ID: {{ projectData.id }}</p>
+              <p>Created At: {{ projectData.created }}</p>
+            </div>
           </div>
-          <div class="project_header_detailes">
-            <p>Project ID: {{ projectData.id }}</p>
-            <p>Created At: {{ projectData.created }}</p>
+          <div class="project_header_userInfo">
+            <p>Currently watching: {{ userdata.user }}</p>
+            <p>This project is shared with: {{ projectData.sharedWith }}</p>
           </div>
         </div>
-        <div class="project_header_userInfo">
-          <p>Currently watching: {{ userdata.user }}</p>
-          <p>This project is shared with: {{ projectData.sharedWith }}</p>
+        <button @mouseup="deletProject">delete Project</button>
+
+        <button @click="threeView = !threeView">TOGGLE 3D VIEW</button>
+        <div class="elemHandler">
+          <select v-if="projectData.main.data" v-model="curretLevel">
+            <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
+              {{ i }}
+            </option>
+          </select>
+          <select v-if="projectData.main.data" v-model="parentSelected">
+            <option></option>
+            <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
+              {{ parent }}
+            </option>
+          </select>
+          <input type="text" v-model="elementToAdd" />
+          <button @mouseup="addElement">Add</button>
         </div>
+
+        <div>
+          <h2>Share this Project with</h2>
+          <input type="text" v-model="shareWithText" />
+          <button @mouseup="sendInvite">Send Invite</button>
+        </div>
+
+        <Listview
+          :projectData="projectData"
+          :curretLevel="parseInt(curretLevel)"
+          @increaseCurrentLevel="increaseCurrentLevel"
+          @newParent="typeof $event == 'string' ? (parentSelected = $event) : ''"
+        />
+
+        <p>parentSelected</p>
+        <p>{{ parentSelected }}</p>
+        <p>numberOfBoxesToRender</p>
+        <p>{{ numberOfBoxesToRender }}</p>
+        <h6>{{ projectData }}</h6>
       </div>
-      <button @mouseup="deletProject">delete Project</button>
-
-      <div class="elemHandler">
-        <select v-if="projectData.main.data" v-model="curretLevel">
-          <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
-            {{ i }}
-          </option>
-        </select>
-        <select v-if="projectData.main.data" v-model="parentSelected">
-          <option></option>
-          <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
-            {{ parent }}
-          </option>
-        </select>
-        <input type="text" v-model="elementToAdd" />
-        <button @mouseup="addElement">Add</button>
-      </div>
-
-      <div>
-        <h2>Share this Project with</h2>
-        <input type="text" v-model="shareWithText" />
-        <button @mouseup="sendInvite">Send Invite</button>
-      </div>
-
-      <Listview
-        :projectData="projectData"
-        :curretLevel="parseInt(curretLevel)"
-        @increaseCurrentLevel="increaseCurrentLevel"
-        @newParent="typeof $event == 'string' ? (parentSelected = $event) : ''"
-      />
-
-      <p>parentSelected</p>
-      <p>{{ parentSelected }}</p>
-      <p>numberOfBoxesToRender</p>
-      <p>{{ numberOfBoxesToRender }}</p>
-      <Render :numberOfBoxesToRender="numberOfBoxesToRender" :numberOfBoxesToRenderChild="numberOfBoxesToRenderChild" />
-      <h6>{{ projectData }}</h6>
     </div>
+
+    <Render
+      @detoogle="threeView = !threeView"
+      v-if="threeView"
+      :numberOfBoxesToRender="numberOfBoxesToRender"
+      :numberOfBoxesToRenderChild="numberOfBoxesToRenderChild"
+    />
   </div>
 </template>
 
@@ -85,6 +94,7 @@ export default {
       isLoading: true,
       numberOfBoxesToRender: 0,
       numberOfBoxesToRenderChild: [],
+      threeView: false,
     };
   },
   methods: {
