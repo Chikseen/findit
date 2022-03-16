@@ -16,6 +16,7 @@
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "three": "^0.138.3",
+    "three-full": "^28.0.2",
     "three.js": "^0.77.1",
     "troisjs": "^0.3.4",
     "vue": "^3.2.13",
