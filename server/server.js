@@ -140,6 +140,25 @@ app.post("/projects/adduserInProj", async (request, response) => {
   response.end();
 });
 
+app.post("/projects/changePosition", async (request, response) => {
+  try {
+    console.log("change posisiotn of: ", request.body);
+    const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
+    const data = proj.get("main");
+    data.pcr[request.body.element].position = request.body.position;
+    proj.set("main", data);
+    response.json(await projcthandler.getMain(JSONdb, pathPreFix, request.body.projectID));
+    sendNewDataToWatcher(request.body.projectID);
+  } catch (error) {
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "sthwentwrong",
+      msg: "Something went Wrong",
+    });
+  }
+});
+
 app.post("/projects/removeuserInProj", async (request, response) => {
   console.log("remove user as watcher", request.body);
   userInProj[request.body.projectID].splice(userInProj[request.body.projectID].indexOf(request.body.socketID), 2);

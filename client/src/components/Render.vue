@@ -1,5 +1,5 @@
 <template>
-  <div @click="click" id="mainWindow">
+  <div @mousedown="saveMouseDown" @mouseup="click" id="mainWindow">
     <button class="three_detoggle" @click="$emit('detoogle')">DETOGGLE</button>
     <Renderer ref="rendererC" antialias alpha class="render-wrapper" resize="window" orbit-ctrl>
       <Camera ref="camera" :position="{ z: 150, x: 0, y: 0 }" :fov="100" />
@@ -12,20 +12,26 @@
           <LambertMaterial />
         </Sphere>
 
-        <Group v-for="(item1, index1) in numberOfBoxesToRender" :key="index1" ref="firstStageGroup">
-          <!-- Print Main BOX -->
-          <BoxFrame ref="boxframe" :position="{ x: 100 * (item1 - 1), y: index1 * 10 }" />
-          <!-- Print BOX -1 One -->
-          <Group v-for="(item2, index2) in numberOfBoxesToRenderChild[index1]" :key="index2">
+        <div v-if="projectData.main.data">
+          <Group v-for="(item, index) in projectData.main.data[0]" :key="index">
+            <!-- Print Main BOX -->
+            <div v-if="projectData.main.pcr[item].position">
+              <BoxFrame ref="boxframe" :position="projectData.main.pcr[item].position" :setName="item" />
+            </div>
+            <div v-else>
+              <BoxFrame ref="boxframe" :position="{ x: 100 * index }" :setName="item" :text="'HELLO'"/>
+            </div>
+            <!-- Print BOX -1 One -->
+            <!-- NO NEED YET -->
+            <!--   <Group v-for="(item2, index2) in numberOfBoxesToRenderChild[index1]" :key="index2">
             <BoxFrame
               ref="boxframe"
               :position="{ x: 100 * (item1 - 1) + (100 / numberOfBoxesToRenderChild[index1]) * index2, y: index1 * 10 }"
               :scale="{ x: 1 / numberOfBoxesToRenderChild[index1], y: 1 / 1.5, z: 1 / 2 }"
             />
+          </Group> -->
           </Group>
-        </Group>
-
-        <BoxFrame ref="boxframe" :position="{ x: -200, y: -200 }" />
+        </div>
       </Scene>
     </Renderer>
   </div>
@@ -33,40 +39,22 @@
 
 <script>
 import BoxFrame from "./render/BoxFrame.vue";
-import { ref } from "vue";
 import {
-  Scene,
-  TrackballControls,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Color,
-  FogExp2,
-  CylinderBufferGeometry,
-  MeshPhongMaterial,
-  Mesh,
-  DirectionalLight,
-  AmbientLight,
-  LineBasicMaterial,
-  Geometry,
-  Vector3,
-  Line,
   Raycaster,
   Vector2,
 } from "three-full";
-const rendererC = ref();
-const meshC = ref();
 
 let raycaster = new Raycaster();
 let pointer = new Vector2();
 let allChilds = [];
+
 
 export default {
   components: {
     BoxFrame,
   },
   props: {
-    numberOfBoxesToRender: { type: Number, default: 0 },
-    numberOfBoxesToRenderChild: { type: Array, default: () => [] },
+    projectData: { type: Object, default: () => {} },
   },
   data() {
     return {
@@ -76,6 +64,7 @@ export default {
       yscale: 1,
       xscale: 1,
       zscale: 1,
+      mouseDown: { x: 0, y: 0 },
     };
   },
   methods: {
@@ -94,48 +83,63 @@ export default {
         }
       });
     },
+    saveMouseDown(event) {
+      this.mouseDown.x = event.clientX;
+      this.mouseDown.y = event.clientY;
+    },
     click(event) {
-      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      if (this.mouseDown.x == event.clientX && this.mouseDown.y == event.clientY) {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      raycaster.setFromCamera(pointer, this.$refs.camera.camera);
+        raycaster.setFromCamera(pointer, this.$refs.camera.camera);
 
-      allChilds = [];
-      if (this.$refs.scene.scene.children.length > 0) {
-        this.getAllChilds(this.$refs.scene.scene.children);
-      }
+        allChilds = [];
+        if (this.$refs.scene.scene.children.length > 0) {
+          this.getAllChilds(this.$refs.scene.scene.children);
+        }
 
-      const intersects = raycaster.intersectObjects(allChilds);
+        const intersects = raycaster.intersectObjects(allChilds);
 
-      if (intersects[0]) {
-        console.log(intersects[0]);
+        if (intersects[0]) {
+          console.log(intersects[0]);
 
-        const box = intersects[0];
-        console.log("box.faceIndex", box.faceIndex);
-        // 0 1, - x
-        if (box.faceIndex == 0 || box.faceIndex == 1) {
-          box.object.parent.position.setX(box.object.parent.position.x - 100);
+          const box = intersects[0];
+          console.log("box.faceIndex", box.faceIndex);
+
+          // 0 1, - x
+          if (box.faceIndex >= 0 && box.faceIndex <= 11) {
+            const pushBy = 10;
+            if (box.faceIndex == 0 || box.faceIndex == 1) {
+              box.object.parent.position.setX(box.object.parent.position.x - pushBy);
+            }
+            // 2 3 , + x
+            else if (box.faceIndex == 2 || box.faceIndex == 3) {
+              box.object.parent.position.setX(box.object.parent.position.x + pushBy);
+            }
+            // 4 5 , - y
+            else if (box.faceIndex == 4 || box.faceIndex == 5) {
+              box.object.parent.position.setY(box.object.parent.position.y - pushBy);
+            }
+            // 6 7 , + y
+            else if (box.faceIndex == 6 || box.faceIndex == 7) {
+              box.object.parent.position.setY(box.object.parent.position.y + pushBy);
+            }
+            // 8 9 , - z
+            else if (box.faceIndex == 8 || box.faceIndex == 9) {
+              box.object.parent.position.setZ(box.object.parent.position.z - pushBy);
+            }
+            // 10 11 , + z
+            else if (box.faceIndex == 10 || box.faceIndex == 11) {
+              box.object.parent.position.setZ(box.object.parent.position.z + pushBy);
+            }
+            this.$emit("newBoxPosition", box.object);
+          } else {
+            console.log("sometginh went wrong in the box replacement proccess");
+          }
         }
-        // 2 3 , + x
-        if (box.faceIndex == 2 || box.faceIndex == 3) {
-          box.object.parent.position.setX(box.object.parent.position.x + 100);
-        }
-        // 4 5 , - y
-        if (box.faceIndex == 4 || box.faceIndex == 5) {
-          box.object.parent.position.setY(box.object.parent.position.y - 100);
-        }
-        // 6 7 , + y
-        if (box.faceIndex == 6 || box.faceIndex == 7) {
-          box.object.parent.position.setY(box.object.parent.position.y + 100);
-        }
-        // 8 9 , - z
-        if (box.faceIndex == 8 || box.faceIndex == 9) {
-          box.object.parent.position.setZ(box.object.parent.position.z - 100);
-        }
-        // 10 11 , + z
-        if (box.faceIndex == 10 || box.faceIndex == 11) {
-          box.object.parent.position.setZ(box.object.parent.position.z + 100);
-        }
+      } else {
+        console.log("mouse movment dont move block");
       }
     },
   },
@@ -161,6 +165,32 @@ export default {
       const intersects = raycaster.intersectObjects(allChilds);
 
       if (intersects[0]) intersects[0].object.material.color.set(0xff0000);
+
+      /*
+
+
+        var options = {
+  size: 90,
+  height: 90,
+  weight: 'normal',
+  font: 'helvetiker',
+  style: 'normal',
+  bevelThickness: 2,
+  bevelSize: 4,
+  bevelSegments: 3,
+  bevelEnabled: true,
+  curveSegments: 12,
+  steps: 1
+};
+
+// the createMesh is the same function we saw earlier
+text1 = createMesh(new THREE.TextGeometry("Learning", options));
+text1.position.z = -100;
+text1.position.y = 100...
+
+
+
+        */
     });
   },
 };
@@ -170,7 +200,6 @@ export default {
 .render-wrapper {
   height: 100%;
   width: 100%;
-  border: 1px solid;
 }
 .three_detoggle {
   position: absolute;

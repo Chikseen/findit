@@ -60,12 +60,7 @@
       </div>
     </div>
 
-    <Render
-      @detoogle="threeView = !threeView"
-      v-if="threeView"
-      :numberOfBoxesToRender="numberOfBoxesToRender"
-      :numberOfBoxesToRenderChild="numberOfBoxesToRenderChild"
-    />
+    <Render @detoogle="threeView = !threeView" @newBoxPosition="newBoxPosition" v-if="threeView" :projectData="projectData" />
   </div>
 </template>
 
@@ -92,9 +87,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
-      numberOfBoxesToRender: 0,
-      numberOfBoxesToRenderChild: [],
-      threeView: false,
+      threeView: true,
     };
   },
   methods: {
@@ -122,12 +115,6 @@ export default {
       } else {
         this.projectData = data;
         this.projectName = data.name;
-        if (this.projectData.main.data[0]) {
-          this.numberOfBoxesToRender = this.projectData.main.data[0].length;
-          this.projectData.main.data[0].forEach((elm) => {
-            this.numberOfBoxesToRenderChild.push(this.projectData.main.pcr[elm].childs.length);
-          });
-        }
         this.isLoading = false;
       }
     },
@@ -147,12 +134,6 @@ export default {
         child: this.elementToAdd,
         parent: this.parentSelected,
       });
-      if (data.data[0]) {
-        this.numberOfBoxesToRender = data.data[0].length;
-        data.data[0].forEach((elm) => {
-          this.numberOfBoxesToRenderChild.push(data.pcr[elm].childs.length);
-        });
-      }
       this.projectData.main = data;
     },
     async setNewProjname(name) {
@@ -183,6 +164,17 @@ export default {
         });
       }
     },
+    async newBoxPosition(box) {
+      console.log("box", box);
+      const data = await api.projectcall("projects/changePosition", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        element: box.name,
+        position: box.parent.position,
+      });
+      console.log("data", data);
+    },
     increaseCurrentLevel(istrue) {
       if (istrue) this.curretLevel++;
       else if (this.curretLevel > 0) this.curretLevel--;
@@ -208,13 +200,8 @@ export default {
     this.socket = io(this.$store.getters.getApiSocket);
     this.socket.on("newProjData", (data) => {
       if (!data.isError) {
+        this.projectData = {};
         this.projectData.main = data;
-        if (data.data[0]) {
-          this.numberOfBoxesToRender = data.data[0].length;
-          data.data[0].forEach((elm) => {
-            this.numberOfBoxesToRenderChild.push(data.pcr[elm].childs.length);
-          });
-        }
       }
     });
     this.socket.on("newUserData", (data) => {

@@ -22,7 +22,7 @@
       <LambertMaterial />
     </Box>
 
-    <Box :position="{ x: 50, y: 50, z: 50 }" :scale="{ x: 101, y: 101, z: 101 }">
+    <Box :position="{ x: 50, y: 50, z: 50 }" :scale="{ x: 101, y: 101, z: 101 }" :props="{ name: setName }" :ref="setName">
       <LambertMaterial color="#454545" :props="{ transparent: true, opacity: 0.2 }" />
     </Box>
   </Group>
@@ -30,16 +30,26 @@
 
 <script>
 import Frame from "./Frame.vue";
+import { Text } from "troika-three-text";
 
 export default {
   components: {
     Frame,
   },
-  data() {
-    return {};
-  },
   props: {
-    z_offset: { type: Number, default: 0 },
+    setName: { type: String, default: "" },
+    text: { type: String, default: "" },
+  },
+  mounted() {
+    const text = new Text();
+    this.$refs[this.setName].mesh.add(text);
+    text.text = this.setName;
+    text.fontSize = 0.1;
+    text.depthOffset = -9999;
+    text.color = 0x9966ff;
+
+    // Update the rendering:
+    text.sync();
   },
 };
 </script>
