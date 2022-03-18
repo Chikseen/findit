@@ -60,7 +60,7 @@
       </div>
     </div>
 
-    <Render @detoogle="threeView = !threeView" @newBoxPosition="newBoxPosition" v-if="threeView" :projectData="projectData" />
+    <Render @detoogle="threeView = !threeView" @newBoxPosition="newBoxPosition" @newBoxscale="newBoxscale" v-if="threeView" :projectData="projectData" />
   </div>
 </template>
 
@@ -87,7 +87,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
-      threeView: false,
+      threeView: true,
     };
   },
   methods: {
@@ -165,7 +165,6 @@ export default {
       }
     },
     async newBoxPosition(box) {
-      console.log("box", box);
       const data = await api.projectcall("projects/changePosition", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),
@@ -173,7 +172,25 @@ export default {
         element: box.name,
         position: box.parent.position,
       });
-      console.log("data", data);
+      if (!data.isError) {
+        this.projectData = {};
+        this.projectData.main = data;
+      }
+    },
+    async newBoxscale(data) {
+      const box = data.box;
+      const scale = data.scale;
+      const call = await api.projectcall("projects/changeScale", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        element: box.name,
+        scale: scale,
+      });
+      if (!call.isError) {
+        this.projectData = {};
+        this.projectData.main = call;
+      }
     },
     increaseCurrentLevel(istrue) {
       if (istrue) this.curretLevel++;

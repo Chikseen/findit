@@ -34,6 +34,6 @@ export default {
 
 .button:hover {
   box-shadow: 2px 2px 5px 3px rgba(50, 50, 20, 0.25);
-  transform: translateX(-2px) translateY(-2px);
+  transform: translateX(-1px) translateY(-1px);
 }
 </style>
