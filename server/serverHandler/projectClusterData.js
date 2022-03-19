@@ -12,7 +12,29 @@ module.exports = {
       });
     }
     console.log("Data for User", projectCluster.get(data));
-    return projectCluster.get(data);
+
+    // Construct OwnData
+    let ownData = [];
+    projectCluster.get(data).ownProjects.forEach((projid) => {
+      const proj = new JSONdb(pathPreFix + "/database/projects/" + projid + ".json");
+      ownData.push({ projectID: projid, name: proj.get("name") });
+    });
+
+    // Construct SharedWith
+    let sharedWith = [];
+    projectCluster.get(data).sharedWithProjects.forEach((projid) => {
+      const proj = new JSONdb(pathPreFix + "/database/projects/" + Object.keys(projid)[0] + ".json");
+      proj.name = sharedWith.push({ projectID: Object.keys(projid)[0], name: proj.get("name"), sharedWith: projid[Object.keys(projid)[0]] });
+    });
+
+    // Construct Sharedby
+    let sharedBy = [];
+    projectCluster.get(data).sharedByProjects.forEach((projid) => {
+      const proj = new JSONdb(pathPreFix + "/database/projects/" + projid.projectID + ".json");
+      sharedBy.push({ projectID: proj.get("id"), name: proj.get("name"), sharedBy: projid.shareBy });
+    });
+
+    return { ownData, sharedWith, sharedBy };
   },
 
   createProject(JSONdb, fs, pathPreFix, owner) {
@@ -109,6 +131,14 @@ module.exports = {
 
             const shareWithjson = await authhandler.checkUser(call, "session/getUser", { email: data.shareWith });
             const shareWith = shareWithjson.result;
+            if (!projectCluster.has(shareWith)) {
+              console.log("Create Projectcluster for user");
+              projectCluster.set(shareWith, {
+                ownProjects: [],
+                sharedByProjects: [],
+                sharedWithProjects: [],
+              });
+            }
 
             const allData = projectCluster.get(data.shareBy);
 
@@ -170,7 +200,12 @@ module.exports = {
 
               const UserDAta = await this.getData(JSONdb, pathPreFix, shareWith);
               console.log("userbinds", userBinds);
-              io.sockets.to(userBinds[shareWith].socketID).emit("newProjData", UserDAta);
+              try {
+                io.sockets.to(userBinds[shareWith].socketID).emit("newProjData", UserDAta);
+              } catch (error) {
+                console.log(error);
+                console.log("nothing to wory about");
+              }
               //send mail to infom inveted person about invite
               authhandler.checkUser(call, "session/sendMailForInvite", { email: data.shareWith });
               return {

@@ -35,12 +35,12 @@ export default {
 
 <style>
 .message_wrapper {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 10px;
   width: calc(100% - 20px);
 
-  z-index: -1;
+  z-index: 100;
 
   background-color: rgba(250, 235, 215, 0.445);
 }

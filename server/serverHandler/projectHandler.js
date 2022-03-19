@@ -17,7 +17,7 @@ module.exports = {
     // Increse level by one of parent
     if (project.pcr[data.parent]) level = project.pcr[data.parent].level + 1;
 
-    project.pcr[data.child] = { parent: data.parent, level: level, childs: [] };
+    project.pcr[data.child] = { parent: data.parent, level: level, childs: [], scale: { x: 100 / (level + 1), y: 100 / (level + 1), z: 100 / (level + 1) } };
 
     if (level != 0) {
       project.pcr[data.parent].childs.push(data.child);

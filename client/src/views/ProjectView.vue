@@ -1,59 +1,57 @@
 <template>
   <div>
-    <div v-if="isLoading">
-      <h1>Page is Loading</h1>
-    </div>
-    <div v-if="!isLoading">
-      <div class="project_header">
-        <div class="project_header_metaInfo">
-          <div class="project_header_projName">
-            <input class="project_header_projName_input" v-model="projectName" @blur="setNewProjname($event.target.value)" />
+    <div v-if="!threeView">
+      <div v-if="isLoading">
+        <h1>Page is Loading</h1>
+      </div>
+      <div v-if="!isLoading">
+        <div class="project_header">
+          <div class="project_header_metaInfo">
+            <div class="project_header_projName">
+              <input class="project_header_projName_input" v-model="projectName" @blur="setNewProjname($event.target.value)" />
+            </div>
+            <div class="project_header_detailes">
+              <p>Project ID: {{ projectData.id }}</p>
+              <p>Created At: {{ projectData.created }}</p>
+            </div>
           </div>
-          <div class="project_header_detailes">
-            <p>Project ID: {{ projectData.id }}</p>
-            <p>Created At: {{ projectData.created }}</p>
+          <div class="project_header_userInfo">
+            <p>Currently watching: {{ userdata.user }}</p>
+            <p>This project is shared with: {{ projectData.sharedWith }}</p>
           </div>
         </div>
-        <div class="project_header_userInfo">
-          <p>Currently watching: {{ userdata.user }}</p>
-          <p>This project is shared with: {{ projectData.sharedWith }}</p>
+        <button @mouseup="deletProject">delete Project</button>
+
+        <button @click="threeView = !threeView">TOGGLE 3D VIEW</button>
+
+        <div>
+          <h2>Share this Project with</h2>
+          <input type="text" v-model="shareWithText" />
+          <button @mouseup="sendInvite">Send Invite</button>
         </div>
-      </div>
-      <button @mouseup="deletProject">delete Project</button>
 
-      <div class="elemHandler">
-        <select v-if="projectData.main.data" v-model="curretLevel">
-          <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
-            {{ i }}
-          </option>
-        </select>
-        <select v-if="projectData.main.data" v-model="parentSelected">
-          <option></option>
-          <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
-            {{ parent }}
-          </option>
-        </select>
-        <input type="text" v-model="elementToAdd" />
-        <button @mouseup="addElement">Add</button>
-      </div>
+        <Listview
+          :projectData="projectData"
+          :curretLevel="parseInt(curretLevel)"
+          @increaseCurrentLevel="increaseCurrentLevel"
+          @newParent="typeof $event == 'string' ? (parentSelected = $event) : ''"
+        />
 
-      <div>
-        <h2>Share this Project with</h2>
-        <input type="text" v-model="shareWithText" />
-        <button @mouseup="sendInvite">Send Invite</button>
+        <p>parentSelected</p>
+        <p>{{ parentSelected }}</p>
+        <p>numberOfBoxesToRender</p>
+        <p>{{ numberOfBoxesToRender }}</p>
+        <h6>{{ projectData }}</h6>
       </div>
-     
-      <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" @increaseCurrentLevel="increaseCurrentLevel" />
-      <Render />
-
-      <h6>{{ projectData }}</h6>
     </div>
+
+    <Render @detoogle="threeView = !threeView" @newBoxPosition="newBoxPosition" @newBoxscale="newBoxscale" v-if="threeView" :projectData="projectData" />
   </div>
 </template>
 
 <script>
 import Render from "../components/Render.vue";
-import Listview from "../components/Listview.vue";
+import Listview from "../components/ListComponent.vue";
 
 import io from "socket.io-client";
 import api from "../apiService";
@@ -74,6 +72,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
+      threeView: false,
     };
   },
   methods: {
@@ -150,6 +149,34 @@ export default {
         });
       }
     },
+    async newBoxPosition(box) {
+      const data = await api.projectcall("projects/changePosition", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        element: box.name,
+        position: box.parent.position,
+      });
+      if (!data.isError) {
+        this.projectData = {};
+        this.projectData.main = data;
+      }
+    },
+    async newBoxscale(data) {
+      const box = data.box;
+      const scale = data.scale;
+      const call = await api.projectcall("projects/changeScale", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        element: box.name,
+        scale: scale,
+      });
+      if (!call.isError) {
+        this.projectData = {};
+        this.projectData.main = call;
+      }
+    },
     increaseCurrentLevel(istrue) {
       if (istrue) this.curretLevel++;
       else if (this.curretLevel > 0) this.curretLevel--;
@@ -175,6 +202,7 @@ export default {
     this.socket = io(this.$store.getters.getApiSocket);
     this.socket.on("newProjData", (data) => {
       if (!data.isError) {
+        this.projectData = {};
         this.projectData.main = data;
       }
     });
@@ -191,9 +219,16 @@ export default {
       });
     });
   },
-
   mounted() {
     this.loadProject();
+  },
+  watch: {
+    parentSelected() {
+      if (this.curretLevel == 0) {
+        console.log(this.projectData.main.data[0].length);
+        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
+      }
+    },
   },
 };
 </script>

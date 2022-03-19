@@ -5,7 +5,7 @@
       <input id="levelSlider" type="range" v-model="curretLevel" min="0" :max="projectData.main.data.maxLevel + 1" />
       <label for="levelSlider">{{ curretLevel }}</label>
     </div>
-    <div class="overlook">
+<!--     <div class="overlook">
       <div v-if="curretLevel - 1 >= 0">
         <h3>All Parents</h3>
         <p v-for="parent in projectData.main.data[curretLevel - 1]" :key="parent + (curretLevel - 1)">
@@ -15,7 +15,7 @@
       <div v-else>
         <h5>There are no parents</h5>
       </div>
-    </div>
+    </div> -->
 
     <!-- Main Data -->
     <div class="overlook mainDataWrapper">
@@ -66,7 +66,7 @@
         <h5>Add your first element here</h5>
       </div>
     </div>
-    <div class="overlook">
+  <!--   <div class="overlook">
       <div v-if="projectData.main.data[curretLevel + 1]">
         <h3>All Childs</h3>
         <p v-for="parent in projectData.main.data[curretLevel + 1]" :key="parent + (curretLevel + 1)">
@@ -76,7 +76,7 @@
       <div v-else>
         <h5>There are no more childs</h5>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -104,7 +104,7 @@ export default {
       this.projectData.main = data;
     },
     async removeChild(parent) {
-      this.goBack();
+      if (this.projectData.main.pcr[parent].level != 0) this.goBack();
       const data = await api.projectcall("projects/removeElement", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),
@@ -123,6 +123,11 @@ export default {
         this.watchChild = "";
       }
       this.$emit("increaseCurrentLevel", false);
+    },
+  },
+  watch: {
+    watchChild() {
+      this.$emit("newParent", this.watchChild);
     },
   },
 };

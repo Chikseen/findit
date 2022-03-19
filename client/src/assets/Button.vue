@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <button class="button" @mouseup="emitData">{{ text }}</button>
-  </div>
+  <button class="button" @mouseup="emitData">{{ text }}</button>
 </template>
 
 <script>
 export default {
   props: {
-    text: { type: String, default: "CTANAME" },
+    text: { type: String, default: "buttonNAME" },
   },
   data() {
     return {};
@@ -20,9 +18,22 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .button {
-  width: 100%;
-  height: 50px;
+  height: 100%;
+  width: calc(100% - 20px);
+  margin: 10px;
+  border-radius: 5px;
+  border: 0;
+  font-size: 1rem;
+  background-color: none;
+  box-shadow: 1px 1px 5px 2px rgba(50, 50, 10, 0.2);
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.button:hover {
+  box-shadow: 2px 2px 5px 3px rgba(50, 50, 20, 0.25);
+  transform: translateX(-1px) translateY(-1px);
 }
 </style>
