@@ -117,7 +117,6 @@ export default {
 
         if (event.clientX > 240 || event.clientY > 270) {
           if (result[0]) {
-            console.log("reso", result[0]);
             const box = result[0];
             switch (parseInt(this.main_selected)) {
               case 0: {

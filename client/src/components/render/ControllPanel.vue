@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="render_controll_group" v-if="main_selected != 2">
+    <div class="render_controll_group" v-if="main_selected != 2 && maxLevel > 0">
       <label> Level to watch </label>
       <div class="render_controll_selection">
         <input type="range" min="0" :max="maxLevel" v-model="level_selected" />
