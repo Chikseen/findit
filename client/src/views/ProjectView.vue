@@ -72,7 +72,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
-      threeView: true,
+      threeView: false,
     };
   },
   methods: {
