@@ -104,7 +104,7 @@ export default {
       this.projectData.main = data;
     },
     async removeChild(parent) {
-      this.goBack();
+      if (this.projectData.main.pcr[parent].level != 0) this.goBack();
       const data = await api.projectcall("projects/removeElement", {
         projectID: sessionStorage.getItem("projectID"),
         SID: localStorage.getItem("sessionID"),

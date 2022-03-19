@@ -16,23 +16,26 @@
           <Group v-for="(item, index) in projectData.main.data[0]" :key="index">
             <!-- Print Main BOX -->
             <div v-if="projectData.main.pcr[item].position">
-              <BoxFrame ref="boxframe" :position="projectData.main.pcr[item].position" :boxScale="projectData.main.pcr[item].scale" :setName="item" />
+              <BoxFrame
+                ref="boxframe"
+                :projectData="projectData.main.pcr"
+                :position="projectData.main.pcr[item].position"
+                :boxScale="projectData.main.pcr[item].scale"
+                :setName="item"
+              />
             </div>
             <div v-else>
-              <BoxFrame ref="boxframe" :position="{ x: 100 * index }" :boxScale="projectData.main.pcr[item].scalescale" :setName="item" :text="'HELLO'" />
+              <BoxFrame
+                ref="boxframe"
+                :projectData="projectData.main.pcr"
+                :position="{ x: 100 * index }"
+                :boxScale="projectData.main.pcr[item].scale"
+                :setName="item"
+                :text="'HELLO'"
+              />
             </div>
-            <!-- Print BOX -1 One -->
-            <!-- NO NEED YET -->
-            <!--   <Group v-for="(item2, index2) in numberOfBoxesToRenderChild[index1]" :key="index2">
-            <BoxFrame
-              ref="boxframe"
-              :position="{ x: 100 * (item1 - 1) + (100 / numberOfBoxesToRenderChild[index1]) * index2, y: index1 * 10 }"
-              :scale="{ x: 1 / numberOfBoxesToRenderChild[index1], y: 1 / 1.5, z: 1 / 2 }"
-            />
-          </Group> -->
           </Group>
-          <!--     <BoxFrame ref="boxframe" :position="{ x: -100, y: -210 }" :boxScale="{ x: 50, y: 50, z: 50 }" :setName="item" :text="'PP'" />
-       -->
+          <!-- <BoxFrame ref="boxframe" :position="{ x: -100, y: -210 }" :boxScale="{ x: 50, y: 50, z: 50 }" :setName="item" :text="'PP'" />-->
         </div>
       </Scene>
     </Renderer>
@@ -79,7 +82,7 @@ export default {
     getAllChilds(group) {
       group.forEach((child) => {
         if (child.type === "Group") {
-          this.getAllChilds(child.children);
+        this.getAllChilds(child.children);
         } else {
           allChilds.push(child);
         }

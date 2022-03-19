@@ -30,6 +30,20 @@
     <Box :position="{ x: boxScale.x / 2, y: boxScale.y / 2, z: boxScale.z / 2 }" :scale="boxScale" :props="{ name: setName }" :ref="setName">
       <LambertMaterial color="#454545" :props="{ transparent: true, opacity: 0.2 }" />
     </Box>
+
+    <div v-if="projectData[setName].childs.length > 0">
+      <div v-for="child in projectData[setName].childs" :key="child">
+        <BoxFrame
+          ref="boxframe"
+          :projectData="projectData"
+          :modifier="projectData[setName].level"
+          :position="projectData[child].position"
+          :boxScale="projectData[child].scale"
+          :setName="child"
+          :text="'HELLO'"
+        />
+      </div>
+    </div>
   </Group>
 </template>
 
@@ -42,15 +56,17 @@ export default {
     Frame,
   },
   props: {
+    projectData: { type: Object, default: () => {} },
     setName: { type: String, default: "" },
     text: { type: String, default: "" },
-    boxScale: { type: Object, default: { x: 100, y: 100, z: 100 } },
+    boxScale: { type: Object, default: { x: 100 , y: 100, z: 100 } },
   },
   mounted() {
     const text = new Text();
     this.$refs[this.setName].mesh.add(text);
     text.text = this.setName;
     text.fontSize = 0.1;
+    text.anchorX = "50%";
     text.depthOffset = -9999;
     text.color = 0x9966ff;
 

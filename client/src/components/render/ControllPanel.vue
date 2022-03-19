@@ -49,9 +49,11 @@ export default {
   watch: {
     main_selected() {
       this.$emit("main_selected", this.main_selected);
+      //this.$store.commit("setMainSelected", this.scale_selected);
     },
     scale_selected() {
       this.$emit("scale_selected", this.scale_selected);
+      //this.$store.commit("setScaleSelected", this.scale_selected);
     },
   },
 };

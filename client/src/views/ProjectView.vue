@@ -23,21 +23,6 @@
         <button @mouseup="deletProject">delete Project</button>
 
         <button @click="threeView = !threeView">TOGGLE 3D VIEW</button>
-        <div class="elemHandler">
-          <select v-if="projectData.main.data" v-model="curretLevel">
-            <option v-for="(level, i) in projectData.main.data.maxLevel + 1" :key="i">
-              {{ i }}
-            </option>
-          </select>
-          <select v-if="projectData.main.data" v-model="parentSelected">
-            <option></option>
-            <option v-for="parent in projectData.main.data[curretLevel]" :key="parent">
-              {{ parent }}
-            </option>
-          </select>
-          <input type="text" v-model="elementToAdd" />
-          <button @mouseup="addElement">Add</button>
-        </div>
 
         <div>
           <h2>Share this Project with</h2>
@@ -87,7 +72,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
-      threeView: true,
+      threeView: false,
     };
   },
   methods: {
