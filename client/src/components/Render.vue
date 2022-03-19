@@ -1,6 +1,13 @@
 <template>
   <div @mousedown="saveMouseDown" @mouseup="click" class="mainWindow">
-    <ControllPanel @detoogle="$emit('detoogle')" @main_selected="main_selected = $event" @scale_selected="scale_selected = $event" />
+    <ControllPanel
+      v-if="projectData.main.data"
+      :maxLevel="projectData.main.data.maxLevel"
+      @detoogle="$emit('detoogle')"
+      @main_selected="main_selected = $event"
+      @scale_selected="scale_selected = $event"
+      @level_selected="level_selected = $event"
+    />
     <Renderer ref="rendererC" antialias alpha class="render-wrapper" resize="window" orbit-ctrl>
       <Camera ref="camera" :position="{ z: 150, x: 0, y: 0 }" :fov="100" />
       <Scene ref="scene">
@@ -70,6 +77,7 @@ export default {
       mouseDown: { x: 0, y: 0 },
       main_selected: 0,
       scale_selected: 0,
+      level_selected: 0,
     };
   },
   methods: {
@@ -82,7 +90,7 @@ export default {
     getAllChilds(group) {
       group.forEach((child) => {
         if (child.type === "Group") {
-        this.getAllChilds(child.children);
+          this.getAllChilds(child.children);
         } else {
           allChilds.push(child);
         }
@@ -103,27 +111,33 @@ export default {
         if (this.$refs.scene.scene.children.length > 0) {
           this.getAllChilds(this.$refs.scene.scene.children);
         }
-
         const intersects = raycaster.intersectObjects(allChilds);
+        const filterMesh = intersects.filter((element) => this.projectData.main.pcr[element.object.name]);
+        const result = filterMesh.filter((element) => this.projectData.main.pcr[element.object.name].level == this.level_selected);
 
-        if (intersects[0]) {
-          const box = intersects[0];
-          switch (parseInt(this.main_selected)) {
-            case 0: {
-              this.changePostion(box);
-              break;
+        if (event.clientX > 240 || event.clientY > 270) {
+          if (result[0]) {
+            console.log("reso", result[0]);
+            const box = result[0];
+            switch (parseInt(this.main_selected)) {
+              case 0: {
+                this.changePostion(box);
+                break;
+              }
+              case 1: {
+                this.changeScale(box);
+                break;
+              }
+              case 2: {
+                console.log("not supported yet");
+                break;
+              }
             }
-            case 1: {
-              this.changeScale(box);
-              break;
-            }
-            case 2: {
-              console.log("not supported yet");
-              break;
-            }
+          } else {
+            console.log("sometginh went wrong in the box replacement proccess");
           }
         } else {
-          console.log("sometginh went wrong in the box replacement proccess");
+          console.log("box click");
         }
       } else {
         console.log("mouse movment dont move block");
@@ -211,26 +225,49 @@ export default {
   mounted() {
     window.addEventListener("pointermove", (event) => {
       if (this.$refs.camera) {
-        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        if (this.main_selected != 2) {
+          pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+          pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        raycaster.setFromCamera(pointer, this.$refs.camera.camera);
+          raycaster.setFromCamera(pointer, this.$refs.camera.camera);
 
-        allChilds = [];
+          allChilds = [];
 
-        if (this.$refs.scene.scene.children.length > 0) {
-          this.getAllChilds(this.$refs.scene.scene.children);
-        }
-
-        allChilds.forEach((element) => {
-          if (element.type == "Mesh") {
-            element.material.color.set(0xffaaff);
+          if (this.$refs.scene.scene.children.length > 0) {
+            this.getAllChilds(this.$refs.scene.scene.children);
           }
-        });
 
-        const intersects = raycaster.intersectObjects(allChilds);
+          allChilds.forEach((element) => {
+            if (element.type == "Mesh") {
+              if (element.name != "") {
+                if (this.projectData.main.pcr[element.name]) {
+                  if (this.projectData.main.pcr[element.name].level == this.level_selected) {
+                    element.material.color.set(0xa5df6e);
+                    element.material.opacity = 0.4;
+                  } else {
+                    element.material.color.set(0xa3a5a1);
+                    element.material.opacity = 0.1;
+                  }
+                }
+              }
+            }
+          });
 
-        if (intersects[0]) intersects[0].object.material.color.set(0xff0000);
+          const intersects = raycaster.intersectObjects(allChilds);
+          const filterMesh = intersects.filter((element) => this.projectData.main.pcr[element.object.name]);
+          const result = filterMesh.filter((element) => this.projectData.main.pcr[element.object.name].level == this.level_selected);
+          if (result[0]) {
+            result[0].object.material.color.set(0xd7da5a);
+            result[0].object.material.opacity = 0.7;
+          }
+        } else {
+          allChilds.forEach((element) => {
+            if (element.type == "Mesh") {
+              element.material.color.set(0xc5c5c2);
+              element.material.opacity = 0.3;
+            }
+          });
+        }
       }
     });
   },
@@ -245,8 +282,8 @@ export default {
   margin: 0;
 }
 .render-wrapper {
-  height: 100%;
-  width: 100%;
+  height: 99%;
+  width: 99%;
 }
 .three_detoggle {
   position: absolute;
@@ -254,5 +291,6 @@ export default {
   left: 50px;
   width: 100px;
   height: 50px;
+  background-color: #c5c5c2;
 }
 </style>

@@ -2,8 +2,8 @@
   <div class="render_controll">
     <h3>CONTROLLPANEL</h3>
     <div>
-      <h4>Mode</h4>
       <div class="render_controll_group">
+        <h4>Mode</h4>
         <div class="render_controll_selection">
           <label> Position </label>
           <input type="radio" name="mode" v-model="main_selected" value="0" />
@@ -13,9 +13,16 @@
           <input type="radio" name="mode" v-model="main_selected" value="1" />
         </div>
         <div class="render_controll_selection">
-          <label> Controll </label>
+          <label> Lock around </label>
           <input type="radio" name="mode" v-model="main_selected" value="2" />
         </div>
+      </div>
+    </div>
+    <div class="render_controll_group" v-if="main_selected != 2">
+      <label> Level to watch </label>
+      <div class="render_controll_selection">
+        <input type="range" min="0" :max="maxLevel" v-model="level_selected" />
+        <label> {{ level_selected }} </label>
       </div>
     </div>
     <div class="render_controll_group" v-if="main_selected == 1">
@@ -40,10 +47,14 @@ export default {
   components: {
     Button,
   },
+  props: {
+    maxLevel: { type: Number, default: 0 },
+  },
   data() {
     return {
       main_selected: 0,
       scale_selected: 0,
+      level_selected: 0,
     };
   },
   watch: {
@@ -55,6 +66,10 @@ export default {
       this.$emit("scale_selected", this.scale_selected);
       //this.$store.commit("setScaleSelected", this.scale_selected);
     },
+    level_selected() {
+      this.$emit("level_selected", this.level_selected);
+      //this.$store.commit("setScaleSelected", this.scale_selected);
+    },
   },
 };
 </script>
@@ -64,6 +79,7 @@ export default {
   position: absolute;
   top: 20px;
   left: 20px;
+  width: 210px;
   display: flex;
   flex-direction: column;
   padding: 10px;
