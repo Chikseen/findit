@@ -215,7 +215,7 @@ export default {
     searchText() {
       this.results = [];
       this.allElements.forEach((text) => {
-        if (text.includes(this.searchText)) this.results.push(text);
+        if (text.toLowerCase().includes(this.searchText.toLowerCase())) this.results.push(text);
       });
       if (this.searchText == "") this.results = [];
       else if (this.searchText != "" && this.results.length == 0) this.results[0] = -1;
