@@ -19,47 +19,51 @@
             <p>Currently watching: {{ userdata.user }}</p>
             <p>This project is shared with: {{ projectData.sharedWith }}</p>
           </div>
+          <div class="project_header_settings">
+            <SettingIcon :isToggeld="settingsToggeld" @click="toggleSettings" />
+          </div>
         </div>
-        <button @mouseup="deletProject">delete Project</button>
-
-        <button @click="threeView = !threeView">TOGGLE 3D VIEW</button>
+        <div class="project_wrapper">
+          <Transition name="show-setting">
+            <ProjectSettings v-if="settingsToggeld" @detoggle="settingsToggeld = false" :project="projectData" />
+          </Transition>
+        </div>
 
         <div>
-          <h2>Share this Project with</h2>
-          <input type="text" v-model="shareWithText" />
-          <button @mouseup="sendInvite">Send Invite</button>
+          <h3>Search for Something</h3>
+          <ReactiveInputField :text="'Search'" @change="typeof $event == 'string' ? (searchText = $event) : ''" />
         </div>
 
-        <Listview
-          :projectData="projectData"
-          :curretLevel="parseInt(curretLevel)"
-          @increaseCurrentLevel="increaseCurrentLevel"
-          @newParent="typeof $event == 'string' ? (parentSelected = $event) : ''"
-        />
+        <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" :result="results" @increaseCurrentLevel="increaseCurrentLevel" />
+
+        <button @click="threeView = !threeView" style="width: 200px; height: 200px">TOGGLE 3D VIEW</button>
 
         <p>parentSelected</p>
         <p>{{ parentSelected }}</p>
-        <p>numberOfBoxesToRender</p>
-        <p>{{ numberOfBoxesToRender }}</p>
         <h6>{{ projectData }}</h6>
       </div>
     </div>
-
-    <Render @detoogle="threeView = !threeView" @newBoxPosition="newBoxPosition" @newBoxscale="newBoxscale" v-if="threeView" :projectData="projectData" />
+    <Render @detoogle="threeView = false" @newBoxPosition="newBoxPosition" @newBoxscale="newBoxscale" v-if="threeView" :projectData="projectData" />
   </div>
 </template>
 
 <script>
-import Render from "../components/Render.vue";
-import Listview from "../components/ListComponent.vue";
+import Render from "@/components/Render.vue";
+import Listview from "@/components/ListComponent.vue";
+import ProjectSettings from "@/components/ProjectSettings.vue";
+import SettingIcon from "@/assets/icons/setting.vue";
+import ReactiveInputField from "@/components/reactiveInputField.vue";
 
 import io from "socket.io-client";
-import api from "../apiService";
+import api from "@/apiService";
 
 export default {
   components: {
     Render,
     Listview,
+    SettingIcon,
+    ProjectSettings,
+    ReactiveInputField,
   },
   data() {
     return {
@@ -73,22 +77,12 @@ export default {
       curretLevel: 0,
       isLoading: true,
       threeView: false,
+      settingsToggeld: false,
+      searchText: "",
+      results: [],
     };
   },
   methods: {
-    async deletProject() {
-      let val = confirm("Are you sure to want delete this Project");
-      if (val == true) {
-        const data = await api.projectcall("projects/delete", {
-          projectID: this.projectData.id,
-          SID: localStorage.getItem("sessionID"),
-          user: localStorage.getItem("usr"),
-        });
-        this.$router.push("/Home");
-      } else {
-        console.log("cancel delete request");
-      }
-    },
     async loadProject() {
       const data = await api.projectcall("projects/load", {
         projectID: sessionStorage.getItem("projectID"),
@@ -102,14 +96,6 @@ export default {
         this.projectName = data.name;
         this.isLoading = false;
       }
-    },
-    async sendInvite() {
-      const data = await api.projectcall("projects/sendInvite", {
-        shareWith: this.shareWithText,
-        shareBy: localStorage.getItem("usr"),
-        projectID: sessionStorage.getItem("projectID"),
-      });
-      this.$store.commit("setMessage", data);
     },
     async addElement() {
       const data = await api.projectcall("projects/addElement", {
@@ -181,6 +167,9 @@ export default {
       if (istrue) this.curretLevel++;
       else if (this.curretLevel > 0) this.curretLevel--;
     },
+    toggleSettings() {
+      this.settingsToggeld = !this.settingsToggeld;
+    },
   },
 
   created() {
@@ -223,23 +212,47 @@ export default {
     this.loadProject();
   },
   watch: {
-    parentSelected() {
-      if (this.curretLevel == 0) {
-        console.log(this.projectData.main.data[0].length);
-        this.numberOfBoxesToRender = this.projectData.main.data[0].length;
-      }
+    searchText() {
+      this.results = [];
+      this.allElements.forEach((text) => {
+        if (text.includes(this.searchText)) this.results.push(text);
+      });
+      if (this.searchText == "") this.results = [];
+      else if (this.searchText != "" && this.results.length == 0) this.results[0] = -1;
+    },
+  },
+  computed: {
+    allElements() {
+      return Object.keys(this.projectData.main.pcr);
     },
   },
 };
 </script>
 
 <style lang="scss">
+/* VUE Animations */
+.show-setting-enter-active,
+.show-setting-leave-active {
+  transform: translateX(0);
+}
+
+.show-setting-enter-from,
+.show-setting-leave-to {
+  transform: translateX(100%);
+}
+/* _______ */
+
+.project_wrapper {
+  overflow: hidden;
+}
 .project_header {
   position: relative;
   display: flex;
   justify-content: space-between;
-  background-color: rgb(209, 209, 221);
+  background-color: rgb(245, 245, 245);
+  box-shadow: 1px 1px 4px 2px rgba(50, 50, 10, 0.2);
   width: calc(100% - 20px);
+  z-index: 10;
   height: 5rem;
   padding: 10px;
 
@@ -277,23 +290,21 @@ export default {
   }
 }
 
-/* __________________ */
+@media only screen and (max-width: 750px) {
+  .project_header {
+    height: 2rem;
+    width: calc(100% - 20px);
+    &_detailes {
+      display: none;
+    }
 
-.elemHandler {
-  padding: 20px;
-  background-color: aqua;
-}
-.projectList {
-  background-color: bisque;
-}
-.overlook {
-  display: flex;
-  flex: row;
-}
+    &_userInfo {
+      display: none;
+    }
 
-.levelSlider {
-  display: flex;
-  flex-direction: column;
-  margin: 40px 25%;
+    &_settings {
+      width: 2rem;
+    }
+  }
 }
 </style>

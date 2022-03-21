@@ -64,8 +64,6 @@ export default {
   &_project {
     height: 250px;
     min-width: 200px;
-    max-width: 300px;
-
     background-color: $main-lighter;
     border-radius: 10px;
     box-shadow: 2px 2px 10px 1px rgba(50, 50, 10, 0.1);
@@ -75,6 +73,23 @@ export default {
 
   &_project:hover {
     box-shadow: 2px 2px 10px 1px rgba(50, 50, 10, 0.2);
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .projectcluster {
+    &_preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+    }
+    &_project {
+      height: 150px;
+      min-width: 100px;
+    }
+    &_project > h1 {
+      font-size: 0.75rem;
+    }
   }
 }
 </style>

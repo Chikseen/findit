@@ -1,5 +1,5 @@
 <template>
-  <div class="reactiveInputField">
+  <div class="reactiveInputField" @keyup.enter="enter">
     <label :class="['reactiveInputField_label', value != '' ? 'reactiveInputField_label_up' : 'reactiveInputField_label_down']">{{ text }}</label>
     <input v-if="!isPassword && !isMail" class="reactiveInputField_input" type="text" v-model="value" />
     <input v-if="isPassword" class="reactiveInputField_input" type="password" v-model="value" />
@@ -13,11 +13,18 @@ export default {
     text: { type: String, default: "" },
     isPassword: { type: Boolean, default: false },
     isMail: { type: Boolean, default: false },
+    submitOnEnter: { type: Boolean, default: false },
   },
   data() {
     return {
       value: "",
     };
+  },
+  methods: {
+    enter() {
+      this.$emit("enter", this.value);
+      this.value = "";
+    },
   },
   watch: {
     value() {
@@ -33,6 +40,7 @@ export default {
   flex-direction: column;
   margin: 10px auto;
   padding: 10px;
+  width: calc(100% - 20px);
 
   &_label {
     text-align: left;

@@ -1,15 +1,14 @@
 <template>
-  <div class="" @mouseup="emitClick">
+  <div class="projectpreview" @mouseup="emitClick">
     <AddIcon v-if="project.id === 'addProject'" />
-    <h1>{{ project.id.name }}</h1>
-    <h5 v-if="!project.id.sharedWith && !project.id.sharedBy">{{ project.id.projectID }}</h5>
-    <div v-if="project.id.sharedWith">
-      <h3>Shared With:</h3>
-      <h4 v-for="(name, index) in project.id.sharedWith" :key="index + name">{{ name }}</h4>
+    <h2  v-if="project.id != 'addProject'">{{ project.id.name }}</h2>
+    <div class="projectpreview_advancedInfo" v-if="project.id.sharedWith">
+      <p>Shared With:</p>
+      <p v-for="(name, index) in project.id.sharedWith" :key="index + name">{{ name }}</p>
     </div>
     <div v-if="project.id.sharedBy">
-      <h3>Shared By:</h3>
-      <h4>{{ project.id.sharedBy }}</h4>
+      <p>Shared By:</p>
+      <p>{{ project.id.sharedBy }}</p>
     </div>
   </div>
 </template>
@@ -32,13 +31,26 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.projectpreview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 5px;
+
+  &_advancedInfo > p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 .projectPreview_wrapper {
   width: 100%;
   height: 100%;
 
   background-color: rgba(187, 193, 197, 0.288);
-  border-radius: 10px;
+  border-radius: 50px;
 
   transition: all 0.5s;
 }

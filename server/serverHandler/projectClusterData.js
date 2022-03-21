@@ -91,9 +91,9 @@ module.exports = {
 
   deleteProject(JSONdb, fs, pathPreFix, data) {
     const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
-    if (projectCluster.get(data.user).ownProjects.includes(data.projectID)) {
+    if (projectCluster.get(data.user).ownProjects.includes(parseInt(data.projectID))) {
       fs.unlinkSync(pathPreFix + "/database/projects/" + data.projectID + ".json");
-      const index = projectCluster.get(data.user).ownProjects.indexOf(data.projectID);
+      const index = projectCluster.get(data.user).ownProjects.indexOf(parseInt(data.projectID));
       if (index > -1) {
         let temp = projectCluster.get(data.user);
         temp.ownProjects.splice(index, 1);
