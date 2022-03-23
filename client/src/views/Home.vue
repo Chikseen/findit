@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import ProjectCluster from "../components/ProjectCluster.vue";
+import ProjectCluster from "../components/projectCluster.vue";
 import SettingsWrapper from "../components/SettingsWrapper.vue";
 
 import io from "socket.io-client";
