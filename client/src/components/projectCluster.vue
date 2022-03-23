@@ -11,11 +11,11 @@
   </div>
 </template>
 <script>
-import ProjectPreview from "@/components/ProjectPreview.vue";
-import api from "@/apiService";
+import ProjectPreview from "../components/ProjectPreview.vue";
+import api from "../apiService";
 
 export default {
-  name: "projectCluster",
+  name: "ProjectCluster",
   components: {
     ProjectPreview,
   },
