@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import ProjectPreview from "../components/ProjectPreview.vue";
+import ProjectPreview from "./projectPreview.vue";
 import api from "../apiService";
 
 export default {
