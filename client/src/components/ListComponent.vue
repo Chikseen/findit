@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     increaseCurrentLevel(elem) {
+      console.log("elem", elem);
       this.watchChild = elem;
       this.$emit("increaseCurrentLevel", true);
     },
@@ -112,7 +113,8 @@ export default {
 
 .parentlist {
   position: relative;
-  border: 1px solid;
+  border: 1px solid #79787852;
+  box-shadow: 1px 1px 5px 3px rgba(50, 50, 10, 0.075);
   border-radius: 10px;
   padding: 15px;
   margin: 15px 0;
@@ -121,7 +123,8 @@ export default {
 .parentListChild {
   padding: 5px 0 0 20px;
   margin: 10px 0 10px 15px;
-  border: 1px solid;
+  border: 1px solid #adacac33;
+  box-shadow: 1px 1px 5px 3px rgba(231, 231, 230, 0.041);
   border-radius: 5px;
   transition: all 0.5s;
 }

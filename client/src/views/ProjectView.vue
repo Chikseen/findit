@@ -19,21 +19,16 @@
             <p>Currently watching: {{ userdata.user }}</p>
             <p>This project is shared with: {{ projectData.sharedWith }}</p>
           </div>
-          <div class="project_header_settings">
-            <SettingIcon :isToggeld="settingsToggeld" @click="toggleSettings" />
+          <div class="project_wrapper">
+            <SettingsWrapper :toShow="'projectconfig'" style="top: 50px" />
+            <SettingsWrapper :toShow="'profileconfig'" />
           </div>
-        </div>
-        <div class="project_wrapper">
-          <Transition name="show-setting">
-            <ProjectSettings v-if="settingsToggeld" @detoggle="settingsToggeld = false" :project="projectData" />
-          </Transition>
         </div>
 
         <div>
           <h3>Search for Something</h3>
           <ReactiveInputField :text="'Search'" @change="typeof $event == 'string' ? (searchText = $event) : ''" />
         </div>
-
         <Listview :projectData="projectData" :curretLevel="parseInt(curretLevel)" :result="results" @increaseCurrentLevel="increaseCurrentLevel" />
 
         <button @click="threeView = !threeView" style="width: 200px; height: 200px">TOGGLE 3D VIEW</button>
@@ -53,6 +48,7 @@ import Listview from "@/components/ListComponent.vue";
 import ProjectSettings from "@/components/ProjectSettings.vue";
 import SettingIcon from "@/assets/icons/setting.vue";
 import ReactiveInputField from "@/components/reactiveInputField.vue";
+import SettingsWrapper from "@/components/SettingsWrapper.vue";
 
 import io from "socket.io-client";
 import api from "@/apiService";
@@ -64,6 +60,7 @@ export default {
     SettingIcon,
     ProjectSettings,
     ReactiveInputField,
+    SettingsWrapper,
   },
   data() {
     return {
@@ -164,6 +161,9 @@ export default {
       }
     },
     increaseCurrentLevel(istrue) {
+      console.log("amihere", istrue);
+      this.searchText = "";
+      this.results = [];
       if (istrue) this.curretLevel++;
       else if (this.curretLevel > 0) this.curretLevel--;
     },
@@ -243,7 +243,11 @@ export default {
 /* _______ */
 
 .project_wrapper {
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  width: 5rem;
+  justify-content: space-evenly;
 }
 .project_header {
   position: relative;
@@ -251,10 +255,12 @@ export default {
   justify-content: space-between;
   background-color: rgb(245, 245, 245);
   box-shadow: 1px 1px 4px 2px rgba(50, 50, 10, 0.2);
-  width: calc(100% - 20px);
+  width: calc(100% - 10px);
   z-index: 10;
   height: 5rem;
   padding: 10px;
+  margin-right: 0;
+  padding-right: 0;
 
   &_metaInfo {
     display: flex;
@@ -266,7 +272,7 @@ export default {
 
     &_input {
       width: 100%;
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       background-color: rgba(0, 0, 0, 0);
       border: 0;
       border-right: 1px solid;
@@ -293,9 +299,14 @@ export default {
 @media only screen and (max-width: 750px) {
   .project_header {
     height: 2rem;
-    width: calc(100% - 20px);
+    width: calc(100% - 10px);
+
     &_detailes {
       display: none;
+    }
+
+    &_projName_input {
+      font-size: 1rem;
     }
 
     &_userInfo {

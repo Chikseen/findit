@@ -1,12 +1,14 @@
 <template>
   <div class="app">
-    <router-view />
+    <div class="app_layout">
+      <router-view />
+    </div>
     <Messege />
   </div>
 </template>
 
 <script>
-import Messege from "./assets/messageComponent.vue";
+import Messege from "@/assets/messageComponent.vue";
 
 export default {
   components: {
@@ -44,6 +46,13 @@ html {
 
 .app {
   height: 100%;
+
+  &_layout {
+    /*  margin-left: 100px;
+    height: 100%;
+    width: calc(100% - 100px); */
+    height: 100%;
+  }
 }
 
 nav {

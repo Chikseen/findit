@@ -1,7 +1,7 @@
 <template>
   <div class="projectpreview" @mouseup="emitClick">
-    <AddIcon v-if="project.id === 'addProject'" />
-    <h2  v-if="project.id != 'addProject'">{{ project.id.name }}</h2>
+    <AddIcon v-if="project.id === 'addProject'" class="projectpreview_icon" />
+    <h2 v-if="project.id != 'addProject'">{{ project.id.name }}</h2>
     <div class="projectpreview_advancedInfo" v-if="project.id.sharedWith">
       <p>Shared With:</p>
       <p v-for="(name, index) in project.id.sharedWith" :key="index + name">{{ name }}</p>
@@ -37,11 +37,17 @@ export default {
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  padding: 5px;
+  padding: 0;
 
   &_advancedInfo > p {
     margin: 0;
     padding: 0;
+  }
+
+  &_icon {
+    width: 100px;
+    height: 100px;
+    margin: auto;
   }
 }
 

@@ -61,7 +61,7 @@ export default {
   &_input {
     height: 2rem;
     background-color: rgb(0, 0, 0, 0);
-    box-shadow: 2px 2px 4px 2px rgba(50, 50, 10, 0.1);
+    box-shadow: 2px 2px 4px 2px rgba(50, 50, 10, 0.055);
     border: 1px solid #c5c4c4b2;
     border-radius: 8px;
   }

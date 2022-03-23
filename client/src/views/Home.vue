@@ -1,5 +1,6 @@
 <template>
   <div class="home_wrapper">
+    <SettingsWrapper :toShow="'profileconfig'"/>
     <h1>Hello {{ userName }}</h1>
     <div>
       <h2>Your Projects</h2>
@@ -20,6 +21,7 @@
 
 <script>
 import ProjectCluster from "../components/projectCluster.vue";
+import SettingsWrapper from "@/components/SettingsWrapper.vue";
 
 import io from "socket.io-client";
 import api from "../apiService";
@@ -28,6 +30,7 @@ export default {
   name: "Home",
   components: {
     ProjectCluster,
+    SettingsWrapper,
   },
   data() {
     return {

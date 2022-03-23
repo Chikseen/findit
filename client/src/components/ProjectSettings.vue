@@ -1,8 +1,5 @@
 <template>
   <div class="project_settings">
-    <div class="project_settings_icon_wrapper">
-      <SettingIcon class="project_settings_icon" @click="$emit('detoggle')" :isToggeld="true" />
-    </div>
     <div class="project_settings_content">
       <div>
         <h3>Share Project</h3>
@@ -71,12 +68,12 @@ export default {
   top: 0;
   right: 0;
   width: 100%;
-  max-width: 750px;
+  max-width: 350px;
   height: 100%;
   background-color: rgb(245, 245, 245);
   border-radius: 15px 0 0 15px;
-  box-shadow: 1px 1px 10px 3px rgba(50, 50, 10, 0.3);
   transition: 0.5s all;
+  z-index: 10;
 
   display: flex;
   flex-direction: column;
@@ -93,8 +90,10 @@ export default {
     }
   }
 
+
   &_content {
     border: 1px solid #79787852;
+    box-shadow: 1px 1px 5px 3px rgba(50, 50, 10, 0.08);
     border-radius: 5px;
     margin: 15px;
     padding: 5px;
