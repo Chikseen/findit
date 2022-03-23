@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!errorScreen">
     <div v-if="!threeView">
       <div v-if="isLoading">
         <h1>Page is Loading</h1>
@@ -20,8 +20,8 @@
             <p>This project is shared with: {{ projectData.sharedWith }}</p>
           </div>
           <div class="project_wrapper">
-            <SettingsWrapper :toShow="'projectconfig'" style="top: 50px" />
             <SettingsWrapper :toShow="'profileconfig'" />
+            <SettingsWrapper :toShow="'projectconfig'" style="top: 50px" :access="projectData.access" />
           </div>
         </div>
 
@@ -39,6 +39,9 @@
       </div>
     </div>
     <Render @detoogle="threeView = false" @newBoxPosition="newBoxPosition" @newBoxscale="newBoxscale" v-if="threeView" :projectData="projectData" />
+  </div>
+  <div v-else>
+    <h1>You either have no permisons for this project or this project dosent exits!</h1>
   </div>
 </template>
 
@@ -73,6 +76,7 @@ export default {
       userdata: 0,
       curretLevel: 0,
       isLoading: true,
+      errorScreen: false,
       threeView: false,
       settingsToggeld: false,
       searchText: "",
@@ -88,6 +92,8 @@ export default {
       });
       if (data.isError) {
         this.$store.commit("setMessage", data);
+        this.isLoading = false;
+        this.errorScreen = true;
       } else {
         this.projectData = data;
         this.projectName = data.name;
@@ -113,8 +119,11 @@ export default {
             user: localStorage.getItem("usr"),
             name: name,
           });
-          this.projectData.name = data.name;
-          this.projectName = data.name;
+          if (data.isError) this.$store.commit("setMessage", data);
+          else {
+            this.projectData.name = data.name;
+            this.projectName = data.name;
+          }
         } else {
           console.log("The project is to short");
           this.projectName = this.projectData.name;
@@ -161,7 +170,6 @@ export default {
       }
     },
     increaseCurrentLevel(istrue) {
-      console.log("amihere", istrue);
       this.searchText = "";
       this.results = [];
       if (istrue) this.curretLevel++;
@@ -196,8 +204,10 @@ export default {
       }
     });
     this.socket.on("newUserData", (data) => {
+      console.log("userdata", data);
       if (!data.isError) {
         this.userdata = data;
+        this.projectData.access = data.access;
       }
     });
 

@@ -1,5 +1,6 @@
 <template>
   <div class="profile_settings">
+    <h1>Profile Settings</h1>
     <div class="profile_settings_content">
       <div>
         <h3>Language</h3>
@@ -17,11 +18,7 @@
 
 <style lang="scss">
 .profile_settings {
-  position: fixed;
-  top: 0;
-  right: 0;
   width: 100%;
-  max-width: 350px;
   height: 100%;
   background-color: rgb(245, 245, 245);
   border-radius: 15px 0 0 15px;

@@ -84,7 +84,7 @@ app.post("/projects/getID", async (request, response) => {
   console.log("load Project", request.body);
   if (await auth.checkUser(authCall, "session/checkUser", request.body)) {
     if (request.body.projectID == "-1") {
-      console.log("create Proj");
+      console.log("check loading permissons");
       response.json(await projectClusterData.createProject(JSONdb, fs, pathPreFix, request.body.user));
     } else {
       console.log("load Proj");
@@ -97,38 +97,104 @@ app.post("/projects/getID", async (request, response) => {
 });
 
 app.post("/projects/delete", async (request, response) => {
-  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
-  console.log("delete Project", request.body);
-  response.json(await projectClusterData.deleteProject(JSONdb, fs, pathPreFix, request.body));
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 4) {
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
+    console.log("delete Project", request.body);
+    response.json(await projectClusterData.deleteProject(JSONdb, fs, pathPreFix, request.body));
+  } else
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 4 access or higher are able to make this operation",
+    });
 });
 
 app.post("/projects/load", async (request, response) => {
   const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
   console.log("load Project", request.body);
   //Validate if user can load thisProject here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  response.json(await projectClusterData.getProject(JSONdb, pathPreFix, request.body.projectID));
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 0) {
+    response.json(await projectClusterData.getProject(JSONdb, pathPreFix, request.body.projectID));
+  } else
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "loadingerror",
+      msg: "You either have no permisons for this project or this project dosent exits!",
+    });
 });
 
 app.post("/projects/sendInvite", async (request, response) => {
-  const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
-  response.json(await projectClusterData.sendInvite(JSONdb, fs, pathPreFix, request.body, authCall, io, userBinds));
+  if (checkUserPermissions(request.body.shareBy, request.body.projectID) >= 3) {
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
+    response.json(await projectClusterData.sendInvite(JSONdb, fs, pathPreFix, request.body, authCall, io, userBinds));
+    sendUserData(request.body.projectID);
+  } else {
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 3 access or higher are able to make this operation",
+    });
+  }
+});
+
+app.post("/projects/changeAccess", async (request, response) => {
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 3) {
+    const projectCluster = new JSONdb(pathPreFix + "/database/projectCluster.json");
+    response.json(await projectClusterData.changeAccess(JSONdb, fs, pathPreFix, request.body, authCall, io, userBinds));
+    sendUserData(request.body.projectID);
+  } else {
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 3 access or higher are able to make this operation",
+    });
+  }
 });
 
 app.post("/projects/addElement", async (request, response) => {
-  response.json(await projcthandler.addElement(JSONdb, pathPreFix, request.body));
-  sendNewDataToWatcher(request.body.projectID);
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 2) {
+    response.json(await projcthandler.addElement(JSONdb, pathPreFix, request.body));
+    sendNewDataToWatcher(request.body.projectID);
+  } else
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 2 access or higher are able to make this operation",
+    });
 });
 
 app.post("/projects/removeElement", async (request, response) => {
-  response.json(await projcthandler.removeElement(JSONdb, pathPreFix, request.body));
-  sendNewDataToWatcher(request.body.projectID);
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 2) {
+    response.json(await projcthandler.removeElement(JSONdb, pathPreFix, request.body));
+    sendNewDataToWatcher(request.body.projectID);
+  } else
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 2 access or higher are able to make this operation",
+    });
 });
 
 app.post("/projects/setNewName", async (request, response) => {
-  const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
-  proj.set("name", request.body.name);
-  console.log("set new Name", request.body.name);
-  response.json({ name: proj.get("name") });
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 2) {
+    const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
+    proj.set("name", request.body.name);
+    console.log("set new Name", request.body.name);
+    response.json({ name: proj.get("name") });
+    sendUserData(request.body.projectID);
+  } else
+    response.json({
+      isError: true,
+      succes: false,
+      errormsg: "permissionerror",
+      msg: "Only user with level 2 access or higher are able to make this operation",
+    });
 });
 
 app.post("/projects/adduserInProj", async (request, response) => {
@@ -141,40 +207,56 @@ app.post("/projects/adduserInProj", async (request, response) => {
 });
 
 app.post("/projects/changePosition", async (request, response) => {
-  try {
-    console.log("change posisiotn of: ", request.body);
-    const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
-    const data = proj.get("main");
-    data.pcr[request.body.element].position = request.body.position;
-    proj.set("main", data);
-    response.json(await projcthandler.getMain(JSONdb, pathPreFix, request.body.projectID));
-    sendNewDataToWatcher(request.body.projectID);
-  } catch (error) {
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 2) {
+    try {
+      console.log("change posisiotn of: ", request.body);
+      const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
+      const data = proj.get("main");
+      data.pcr[request.body.element].position = request.body.position;
+      proj.set("main", data);
+      response.json(await projcthandler.getMain(JSONdb, pathPreFix, request.body.projectID));
+      sendNewDataToWatcher(request.body.projectID);
+    } catch (error) {
+      response.json({
+        isError: true,
+        succes: false,
+        errormsg: "sthwentwrong",
+        msg: "Something went Wrong",
+      });
+    }
+  } else
     response.json({
       isError: true,
       succes: false,
-      errormsg: "sthwentwrong",
-      msg: "Something went Wrong",
+      errormsg: "permissionerror",
+      msg: "Only user with level 2 access or higher are able to make this operation",
     });
-  }
 });
 app.post("/projects/changeScale", async (request, response) => {
-  try {
-    console.log("change scale of: ", request.body);
-    const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
-    const data = proj.get("main");
-    data.pcr[request.body.element].scale = request.body.scale;
-    proj.set("main", data);
-    response.json(await projcthandler.getMain(JSONdb, pathPreFix, request.body.projectID));
-    sendNewDataToWatcher(request.body.projectID);
-  } catch (error) {
+  if (checkUserPermissions(request.body.user, request.body.projectID) >= 2) {
+    try {
+      console.log("change scale of: ", request.body);
+      const proj = new JSONdb(pathPreFix + "/database/projects/" + request.body.projectID + ".json");
+      const data = proj.get("main");
+      data.pcr[request.body.element].scale = request.body.scale;
+      proj.set("main", data);
+      response.json(await projcthandler.getMain(JSONdb, pathPreFix, request.body.projectID));
+      sendNewDataToWatcher(request.body.projectID);
+    } catch (error) {
+      response.json({
+        isError: true,
+        succes: false,
+        errormsg: "sthwentwrong",
+        msg: "Something went Wrong",
+      });
+    }
+  } else
     response.json({
       isError: true,
       succes: false,
-      errormsg: "sthwentwrong",
-      msg: "Something went Wrong",
+      errormsg: "permissionerror",
+      msg: "Only user with level 2 access or higher are able to make this operation",
     });
-  }
 });
 
 app.post("/projects/removeuserInProj", async (request, response) => {
@@ -200,7 +282,6 @@ async function sendNewDataToWatcher(id) {
   console.log("send new data to all watcher of", id);
 
   const data = await projectHandler.getMain(JSONdb, pathPreFix, id);
-  console.log("data", data);
   userInProj[id].forEach((user) => {
     console.log("for ", user);
     io.sockets.to(user).emit("newProjData", data);
@@ -208,8 +289,28 @@ async function sendNewDataToWatcher(id) {
 }
 
 async function sendUserData(id) {
+  console.log("is this proj id", id);
+  const proj = new JSONdb(pathPreFix + "/database/projects/" + id + ".json");
   userInProj[id].forEach((user) => {
     console.log("for ", user);
-    io.sockets.to(user).emit("newUserData", { user: userInProj[id].length });
+    io.sockets.to(user).emit("newUserData", { user: userInProj[id].length, access: proj.get("access") });
   });
+}
+
+function checkUserPermissions(user, id) {
+  const proj = new JSONdb(pathPreFix + "/database/projects/" + id + ".json");
+  const access = proj.get("access");
+  if (access != null || access != undefined) {
+    if (user == null || user == undefined) {
+      if (access.everyone) return 0;
+      else return -1;
+    } else {
+      if (proj.get("owner") == user) return 4;
+      else if (access.admin.includes(user)) return 3;
+      else if (access.full.includes(user)) return 2;
+      else if (access.readOnly.includes(user)) return 1;
+      else if (access.everyone) return 0;
+      else return -1;
+    }
+  } else return -1;
 }

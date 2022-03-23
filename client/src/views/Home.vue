@@ -1,6 +1,6 @@
 <template>
   <div class="home_wrapper">
-    <SettingsWrapper :toShow="'profileconfig'"/>
+    <SettingsWrapper :toShow="'profileconfig'" />
     <h1>Hello {{ userName }}</h1>
     <div>
       <h2>Your Projects</h2>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import ProjectCluster from "../components/projectCluster.vue";
+import ProjectCluster from "@/components/ProjectCluster.vue";
 import SettingsWrapper from "@/components/SettingsWrapper.vue";
 
 import io from "socket.io-client";
@@ -50,7 +50,8 @@ export default {
         SID: localStorage.getItem("sessionID"),
         user: localStorage.getItem("usr"),
       });
-      this.projectCluster = data;
+      if (data.isError) this.$store.commit("setMessage", data);
+      else this.projectCluster = data;
     },
     async checkUserValidation() {
       const data = await api.fetchData("session/checkUser", {

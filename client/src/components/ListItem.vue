@@ -68,6 +68,7 @@ export default {
         parent: parent,
         child: child,
       });
+      if (data.isError) this.$store.commit("setMessage", data);
     },
     async removeChild(parent) {
       if (this.projectData.main.pcr[parent].level != 0) this.goBack();
@@ -77,6 +78,7 @@ export default {
         user: localStorage.getItem("usr"),
         parent: parent,
       });
+      if (data.isError) this.$store.commit("setMessage", data);
     },
   },
 };

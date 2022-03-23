@@ -13,6 +13,8 @@ module.exports = {
     }
     console.log("Data for User", projectCluster.get(data));
 
+    console.log("check for deleted Projects");
+
     // Construct OwnData
     let ownData = [];
     projectCluster.get(data).ownProjects.forEach((projid) => {
@@ -24,14 +26,28 @@ module.exports = {
     let sharedWith = [];
     projectCluster.get(data).sharedWithProjects.forEach((projid) => {
       const proj = new JSONdb(pathPreFix + "/database/projects/" + Object.keys(projid)[0] + ".json");
-      proj.name = sharedWith.push({ projectID: Object.keys(projid)[0], name: proj.get("name"), sharedWith: projid[Object.keys(projid)[0]] });
+      if (Object.keys(proj.JSON()).length == 0) {
+        const temp = projectCluster.get(data);
+        const i = temp.sharedWithProjects.findIndex((x) => x.projectID === Object.keys(projid)[0]);
+        temp.sharedWithProjects.splice(i, 1);
+        projectCluster.set(data, temp);
+      } else {
+        proj.name = sharedWith.push({ projectID: Object.keys(projid)[0], name: proj.get("name"), sharedWith: projid[Object.keys(projid)[0]] });
+      }
     });
 
     // Construct Sharedby
     let sharedBy = [];
     projectCluster.get(data).sharedByProjects.forEach((projid) => {
       const proj = new JSONdb(pathPreFix + "/database/projects/" + projid.projectID + ".json");
-      sharedBy.push({ projectID: proj.get("id"), name: proj.get("name"), sharedBy: projid.shareBy });
+      if (Object.keys(proj.JSON()).length == 0) {
+        const temp = projectCluster.get(data);
+        const i = temp.sharedByProjects.findIndex((x) => x.projectID === projid.projectID);
+        temp.sharedByProjects.splice(i, 1);
+        projectCluster.set(data, temp);
+      } else {
+        sharedBy.push({ projectID: proj.get("id"), name: proj.get("name"), sharedBy: projid.shareBy });
+      }
     });
 
     return { ownData, sharedWith, sharedBy };
@@ -47,10 +63,10 @@ module.exports = {
     newProj.set("name", "Untiteld");
     newProj.set("created", new Date());
     newProj.set("id", projectID);
+    newProj.set("access", { full: [], readOnly: [], admin: [], everyone: false });
     newProj.set("main", { pcr: {}, data: { maxLevel: 0 } });
 
     if (!projectCluster.get(owner).ownProjects.includes(projectID)) {
-      console.log("set Owenr");
       projectCluster.set(owner + ".ownProjects", projectCluster.get(owner).ownProjects.push(projectID));
     }
 
@@ -85,7 +101,6 @@ module.exports = {
   getProjectMeta(JSONdb, pathPreFix, projectID) {
     console.log("get Project Data", projectID);
     const newProj = new JSONdb(pathPreFix + "/database/projects/" + projectID + ".json");
-
     return newProj.storage.id;
   },
 
@@ -156,6 +171,12 @@ module.exports = {
             if (!hasFoundProj) {
               console.log("create new shared Project Entry");
               allData.sharedWithProjects.push({ [data.projectID]: [shareWith] });
+              const projectData = new JSONdb(pathPreFix + "/database/projects/" + data.projectID + ".json");
+              const access = projectData.get("access");
+              if (data.accessLevel == 0) access.readOnly.push(shareWith);
+              if (data.accessLevel == 1) access.full.push(shareWith);
+              if (data.accessLevel == 2) access.admin.push(shareWith);
+              projectData.set("access", access);
             } else {
               if (allData.sharedWithProjects[foundOn][data.projectID].includes(shareWith)) {
                 console.log("Allradey added");
@@ -203,8 +224,8 @@ module.exports = {
               try {
                 io.sockets.to(userBinds[shareWith].socketID).emit("newProjData", UserDAta);
               } catch (error) {
-                console.log(error);
                 console.log("nothing to wory about");
+                console.log(error);
               }
               //send mail to infom inveted person about invite
               authhandler.checkUser(call, "session/sendMailForInvite", { email: data.shareWith });
@@ -243,6 +264,54 @@ module.exports = {
         errormsg: "unexpected",
         msg: "Something unexepted happend",
       };
+    }
+  },
+
+  async changeAccess(JSONdb, fs, pathPreFix, data, call, io, userBinds) {
+    console.log("Change Access level for " + data.userToChange + " to " + data.toLevel);
+    const project = new JSONdb(pathPreFix + "/database/projects/" + data.projectID + ".json");
+    let access = project.get("access");
+    switch (data.toLevel) {
+      case 0:
+        const indexfull0 = access.full.indexOf(data.userToChange);
+        if (indexfull0 > -1) access.full.splice(indexfull0, 1);
+        const indexadmin0 = access.admin.indexOf(data.userToChange);
+        if (indexadmin0 > -1) access.admin.splice(indexadmin0, 1);
+
+        access.readOnly.push(data.userToChange);
+        project.set("access", access);
+
+        break;
+      case 1:
+        const indexreadOnly1 = access.readOnly.indexOf(data.userToChange);
+        if (indexreadOnly1 > -1) access.readOnly.splice(indexreadOnly1, 1);
+        const indexadmin1 = access.admin.indexOf(data.userToChange);
+        if (indexadmin1 > -1) access.admin.splice(indexadmin1, 1);
+
+        access.full.push(data.userToChange);
+        project.set("access", access);
+
+        break;
+      case 2:
+        const indexreadOnly2 = access.readOnly.indexOf(data.userToChange);
+        if (indexreadOnly2 > -1) access.readOnly.splice(indexreadOnly2, 1);
+        const indexfull2 = access.full.indexOf(data.userToChange);
+        if (indexfull2 > -1) access.full.splice(indexfull2, 1);
+
+        access.admin.push(data.userToChange);
+        project.set("access", access);
+
+        break;
+      case 3:
+        break;
+      case 4:
+        access.everyone = !access.everyone;
+        project.set("access", access);
+        console.log("toggle everyone mode", access);
+        break;
+      default:
+        console.log("no to level given");
+        break;
     }
   },
 };

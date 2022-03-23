@@ -55,6 +55,8 @@
 import ReactiveInputField from "@/components/reactiveInputField.vue";
 import ListItem from "@/components/ListItem.vue";
 
+import api from "../apiService";
+
 export default {
   props: {
     projectData: { type: Object, default: {} },
@@ -72,6 +74,16 @@ export default {
     };
   },
   methods: {
+    async addElement(parent, child) {
+      const data = await api.projectcall("projects/addElement", {
+        projectID: sessionStorage.getItem("projectID"),
+        SID: localStorage.getItem("sessionID"),
+        user: localStorage.getItem("usr"),
+        parent: parent,
+        child: child,
+      });
+      if (data.isError) this.$store.commit("setMessage", data);
+    },
     increaseCurrentLevel(elem) {
       console.log("elem", elem);
       this.watchChild = elem;

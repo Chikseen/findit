@@ -7,7 +7,7 @@
     <Transition name="profile-setting">
       <div v-if="isExpand" class="profileSettings_content">
         <ProfileSettings v-if="toShow == 'profileconfig'" />
-        <ProjectSettings v-if="toShow == 'projectconfig'" />
+        <ProjectSettings v-if="toShow == 'projectconfig'" :access="access" />
       </div>
     </Transition>
   </div>
@@ -24,6 +24,7 @@ export default {
   },
   props: {
     toShow: { type: String },
+    access: { type: Object, default: () => {} },
   },
   data() {
     return {
@@ -83,11 +84,12 @@ export default {
 
   &_content {
     position: fixed;
+    overflow-y: scroll;
     top: 0;
     right: 0;
     width: 100%;
-    max-width: calc(350px + 5rem);
     height: 100%;
+    max-width: calc(350px + 5rem);
     background-color: rgb(245, 245, 245);
     border-radius: 15px 0 0 15px;
     box-shadow: 1px 1px 10px 3px rgba(50, 50, 10, 0.3);
