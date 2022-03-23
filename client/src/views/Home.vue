@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import ProjectCluster from "@/components/ProjectCluster.vue";
-import SettingsWrapper from "@/components/SettingsWrapper.vue";
+import ProjectCluster from "../components/ProjectCluster.vue";
+import SettingsWrapper from "../components/SettingsWrapper.vue";
 
 import io from "socket.io-client";
 import api from "../apiService";
