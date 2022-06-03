@@ -181,7 +181,7 @@ export default {
   },
 
   created() {
-    if (process.env.NODE_ENV != "development") {
+    if (process.env.NODE_ENV != "develop") {
       window.onbeforeunload = async function () {
         await api.projectcall("projects/removeuserInProj", {
           projectID: sessionStorage.getItem("projectID"),

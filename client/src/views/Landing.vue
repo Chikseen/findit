@@ -10,6 +10,7 @@
         <div class="landing_header_login">
           <CTA :text="'Login'" @click="$router.push('/login')" />
         </div>
+        <p>{{ loginState }}</p>
       </div>
     </div>
     <div class="landing_title">
@@ -63,6 +64,8 @@ import Render from "@/components/Render.vue";
 import CTA from "@/assets/CTA.vue";
 import Logo from "@/assets/icons/logo.vue";
 
+import { mapState } from "vuex";
+
 export default {
   name: "landing",
   components: {
@@ -70,6 +73,7 @@ export default {
     CTA,
     Logo,
   },
+  computed: mapState(["loginState"]),
   methods: {
     login() {
       this.$router.push("/login");

@@ -5,6 +5,7 @@ import Landing from "../views/Landing.vue";
 import ProjectView from "../views/ProjectView.vue";
 import Varifyer from "../views/Varifyer.vue";
 import PrivacyPolicy from "../views/PrivacyPolicy.vue";
+import UserValidation from "../views/UserValidation.vue";
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: "/privacyPolicy",
     name: "PrivacyPolicy",
     component: PrivacyPolicy,
+  },
+  {
+    path: "/validate",
+    name: "UserValidation",
+    component: UserValidation,
   },
 ];
 

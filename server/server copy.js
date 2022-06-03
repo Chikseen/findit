@@ -1,31 +1,32 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 
+const { Server } = require("socket.io");
 const JSONdb = require("simple-json-db");
 const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
-const nodefetch = require("node-fetch");
-const cookieParser = require("cookie-parser");
 const { Client } = require("pg");
-const { Server } = require("socket.io");
-const { v4: uid } = require("uuid");
+const nodefetch = require("node-fetch");
 
-const authGithub = require("./auth/github");
-
-/* const projectClusterData = require("./serverHandler/projectClusterData");
+const projectClusterData = require("./serverHandler/projectClusterData");
 const databaseIntegrity = require("./serverHandler/databaseIntegrity");
 const projcthandler = require("./serverHandler/projectHandler");
 const auth = require("./serverHandler/authHandler");
-const projectHandler = require("./serverHandler/projectHandler"); */
+const projectHandler = require("./serverHandler/projectHandler");
 
-//let pathPreFix = "";
-//const authCall = process.env.NODE_ENV;
+let pathPreFix;
+let authCall;
 
-//console.log("this env", process.env.NODE_ENV);
-//console.log("Api call", process.env.API);
+console.log("this env", process.env.NODE_ENV);
 
-// If nedded
-//if (process.env.NODE_ENV === "develop") pathPreFix = ".";
+if (process.env.NODE_ENV === "develop") {
+  console.log("server is running in Dev mode");
+  authCall = "http://192.168.2.100:6080/";
+  pathPreFix = ".";
+} else {
+  authCall = "https://auth.drunc.net/";
+  pathPreFix = "";
+}
 
 // create pg Client
 /* const client = new Client({
@@ -42,7 +43,7 @@ client.connect(function (err) {
   console.log("Connected!");
 });
 */
-//var sql = fs.readFileSync("./sql/getAllUser.sql").toString();
+var sql = fs.readFileSync("./sql/getAllUser.sql").toString();
 
 // regex magic
 /*  [var1] = user 
@@ -57,17 +58,9 @@ client.query(sql, function (err, result) {
 });  */
 
 // DATAINIT
-//databaseIntegrity.init(fs, pathPreFix);
+databaseIntegrity.init(fs, pathPreFix);
 //databaseIntegrity.checkProjectCluster(fs, pathPreFix);
 
-/*     maxAge: 5000,
-    // expires works the same as the maxAge
-    expires: new Date("01 12 2021"),
-    secure: true,
-    httpOnly: true,
-    sameSite: "none", */
-
-if (process.env.NODE_ENV === "undefined") console.log("No .env File deteced");
 const io = new Server({
   cors: {
     origin: `*`,
@@ -78,57 +71,18 @@ const io = new Server({
 
 // EXPRESS SETUP
 const app = express();
-var corsOptions = {
-  origin: "http://192.168.2.100:8080",
-  credentials: true,
-  "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-};
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 const port = 7081;
-app.listen(port, () => console.log("API listen on port: " + port));
+app.listen(port, () => console.log("Connecet with Port: " + port));
 
 app.get("/", (req, res) => {
-  res.send({ status: "succes" });
+  res.json({ status: "success" });
 });
 
 let userBinds = {};
 let userInProj = {};
-let userHandler = [];
-let userValidation = {};
-
-app.get("/user/auth/github/code", async (req, res) => {
-  console.log("Auth: github");
-  const accessToken = await authGithub.getAccesToken(req.query.code);
-  const userdata = await authGithub.getUserData(accessToken.access_token);
-
-  // Handle UserData here
-  const sessionId = uid();
-  userHandler.push({ ...userdata, provider: "github", sessionId: sessionId });
-  const token = uid();
-  userValidation[token] = sessionId;
-  res.redirect(process.env.REDIRECT_AFTER_LOGIN + "validate?token=" + token);
-});
-
-app.get("/user/validate", async (req, res) => {
-  console.log("Create Validated user", req.query.token);
-  const sessionId = userValidation[req.query.token];
-  res.cookie(`sessionId`, sessionId, {});
-  delete userValidation[req.query.token];
-  res.send({ status: "succes" });
-});
-
-app.get("/user/check", async (req, res) => {
-  console.log("Check user", req.cookies);
-  const filter = userHandler.some((item) => item.sessionId === req.cookies.sessionId);
-  if (filter) res.send({ status: true });
-  else {
-    res.clearCookie();
-    res.send({ status: false });
-  }
-});
 
 // ---------------------------------------------------------------------------------------------------------
 //Auth

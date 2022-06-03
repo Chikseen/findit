@@ -9,17 +9,18 @@
 
 <script>
 import Messege from "@/assets/messageComponent.vue";
+import api from "@/apiService";
 
 export default {
   components: {
     Messege,
   },
   created() {
-    if (process.env.NODE_ENV == "development") {
-      this.$store.commit("setApiSocket", "http://localhost:7080");
-    } else {
-      this.$store.commit("setApiSocket", "https://api.drunc.net");
-    }
+    this.$store.commit("setApiSocket", process.env.VUE_APP_API_ENDPOINT);
+  },
+  async mounted() {
+    const res = await api.get("user/check");
+    this.$store.commit("setLoginState", res.status);
   },
 };
 </script>

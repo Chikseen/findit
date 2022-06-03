@@ -1,6 +1,9 @@
 <template>
   <div class="login_wrapper">
-    <div class="login">
+    <a :href="githubUrl">Github Login</a>
+    <a :href="googleUrl">Google Login</a>
+
+    <!--  <div class="login">
       <div class="login_logo">
         <Logo v-if="false" />
       </div>
@@ -22,7 +25,7 @@
         <Button class="login_buttons" :text="'Home'" @mouseup="tryLogin" v-if="validLogin" />
         <Button class="login_buttons" :text="'Send New Validaiotn'" @mouseup="sendValidaitonCode" v-if="!userValidationStatus" />
       </div>
-    </div>
+    </div>  -->
   </div>
 </template>
 
@@ -41,6 +44,17 @@ export default {
     CTA,
     Logo,
     ReactiveInputField,
+  },
+  computed: {
+    validLogin() {
+      return this.$store.getters.getloginStatus;
+    },
+    githubUrl() {
+      return `https://github.com/login/oauth/authorize?client_id=${process.env.VUE_APP_GITHUB_CLIENT_ID}`;
+    },
+    googleUrl() {
+      return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.VUE_APP_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.VUE_APP_GOOGLE_REDIRECT}&response_type=code&scope=email profile`;
+    },
   },
   data() {
     return {
@@ -133,11 +147,6 @@ export default {
     newValue(from, value) {
       console.log("new calue from", from);
       console.log("is", value);
-    },
-  },
-  computed: {
-    validLogin() {
-      return this.$store.getters.getloginStatus;
     },
   },
   mounted() {

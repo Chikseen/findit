@@ -7,6 +7,7 @@ export default createStore({
     loginStatus: false,
     mainSelected: 0,
     scaleSelected: 0,
+    loginState: false,
   },
   getters: {
     getApiSocket: (state) => {
@@ -31,6 +32,9 @@ export default createStore({
     },
     setScaleSelected(state, payload) {
       state.scaleSelected = payload;
+    },
+    setLoginState(state, payload) {
+      state.loginState = payload;
     },
   },
   actions: {},
