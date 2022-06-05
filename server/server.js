@@ -11,56 +11,32 @@ const { Server } = require("socket.io");
 const { v4: uid } = require("uuid");
 
 const authGithub = require("./auth/github");
-
-/* const projectClusterData = require("./serverHandler/projectClusterData");
-const databaseIntegrity = require("./serverHandler/databaseIntegrity");
-const projcthandler = require("./serverHandler/projectHandler");
-const auth = require("./serverHandler/authHandler");
-const projectHandler = require("./serverHandler/projectHandler"); */
-
-//let pathPreFix = "";
-//const authCall = process.env.NODE_ENV;
-
-//console.log("this env", process.env.NODE_ENV);
-//console.log("Api call", process.env.API);
-
-// If nedded
-//if (process.env.NODE_ENV === "develop") pathPreFix = ".";
+const authGoogle = require("./auth/google");
+const dbUser = require("./db/user");
 
 // create pg Client
-/* const client = new Client({
-  user: process.env.VUE_APP_PG_USERNAME,
-  host: process.env.VUE_APP_PG_HOST,
-  database: process.env.VUE_APP_PG_DATABASE,
-  password: process.env.VUE_APP_PG_PASSWORD,
-  port: process.env.VUE_APP_PG_PORT,
-}); 
+const db = new Client({
+  user: process.env.PG_USERNAME,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
 console.log("Check postgres Connection");
-client.connect(function (err) {
+db.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 });
-*/
-//var sql = fs.readFileSync("./sql/getAllUser.sql").toString();
 
-// regex magic
-/*  [var1] = user 
+console.log("Check DB");
+const initData = fs.readFileSync("./sql/initData.sql").toString();
+db.query(initData, function (err, result) {
+  if (err) console.log("error: ", err);
+  else console.log("DB Check done");
+});
 
-client.query(sql, function (err, result) {
-  if (err) {
-    console.log("error: ", err);
-    process.exit(1);
-  }
-  console.log("result", result);
-  process.exit(0);
-});  */
-
-// DATAINIT
-//databaseIntegrity.init(fs, pathPreFix);
-//databaseIntegrity.checkProjectCluster(fs, pathPreFix);
-
-/*     maxAge: 5000,
+/*      maxAge: 5000,
     // expires works the same as the maxAge
     expires: new Date("01 12 2021"),
     secure: true,
@@ -83,14 +59,22 @@ var corsOptions = {
   credentials: true,
   "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
 };
+
+const port = 7081;
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-const port = 7081;
 app.listen(port, () => console.log("API listen on port: " + port));
 
 app.get("/", (req, res) => {
+  var sql = fs.readFileSync("./sql/test.sql").toString();
+
+  db.query(sql, function (err, result) {
+    if (err) console.log("error: ", err);
+    else console.log("result", result);
+  });
+
   res.send({ status: "succes" });
 });
 
@@ -99,18 +83,37 @@ let userInProj = {};
 let userHandler = [];
 let userValidation = {};
 
+// ___ AUTH ________________________________________
+
 app.get("/user/auth/github/code", async (req, res) => {
   console.log("Auth: github");
   const accessToken = await authGithub.getAccesToken(req.query.code);
   const userdata = await authGithub.getUserData(accessToken.access_token);
 
-  // Handle UserData here
   const sessionId = uid();
   userHandler.push({ ...userdata, provider: "github", sessionId: sessionId });
+  dbUser.saveUser(db, { ...userdata, provider: "github" });
+
   const token = uid();
   userValidation[token] = sessionId;
   res.redirect(process.env.REDIRECT_AFTER_LOGIN + "validate?token=" + token);
 });
+
+app.get("/user/auth/google/code", async (req, res) => {
+  console.log("Auth: Google");
+  const accessToken = await authGoogle.getAccesToken(req.query.code);
+  const userdata = await authGoogle.getUserData(accessToken.access_token);
+
+  const sessionId = uid();
+  userHandler.push({ ...userdata, provider: "github", sessionId: sessionId });
+  dbUser.saveUser(db, { ...userdata, provider: "github" });
+
+  const token = uid();
+  userValidation[token] = sessionId;
+  res.redirect(process.env.REDIRECT_AFTER_LOGIN + "validate?token=" + token);
+});
+
+
 
 app.get("/user/validate", async (req, res) => {
   console.log("Create Validated user", req.query.token);
